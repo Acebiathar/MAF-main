@@ -10,6 +10,9 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: laravel-app
     # This sets up a temporary PostgreSQL database inside GitHub Actions
     services:
       postgres:
