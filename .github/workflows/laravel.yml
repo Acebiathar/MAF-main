@@ -58,5 +58,5 @@ jobs:
         DB_DATABASE: test_db
         DB_USERNAME: postgres
         DB_PASSWORD: password
-        APP_KEY: base64:fH68Nf6H6f6H6f6H6f6H6f6H6f6H6f6H6f6H6f6H6f6=
+        APP_KEY: base64:t6PmsXhJvSnS9mG/H7A9R6vH6f6H6f6H6f6H6f6H6f8=
       run: php artisan migrate --force && php artisan test
