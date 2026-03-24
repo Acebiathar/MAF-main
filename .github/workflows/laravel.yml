@@ -58,4 +58,5 @@ jobs:
         DB_DATABASE: test_db
         DB_USERNAME: postgres
         DB_PASSWORD: password
+        APP_KEY: ${{ secrets.APP_KEY }}
       run: php artisan migrate && php artisan test
