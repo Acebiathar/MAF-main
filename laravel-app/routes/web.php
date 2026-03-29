@@ -58,8 +58,13 @@ Route::get('/', function (Request $request) {
     ]);
 });
 
-Route::view('/how-it-works', 'how');
-Route::view('/about', 'about');
+Route::get('/how-it-works', function () {
+    return renderView('how');
+});
+
+Route::get('/about', function () {
+    return renderView('about');
+});
 
 Route::match(['get', 'post'], '/contact', function (Request $request) {
     if ($request->isMethod('post')) {
