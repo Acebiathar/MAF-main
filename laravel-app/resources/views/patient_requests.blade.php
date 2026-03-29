@@ -1,24 +1,28 @@
-<?php /** @var array $reservations */ ?>
-<h3 class="fw-bold mb-3">My reservations</h3>
-<div class="table-responsive card shadow-sm">
-  <table class="table align-middle mb-0">
-    <thead class="table-light"><tr><th>Medicine</th><th>Pharmacy</th><th>Status</th><th>Note</th><th>Placed</th></tr></thead>
-    <tbody>
-      <?php if ($reservations): ?>
-        <?php foreach ($reservations as $r): ?>
-        <tr>
-          <td><?= htmlspecialchars($r['medicine_name']) ?></td>
-          <td><?= htmlspecialchars($r['pharmacy_name']) ?><div class="small text-muted"><?= htmlspecialchars($r['pharmacy_location']) ?></div></td>
-          <td>
-            <?php if ($r['status'] === 'confirmed'): ?><span class="badge bg-success">Confirmed<?php elseif ($r['status'] === 'declined'): ?><span class="badge bg-secondary">Declined<?php else: ?><span class="badge bg-warning text-dark">Pending<?php endif; ?></span>
-          </td>
-          <td class="small"><?= htmlspecialchars($r['note'] ?? '-') ?></td>
-          <td class="small text-muted"><?= htmlspecialchars($r['created_at']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-      <?php else: ?>
-      <tr><td colspan="5" class="text-muted">No reservations yet.</td></tr>
-      <?php endif; ?>
-    </tbody>
-  </table>
-</div>
+function handle_pharmacist_requests(PDO $db): void
+{
+    $user = require_login('pharmacist');
+    
+    // Get the pharmacy owned by this user
+    $stmt = $db->prepare('SELECT * FROM pharmacies WHERE owner_id = :owner LIMIT 1');
+    $stmt->execute([':owner' => $user->id]);
+    $pharmacy = $stmt->fetch();
+
+    if (!$pharmacy) {
+        flash('No pharmacy profile found.', 'warning');
+        redirect('/');
+    }
+
+    // Get all reservations for this pharmacy
+    $stmt = $db->prepare('
+        SELECT r.*, u.name AS user_name, u.email AS user_email, m.name AS medicine_name
+        FROM reservations r
+        JOIN users u ON r.user_id = u.id
+        JOIN medicines m ON r.medicine_id = m.id
+        WHERE r.pharmacy_id = :pid
+        ORDER BY r.created_at DESC
+    ');
+    $stmt->execute([':pid' => $pharmacy->id]);
+    $reservations = $stmt->fetchAll();
+
+    render('pharmacist_requests', compact('reservations', 'pharmacy'));
+}
