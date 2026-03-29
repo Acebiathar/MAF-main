@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('pharmacies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('district');
-            $table->string('town');
+            $table->string('location');
             $table->string('phone_number')->nullable();
+            $table->string('license_number');
             $table->string('status')->default('approved');
+            $table->foreignId('owner_id');
             $table->timestamps();
         });
     }
