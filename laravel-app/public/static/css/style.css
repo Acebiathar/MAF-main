@@ -1,8 +1,0 @@
-:root {
-  --gradient: radial-gradient(circle at 10% 20%, #e0f2ff 0, #f6f8ff 40%, #ffffff 100%);
-}
-body { background: var(--gradient); }
-.hero { background: #fff; border: 1px solid #eef2f7; }
-.icon-circle { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
-.card { border: 1px solid #eef2f7; }
-.table > :not(caption) > * > * { padding: 0.85rem; }

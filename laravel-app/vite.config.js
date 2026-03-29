@@ -8,4 +8,9 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: '0.0.0.0', // This is the "magic" number that opens it to everyone
+        port: 5173,
+        strictPort: true,
+    },
 });

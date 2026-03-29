@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 function currentUser()
 {
     $userId = session('user_id');
-    return $userId ? DB::table('user')->where('id', $userId)->first() : null;
+    return $userId ? DB::table('users')->where('id', $userId)->first() : null;
 }
 
 function flash($category, $message)
@@ -30,7 +30,7 @@ Route::get('/', function (Request $request) {
     if ($query !== '') {
         $results = DB::table('pharmacy_medicine as pm')
             ->join('medicine as m', 'pm.medicine_id', '=', 'm.id')
-            ->join('pharmacy as p', 'pm.pharmacy_id', '=', 'p.id')
+            ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
             ->select('pm.*', 'm.name as medicine_name', 'm.category as medicine_category', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
             ->where('m.name', 'like', "%{$query}%")
             ->where('p.status', '=', 'approved')
@@ -49,7 +49,7 @@ Route::get('/', function (Request $request) {
         }
     }
 
-    $pharmacies = DB::table('pharmacy')->where('status', 'approved')->limit(4)->get();
+    $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
     return renderView('home', [
         'query' => $query,
         'results' => $results,
@@ -58,8 +58,13 @@ Route::get('/', function (Request $request) {
     ]);
 });
 
-Route::view('/how-it-works', 'how');
-Route::view('/about', 'about');
+Route::get('/how-it-works', function () {
+    return renderView('how');
+});
+
+Route::get('/about', function () {
+    return renderView('about');
+});
 
 Route::match(['get', 'post'], '/contact', function (Request $request) {
     if ($request->isMethod('post')) {
@@ -73,8 +78,8 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
-        $user = DB::table('user')->where('email', $email)->first();
-        if ($user && Hash::check($password, $user->password_hash)) {
+        $user = DB::table('users')->where('email', $email)->first();
+        if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
             flash('success', 'Welcome back!');
             return redirect('/');
@@ -88,7 +93,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
 Route::match(['get', 'post'], '/register', function (Request $request) {
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
-        $exists = DB::table('user')->where('email', $email)->exists();
+        $exists = DB::table('users')->where('email', $email)->exists();
         if ($exists) {
             flash('warning', 'Email already registered.');
             return redirect('/register');
@@ -98,15 +103,15 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
         $password = $request->input('password', '');
 
         DB::transaction(function () use ($request, $name, $email, $password, $role) {
-            $userId = DB::table('user')->insertGetId([
+            $userId = DB::table('users')->insertGetId([
                 'name' => $name,
                 'email' => $email,
-                'password_hash' => Hash::make($password),
+                'password' => Hash::make($password),
                 'role' => $role,
             ]);
 
             if ($role === 'pharmacist') {
-                DB::table('pharmacy')->insert([
+                DB::table('pharmacies')->insert([
                     'name' => $request->input('pharmacy_name', ''),
                     'location' => $request->input('location', ''),
                     'license_number' => $request->input('license', ''),
@@ -142,14 +147,14 @@ Route::get('/pharmacist', function () {
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
-    $pharmacy = DB::table('pharmacy')->where('owner_id', $user->id)->first();
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) {
         flash('warning', 'No pharmacy profile found.');
         return redirect('/');
     }
-    $medicines = DB::table('medicine')->orderBy('name')->get();
+    $medicines = DB::table('medicines')->orderBy('name')->get();
     $inventory = DB::table('pharmacy_medicine as pm')
-        ->join('medicine as m', 'pm.medicine_id', '=', 'm.id')
+        ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
         ->select('pm.*', 'm.name as medicine_name')
         ->where('pm.pharmacy_id', $pharmacy->id)
         ->orderBy('m.name')
@@ -163,7 +168,7 @@ Route::post('/pharmacist/add', function (Request $request) {
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
-    $pharmacy = DB::table('pharmacy')->where('owner_id', $user->id)->first();
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) {
         flash('warning', 'No pharmacy profile found.');
         return redirect('/');
@@ -211,7 +216,7 @@ Route::post('/reserve/{item}', function (int $item) {
         return redirect('/');
     }
     $note = request('note', '');
-    DB::table('reservation')->insert([
+    DB::table('reservations')->insert([
         'user_id' => $user->id,
         'pharmacy_id' => $itemRow->pharmacy_id,
         'medicine_id' => $itemRow->medicine_id,
@@ -219,7 +224,7 @@ Route::post('/reserve/{item}', function (int $item) {
         'created_at' => now(),
         'note' => $note,
     ]);
-    $medName = DB::table('medicine')->where('id', $itemRow->medicine_id)->value('name') ?? '';
+    $medName = DB::table('medicines')->where('id', $itemRow->medicine_id)->value('name') ?? '';
     flash('success', 'Reservation sent to the pharmacy.');
     return redirect('/?q=' . urlencode($medName));
 });
@@ -230,9 +235,9 @@ Route::get('/requests', function () {
         flash('warning', 'Please log in first.');
         return redirect('/login');
     }
-    $reservations = DB::table('reservation as r')
-        ->join('pharmacy as p', 'r.pharmacy_id', '=', 'p.id')
-        ->join('medicine as m', 'r.medicine_id', '=', 'm.id')
+    $reservations = DB::table('reservations as r')
+        ->join('pharmacies as p', 'r.pharmacy_id', '=', 'p.id')
+        ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
         ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
         ->where('r.user_id', $user->id)
         ->orderByDesc('r.created_at')
@@ -246,39 +251,39 @@ Route::get('/pharmacist/requests', function () {
         flash('warning', 'Please log in first.');
         return redirect('/login');
     }
-    $pharmacy = DB::table('pharmacy')->where('owner_id', $user->id)->first();
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) {
         flash('warning', 'No pharmacy profile found.');
         return redirect('/');
     }
-    $reservations = DB::table('reservation as r')
+    $reservations = DB::table('reservations as r')
         ->join('user as u', 'r.user_id', '=', 'u.id')
         ->join('medicine as m', 'r.medicine_id', '=', 'm.id')
         ->select('r.*', 'u.name as user_name', 'u.email as user_email', 'm.name as medicine_name')
         ->where('r.pharmacy_id', $pharmacy->id)
         ->orderByDesc('r.created_at')
         ->get();
-    return renderView('pharmacist_requests', compact('reservations', 'pharmacy'));
+    return renderView('pharmacist_requests', compact('reservations', 'pharmacies'));
 });
 
-Route::post('/pharmacist/requests/{reservation}/{action}', function (int $reservation, string $action) {
+Route::post('/pharmacist/requests/{reservations}/{action}', function (int $reservation, string $action) {
     $user = currentUser();
     if (!$user || $user->role !== 'pharmacist') {
         flash('warning', 'Please log in first.');
         return redirect('/login');
     }
-    $pharmacy = DB::table('pharmacy')->where('owner_id', $user->id)->first();
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) {
         flash('warning', 'No pharmacy profile found.');
         return redirect('/');
     }
-    $res = DB::table('reservation')->where('id', $reservation)->first();
+    $res = DB::table('reservations')->where('id', $reservation)->first();
     if (!$res || (int)$res->pharmacy_id !== (int)$pharmacy->id) {
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
     $status = $action === 'confirm' ? 'confirmed' : 'declined';
-    DB::table('reservation')->where('id', $reservation)->update(['status' => $status]);
+    DB::table('reservations')->where('id', $reservation)->update(['status' => $status]);
     flash('success', 'Reservation updated.');
     return redirect('/pharmacist/requests');
 });
@@ -289,12 +294,12 @@ Route::get('/admin', function () {
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
-    $pending = DB::table('pharmacy')->where('status', 'pending')->get();
+    $pending = DB::table('pharmacies')->where('status', 'pending')->get();
     $stats = [
-        'users' => DB::table('user')->count(),
-        'pharmacies' => DB::table('pharmacy')->count(),
+        'users' => DB::table('users')->count(),
+        'pharmacies' => DB::table('pharmacies')->count(),
         'medicines' => DB::table('medicine')->count(),
-        'reservations' => DB::table('reservation')->count(),
+        'reservations' => DB::table('reservations')->count(),
     ];
     return renderView('admin_dashboard', compact('pending', 'stats'));
 });
@@ -305,13 +310,13 @@ Route::get('/admin/pharmacies/{pharmacy}/{action}', function (int $pharmacy, str
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
-    $ph = DB::table('pharmacy')->where('id', $pharmacy)->first();
+    $ph = DB::table('pharmacies')->where('id', $pharmacy)->first();
     if (!$ph) {
         flash('danger', 'Pharmacy not found.');
         return redirect('/admin');
     }
     $newStatus = $action === 'approve' ? 'approved' : 'rejected';
-    DB::table('pharmacy')->where('id', $pharmacy)->update(['status' => $newStatus]);
+    DB::table('pharmacies')->where('id', $pharmacy)->update(['status' => $newStatus]);
     flash($newStatus === 'approved' ? 'success' : 'warning', 'Pharmacy ' . ($newStatus === 'approved' ? 'approved' : 'rejected') . '.');
     return redirect('/admin');
 });
