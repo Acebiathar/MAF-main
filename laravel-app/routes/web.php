@@ -111,7 +111,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
             ]);
 
             if ($role === 'pharmacist') {
-                DB::table('pharmacy')->insert([
+                DB::table('pharmacies')->insert([
                     'name' => $request->input('pharmacy_name', ''),
                     'location' => $request->input('location', ''),
                     'license_number' => $request->input('license', ''),
@@ -147,14 +147,14 @@ Route::get('/pharmacist', function () {
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
-    $pharmacy = DB::table('pharmacy')->where('owner_id', $user->id)->first();
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) {
         flash('warning', 'No pharmacy profile found.');
         return redirect('/');
     }
-    $medicines = DB::table('medicine')->orderBy('name')->get();
+    $medicines = DB::table('medicines')->orderBy('name')->get();
     $inventory = DB::table('pharmacy_medicine as pm')
-        ->join('medicine as m', 'pm.medicine_id', '=', 'm.id')
+        ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
         ->select('pm.*', 'm.name as medicine_name')
         ->where('pm.pharmacy_id', $pharmacy->id)
         ->orderBy('m.name')
@@ -168,7 +168,7 @@ Route::post('/pharmacist/add', function (Request $request) {
         flash('danger', 'Not authorized.');
         return redirect('/');
     }
-    $pharmacy = DB::table('pharmacy')->where('owner_id', $user->id)->first();
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) {
         flash('warning', 'No pharmacy profile found.');
         return redirect('/');
@@ -224,7 +224,7 @@ Route::post('/reserve/{item}', function (int $item) {
         'created_at' => now(),
         'note' => $note,
     ]);
-    $medName = DB::table('medicine')->where('id', $itemRow->medicine_id)->value('name') ?? '';
+    $medName = DB::table('medicines')->where('id', $itemRow->medicine_id)->value('name') ?? '';
     flash('success', 'Reservation sent to the pharmacy.');
     return redirect('/?q=' . urlencode($medName));
 });
@@ -237,7 +237,7 @@ Route::get('/requests', function () {
     }
     $reservations = DB::table('reservations as r')
         ->join('pharmacies as p', 'r.pharmacy_id', '=', 'p.id')
-        ->join('medicine as m', 'r.medicine_id', '=', 'm.id')
+        ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
         ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
         ->where('r.user_id', $user->id)
         ->orderByDesc('r.created_at')
