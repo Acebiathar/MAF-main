@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <h2 class="fw-bold mb-3">About Us</h2>
 <p class="lead">Our mission is to make medicine accessible by helping patients locate drugs quickly and reliably.</p>
 <div class="row g-4">
@@ -41,4 +38,3 @@
   <div class="col-md-3"><div class="card shadow-sm p-3 h-100"><strong>Pharmacist Advisor</strong><div class="small text-muted">Validates medicine data and safety.</div></div></div>
   <div class="col-md-3"><div class="card shadow-sm p-3 h-100"><strong>Community Manager</strong><div class="small text-muted">Supports pharmacies and patients.</div></div></div>
 </div>
-@endsection

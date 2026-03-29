@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <h2 class="fw-bold mb-4">How It Works</h2>
 <div class="row g-4">
   <div class="col-md-6">
@@ -36,4 +33,3 @@
     </div>
   </div>
 </div>
-@endsection

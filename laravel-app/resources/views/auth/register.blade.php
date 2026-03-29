@@ -1,13 +1,9 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="row justify-content-center">
   <div class="col-lg-8">
     <div class="card shadow-sm">
       <div class="card-body p-4">
         <h4 class="fw-semibold mb-3">Create Account</h4>
         <form method="post">
-          @csrf
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Full name</label>
@@ -51,10 +47,9 @@
           </div>
 
           <button class="btn btn-primary w-100 mt-3" type="submit">Sign up</button>
-          <div class="text-center small mt-2">Already registered? <a href="{{ url('/login') }}">Login</a></div>
+          <div class="text-center small mt-2">Already registered? <a href="/login">Login</a></div>
         </form>
       </div>
     </div>
   </div>
 </div>
-@endsection

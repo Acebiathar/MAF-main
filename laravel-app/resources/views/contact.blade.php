@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <h2 class="fw-bold mb-3">Contact</h2>
 <div class="row g-4">
   <div class="col-md-6">
@@ -18,7 +15,6 @@
       <div class="card-body">
         <h5>Suggestion box</h5>
         <form method="post">
-          @csrf
           <div class="mb-3">
             <label class="form-label">Name</label>
             <input class="form-control" name="name" required>
@@ -49,4 +45,3 @@
     <div id="faq2c" class="accordion-collapse collapse" data-bs-parent="#faqs"><div class="accordion-body">Yes, if the pharmacy offers reservations. Contact them to confirm.</div></div>
   </div>
 </div>
-@endsection

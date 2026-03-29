@@ -1,24 +1,25 @@
-@extends('layouts.app')
-
-@section('content')
-<h3 class="fw-bold mb-3">{{ $pharmacy->name }} dashboard</h3>
+<?php
+/** @var array $pharmacy */
+/** @var array $medicines */
+/** @var array $inventory */
+?>
+<h3 class="fw-bold mb-3"><?= htmlspecialchars($pharmacy['name']) ?> dashboard</h3>
 <div class="d-flex align-items-center gap-2 mb-3">
-  <div class="alert alert-info mb-0">Status: {{ ucfirst($pharmacy->status) }}. Phone {{ $pharmacy->phone }} | Location {{ $pharmacy->location }}</div>
-  <a class="btn btn-sm btn-outline-primary" href="{{ url('/pharmacist/requests') }}">View requests</a>
-  </div>
+  <div class="alert alert-info mb-0">Status: <?= htmlspecialchars(ucfirst($pharmacy['status'])) ?>. Phone <?= htmlspecialchars($pharmacy['phone']) ?> | Location <?= htmlspecialchars($pharmacy['location']) ?></div>
+  <a class="btn btn-sm btn-outline-primary" href="/pharmacist/requests">View requests</a>
+</div>
 <div class="row g-4">
   <div class="col-lg-5">
     <div class="card shadow-sm">
       <div class="card-body">
         <h5 class="fw-semibold">Add / update stock</h5>
-        <form method="post" action="{{ url('/pharmacist/add') }}">
-          @csrf
+        <form method="post" action="/pharmacist/add">
           <div class="mb-3">
             <label class="form-label">Medicine</label>
             <select class="form-select" name="medicine_id" required>
-              @foreach($medicines as $med)
-              <option value="{{ $med->id }}">{{ $med->name }} ({{ $med->category }})</option>
-              @endforeach
+              <?php foreach ($medicines as $med): ?>
+              <option value="<?= (int)$med['id'] ?>"><?= htmlspecialchars($med['name']) ?> (<?= htmlspecialchars($med['category']) ?>)</option>
+              <?php endforeach; ?>
             </select>
           </div>
           <div class="mb-3">
@@ -51,14 +52,14 @@
               <tr><th>Medicine</th><th>Price</th><th>Status</th><th>Qty</th></tr>
             </thead>
             <tbody>
-              @foreach($inventory as $item)
+              <?php foreach ($inventory as $item): ?>
               <tr>
-                <td>{{ $item->medicine_name }}</td>
-                <td>{{ number_format($item->price ?? 0, 0) }}</td>
-                <td>{!! $item->stock_status === 'in_stock' ? '<span class="badge bg-success">In stock</span>' : '<span class="badge bg-secondary">Out</span>' !!}</td>
-                <td>{{ (int)$item->quantity }}</td>
+                <td><?= htmlspecialchars($item['medicine_name']) ?></td>
+                <td><?= number_format((float)($item['price'] ?? 0), 0) ?></td>
+                <td><?= $item['stock_status'] === 'in_stock' ? '<span class="badge bg-success">In stock</span>' : '<span class="badge bg-secondary">Out</span>' ?></td>
+                <td><?= (int)$item['quantity'] ?></td>
               </tr>
-              @endforeach
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div>
@@ -66,4 +67,3 @@
     </div>
   </div>
 </div>
-@endsection
