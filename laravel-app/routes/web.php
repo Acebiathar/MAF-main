@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 function currentUser()
 {
     $userId = session('user_id');
-    return $userId ? DB::table('user')->where('id', $userId)->first() : null;
+    return $userId ? DB::table('users')->where('id', $userId)->first() : null;
 }
 
 function flash($category, $message)
@@ -30,7 +30,7 @@ Route::get('/', function (Request $request) {
     if ($query !== '') {
         $results = DB::table('pharmacy_medicine as pm')
             ->join('medicine as m', 'pm.medicine_id', '=', 'm.id')
-            ->join('pharmacy as p', 'pm.pharmacy_id', '=', 'p.id')
+            ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
             ->select('pm.*', 'm.name as medicine_name', 'm.category as medicine_category', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
             ->where('m.name', 'like', "%{$query}%")
             ->where('p.status', '=', 'approved')
@@ -49,7 +49,7 @@ Route::get('/', function (Request $request) {
         }
     }
 
-    $pharmacies = DB::table('pharmacy')->where('status', 'approved')->limit(4)->get();
+    $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
     return renderView('home', [
         'query' => $query,
         'results' => $results,
@@ -73,8 +73,8 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
-        $user = DB::table('user')->where('email', $email)->first();
-        if ($user && Hash::check($password, $user->password_hash)) {
+        $user = DB::table('users')->where('email', $email)->first();
+        if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
             flash('success', 'Welcome back!');
             return redirect('/');
@@ -88,7 +88,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
 Route::match(['get', 'post'], '/register', function (Request $request) {
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
-        $exists = DB::table('user')->where('email', $email)->exists();
+        $exists = DB::table('users')->where('email', $email)->exists();
         if ($exists) {
             flash('warning', 'Email already registered.');
             return redirect('/register');
@@ -98,10 +98,10 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
         $password = $request->input('password', '');
 
         DB::transaction(function () use ($request, $name, $email, $password, $role) {
-            $userId = DB::table('user')->insertGetId([
+            $userId = DB::table('users')->insertGetId([
                 'name' => $name,
                 'email' => $email,
-                'password_hash' => Hash::make($password),
+                'password' => Hash::make($password),
                 'role' => $role,
             ]);
 
