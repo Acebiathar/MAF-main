@@ -12,7 +12,7 @@ define('PUBLIC_PATH', __DIR__ . '/public');
 $dbPath = __DIR__ . '/maf.db';
 $db = new PDO('sqlite:' . $dbPath);
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-// Using OBJ mode makes $item->name work instead of $item['name']
+// CRITICAL: Using FETCH_OBJ so templates use $item->name
 $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 
 init_db($db);
@@ -21,16 +21,7 @@ seed_if_empty($db);
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-// 3. CSRF PROTECTION (Simple version for your project)
-if ($method === 'POST') {
-    // In a real Laravel app, this is handled by middleware
-    // For now, we ensure the session is active
-    if (!isset($_SESSION['user_id']) && !in_array($path, ['/login', '/register', '/contact'])) {
-        // Allow public posts, but protect sensitive ones
-    }
-}
-
-// 4. ROUTING LOGIC
+// 3. ROUTING LOGIC
 if ($path === '/' && $method === 'GET') {
     handle_home($db);
 } elseif ($path === '/how-it-works') {
@@ -39,7 +30,7 @@ if ($path === '/' && $method === 'GET') {
     render('about');
 } elseif ($path === '/contact') {
     if ($method === 'POST') {
-        flash('Thanks! We received your message.', 'success');
+        flash('Thanks! Message received.', 'success');
         redirect('/contact');
     }
     render('contact');
@@ -49,6 +40,11 @@ if ($path === '/' && $method === 'GET') {
 } elseif ($path === '/register') {
     if ($method === 'POST') handle_register($db);
     render('auth/register');
+} elseif ($path === '/logout') {
+    session_destroy();
+    session_start();
+    flash('Logged out successfully.', 'info');
+    redirect('/');
 } elseif ($path === '/pharmacist' && $method === 'GET') {
     handle_pharmacist_dashboard($db);
 } elseif ($path === '/pharmacist/add' && $method === 'POST') {
@@ -57,53 +53,58 @@ if ($path === '/' && $method === 'GET') {
     handle_pharmacist_requests($db);
 } elseif ($path === '/admin' && $method === 'GET') {
     handle_admin_dashboard($db);
+} elseif (preg_match('#^/admin/pharmacies/(\d+)/(approve|reject)$#', $path, $m)) {
+    handle_moderate_pharmacy($db, (int)$m[1], $m[2]);
+} elseif (preg_match('#^/reserve/(\d+)$#', $path, $m) && $method === 'POST') {
+    handle_reserve($db, (int)$m[1]);
+} elseif ($path === '/requests' && $method === 'GET') {
+    handle_patient_requests($db);
 } else {
-    // Check for dynamic routes like /reserve/1
-    if (preg_match('#^/reserve/(\d+)$#', $path, $m)) {
-        handle_reserve($db, (int)$m[1]);
-    } else {
-        http_response_code(404);
-        render('errors/404'); // You can create this later
-    }
+    http_response_code(404);
+    echo "404 - Page Not Found";
 }
 
-// 5. THE CORE RENDER ENGINE
+// --- 4. CORE ENGINE FUNCTIONS ---
+
 function render(string $template, array $data = []): void
 {
     $alerts = flashes();
     $currentUser = current_user();
-    
-    // This makes variables like $query available in the template
     extract($data);
-
-    // We use a simple output buffer to mimic Blade's @yield
     ob_start();
     $templatePath = VIEW_PATH . "/{$template}.blade.php";
-    
     if (file_exists($templatePath)) {
         include $templatePath;
     } else {
-        echo "Template not found: {$template}";
+        echo "Template missing: {$template}";
     }
-    
     $content = ob_get_clean();
-
-    // Include the main layout which contains the @yield('content')
-    // In our manual setup, we just use the $content variable
     include VIEW_PATH . '/layouts/app.blade.php';
     exit;
 }
 
-// 6. HELPER FUNCTIONS
 function current_user(): ?object
 {
     $userId = $_SESSION['user_id'] ?? null;
     if (!$userId) return null;
-    
     global $db;
     $stmt = $db->prepare('SELECT * FROM users WHERE id = :id');
     $stmt->execute([':id' => $userId]);
     return $stmt->fetch() ?: null;
+}
+
+function require_login(?string $role = null): object
+{
+    $user = current_user();
+    if (!$user) {
+        flash('Please login to continue.', 'warning');
+        redirect('/login');
+    }
+    if ($role && $user->role !== $role) {
+        flash('Access denied. Admin privileges required.', 'danger');
+        redirect('/');
+    }
+    return $user;
 }
 
 function flash(string $message, string $category = 'info'): void
@@ -124,4 +125,95 @@ function redirect(string $path): void
     exit;
 }
 
-// ... rest of your handle_ functions stay largely the same but use $item->prop ...
+// --- 5. CONTROLLER HANDLERS (ADMIN CORRECTED) ---
+
+function handle_home(PDO $db): void
+{
+    $query = trim($_GET['q'] ?? '');
+    $results = [];
+    if ($query !== '') {
+        $stmt = $db->prepare("
+            SELECT pm.id, pm.price, pm.stock_status, pm.quantity,
+                   m.name AS medicine_name, p.name AS pharmacy_name, p.location AS pharmacy_location
+            FROM pharmacy_medicines pm
+            JOIN medicines m ON pm.medicine_id = m.id
+            JOIN pharmacies p ON pm.pharmacy_id = p.id
+            WHERE m.name LIKE :q AND p.status = 'approved'
+        ");
+        $stmt->execute([':q' => "%{$query}%"]);
+        $results = $stmt->fetchAll();
+    }
+    render('home', compact('query', 'results'));
+}
+
+function handle_login(PDO $db): void
+{
+    $email = strtolower(trim($_POST['email'] ?? ''));
+    $password = $_POST['password'] ?? '';
+    $stmt = $db->prepare('SELECT * FROM users WHERE email = :email');
+    $stmt->execute([':email' => $email]);
+    $user = $stmt->fetch();
+
+    if ($user && password_verify($password, $user->password)) {
+        $_SESSION['user_id'] = $user->id;
+        flash("Welcome, {$user->name}!", 'success');
+        
+        // Admin Correction: Redirect to specific dashboards
+        if ($user->role === 'admin') redirect('/admin');
+        if ($user->role === 'pharmacist') redirect('/pharmacist');
+        redirect('/');
+    }
+    flash('Invalid email or password.', 'danger');
+    redirect('/login');
+}
+
+function handle_admin_dashboard(PDO $db): void
+{
+    require_login('admin');
+    $pending = $db->query("SELECT * FROM pharmacies WHERE status = 'pending'")->fetchAll();
+    $stats = [
+        'users' => $db->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+        'pharmacies' => $db->query('SELECT COUNT(*) FROM pharmacies WHERE status = "approved"')->fetchColumn(),
+        'medicines' => $db->query('SELECT COUNT(*) FROM medicines')->fetchColumn(),
+        'reservations' => $db->query('SELECT COUNT(*) FROM reservations')->fetchColumn(),
+    ];
+    render('admin_dashboard', compact('pending', 'stats'));
+}
+
+function handle_moderate_pharmacy(PDO $db, int $id, string $action): void
+{
+    require_login('admin');
+    $status = ($action === 'approve') ? 'approved' : 'rejected';
+    $stmt = $db->prepare('UPDATE pharmacies SET status = ? WHERE id = ?');
+    $stmt->execute([$status, $id]);
+    flash("Pharmacy updated to {$status}.", 'info');
+    redirect('/admin');
+}
+
+// --- 6. DATABASE SETUP ---
+
+function init_db(PDO $db): void
+{
+    $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, password_hash TEXT, role TEXT)");
+    $db->exec("CREATE TABLE IF NOT EXISTS pharmacies (id INTEGER PRIMARY KEY, name TEXT, location TEXT, license_number TEXT, phone TEXT, status TEXT, owner_id INTEGER)");
+    $db->exec("CREATE TABLE IF NOT EXISTS medicines (id INTEGER PRIMARY KEY, name TEXT, category TEXT)");
+    $db->exec("CREATE TABLE IF NOT EXISTS pharmacy_medicines (id INTEGER PRIMARY KEY, pharmacy_id INTEGER, medicine_id INTEGER, price REAL, stock_status TEXT, quantity INTEGER)");
+    $db->exec("CREATE TABLE IF NOT EXISTS reservations (id INTEGER PRIMARY KEY, user_id INTEGER, pharmacy_id INTEGER, medicine_id INTEGER, status TEXT, note TEXT, created_at TEXT)");
+}
+
+function seed_if_empty(PDO $db): void
+{
+    // We check for the email specifically to see if the admin exists
+    $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+    $stmt->execute(['admin@maf.com']);
+    $exists = $stmt->fetchColumn();
+    
+    if (!$exists) {
+        // Corrected: password_hash instead of password()
+        // Corrected: 'password' column name to match pgAdmin
+        $hashed = password_hash('admin@2026', PASSWORD_DEFAULT);
+        
+        $db->prepare("INSERT INTO users (name, email, role, password) VALUES (?,?,?,?)")
+           ->execute(['administrator', 'admin@maf.com', 'admin', $hashed]);
+    }
+}

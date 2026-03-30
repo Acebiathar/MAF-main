@@ -28,8 +28,8 @@ Route::get('/', function (Request $request) {
     $results = collect();
     $alternatives = collect();
     if ($query !== '') {
-        $results = DB::table('pharmacy_medicine as pm')
-            ->join('medicine as m', 'pm.medicine_id', '=', 'm.id')
+        $results = DB::table('pharmacy_medicines as pm')
+            ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
             ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
             ->select('pm.*', 'm.name as medicine_name', 'm.category as medicine_category', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
             ->where('m.name', 'like', "%{$query}%")
@@ -37,11 +37,11 @@ Route::get('/', function (Request $request) {
             ->get();
 
         $category = $results->first()->medicine_category ?? optional(
-            DB::table('medicine')->where('name', 'like', "%{$query}%")->first()
+            DB::table('medicines')->where('name', 'like', "%{$query}%")->first()
         )->category;
 
         if ($category) {
-            $alternatives = DB::table('medicine')
+            $alternatives = DB::table('medicines')
                 ->where('category', $category)
                 ->where('name', 'not like', "%{$query}%")
                 ->limit(4)
@@ -257,13 +257,13 @@ Route::get('/pharmacist/requests', function () {
         return redirect('/');
     }
     $reservations = DB::table('reservations as r')
-        ->join('user as u', 'r.user_id', '=', 'u.id')
-        ->join('medicine as m', 'r.medicine_id', '=', 'm.id')
+        ->join('users as u', 'r.user_id', '=', 'u.id')
+        ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
         ->select('r.*', 'u.name as user_name', 'u.email as user_email', 'm.name as medicine_name')
         ->where('r.pharmacy_id', $pharmacy->id)
         ->orderByDesc('r.created_at')
         ->get();
-    return renderView('pharmacist_requests', compact('reservations', 'pharmacies'));
+    return renderView('pharmacist_requests', compact('reservations', 'pharmacy'));
 });
 
 Route::post('/pharmacist/requests/{reservations}/{action}', function (int $reservation, string $action) {
@@ -298,7 +298,7 @@ Route::get('/admin', function () {
     $stats = [
         'users' => DB::table('users')->count(),
         'pharmacies' => DB::table('pharmacies')->count(),
-        'medicines' => DB::table('medicine')->count(),
+        'medicines' => DB::table('medicines')->count(),
         'reservations' => DB::table('reservations')->count(),
     ];
     return renderView('admin_dashboard', compact('pending', 'stats'));
