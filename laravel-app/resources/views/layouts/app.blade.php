@@ -12,7 +12,7 @@
 <body class="bg-light">
   <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-white sticky-top">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="/">MedFinder</a>
+      <a class="navbar-brand fw-bold text-primary" href="/">MAF</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbars">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -68,16 +68,16 @@
     </div>
   </main>
 
-  <footer class="bg-dark text-white py-5 mt-5">
+  <footer class="bg-dark text-white py-2 mt-2">
     <div class="container d-flex flex-wrap justify-content-between align-items-center">
       <div>
-        <div class="fw-bold fs-5">MedFinder Uganda</div>
-        <div class="small text-muted">Connecting patients to pharmacies.</div>
+        <div class="fw-bold fs-5">MAF Uganda</div>
+        <div class="small">Connecting patients to pharmacies.</div>
       </div>
       <div class="small">
-        <a class="text-white-50 text-decoration-none me-3" href="/about">About</a>
-        <a class="text-white-50 text-decoration-none me-3" href="/contact">Contact</a>
-        <span class="text-white-50">&copy; 2026</span>
+        <a class="text-white-40 text-decoration-none me-3" href="/about">About</a>
+        <a class="text-white-40 text-decoration-none me-3" href="/contact">Contact</a>
+        <span class="text-white-40">&copy; 2026</span>
       </div>
     </div>
   </footer>
