@@ -19,7 +19,7 @@
                 <div>
                     <h4 class="alert-heading fw-bold">Subscription Payment Pending</h4>
                     <p class="mb-2">Your pharmacy is currently <strong>Inactive</strong>. Your inventory will not appear in patient search results until payment is confirmed.</p>
-                    <p class="mb-0"><strong>How to Activate:</strong> Send **50,000 UGX** to **07XX XXX XXX (Lola Suits)**. Use "{{ $pharmacy->name }}" as the reference. Your account will be activated manually upon receipt.</p>
+                    <p class="mb-0"><strong>How to Activate:</strong> Send 50,000 UGX to 0704796256 (ABIATHAR SANDE). Use "{{ $pharmacy->name }}" as the reference. Your account will be activated upon payment.</p>
                 </div>
             </div>
         </div>
