@@ -6,7 +6,7 @@
     <div class="card shadow border-0 rounded-4">
       <div class="card-body p-4 p-md-5">
         <div class="text-center mb-4">
-            <h4 class="fw-bold mb-1">Create Your MedFinder Account</h4>
+            <h4 class="fw-bold mb-1">Create Your MAF Account</h4>
             <p class="text-muted small">Join our network of patients and pharmacies in Uganda</p>
         </div>
 
@@ -57,7 +57,7 @@
             </div>
             <div class="col-12">
                 <div class="alert alert-warning py-2 small mb-0">
-                    <i class="bi bi-info-circle me-2"></i>Note: Pharmacist accounts require manual verification by our Admin team before you can list medicine.
+                    <i class="bi bi-info-circle me-2"></i>Note: Pharmacist accounts require verification by our Admin team before you can list medicine.
                 </div>
             </div>
           </div>

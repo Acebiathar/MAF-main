@@ -6,7 +6,7 @@
     <div class="card shadow border-0 rounded-4">
       <div class="card-body p-5">
         <div class="text-center mb-4">
-            <h4 class="fw-bold mb-1">Welcome Back</h4>
+            <h4 class="fw-bold mb-1">Welcome!</h4>
             <p class="text-muted small">Sign in to manage your medicine requests</p>
         </div>
 
@@ -19,7 +19,7 @@
 
           <div class="mb-4">
             <label class="form-label small fw-bold text-secondary">Password</label>
-            <input class="form-control bg-light border-0 py-2" type="password" name="password" placeholder="••••••••" required>
+            <input class="form-control bg-light border-0 py-2" type="password" name="password" placeholder="********" required>
           </div>
 
           <button class="btn btn-primary w-100 py-2 fw-bold shadow-sm" type="submit">
