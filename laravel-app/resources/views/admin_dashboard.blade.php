@@ -142,7 +142,7 @@
           @empty
           <tr>
             <td colspan="5" class="text-center py-5 text-muted">
-                <div class="fs-1 mb-2">✅</div>
+                <div class="fs-1 mb-2"></div>
                 <p class="mb-0 text-muted">All pharmacy applications have been processed.</p>
             </td>
           </tr>

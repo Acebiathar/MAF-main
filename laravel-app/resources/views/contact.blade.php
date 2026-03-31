@@ -14,14 +14,14 @@
                 <div class="text-primary me-3"><i class="bi bi-envelope"></i></div>
                 <div>
                     <div class="small text-muted">Email</div>
-                    <div class="fw-semibold">support@medfinder.com</div>
+                    <div class="fw-semibold">support@maf.com</div>
                 </div>
             </div>
             <div class="d-flex mb-3">
                 <div class="text-primary me-3"><i class="bi bi-telephone"></i></div>
                 <div>
                     <div class="small text-muted">Phone</div>
-                    <div class="fw-semibold">+256 700 123 456</div>
+                    <div class="fw-semibold">+256 773496048</div>
                 </div>
             </div>
             <div class="d-flex">
@@ -87,7 +87,7 @@
         </h2>
         <div id="faq2c" class="accordion-collapse collapse" data-bs-parent="#faqs">
           <div class="accordion-body text-secondary">
-            Yes, if the pharmacy offers reservations through MedFinder. Once reserved, you will receive a notification to pick it up within a specific timeframe.
+            Yes, if the pharmacy offers reservations through Medicine Availability Finder. Once reserved, you will receive a notification to pick it up within a specific timeframe.
           </div>
         </div>
       </div>

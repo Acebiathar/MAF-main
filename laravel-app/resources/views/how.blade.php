@@ -3,7 +3,7 @@
 @section('content')
 <div class="py-5">
     <div class="text-center mb-5">
-        <h2 class="fw-bold mb-3 text-primary">How MedFinder Works</h2>
+        <h2 class="fw-bold mb-3 text-primary">How Medicine Availability Finder Works</h2>
         <p class="lead text-secondary mx-auto" style="max-width: 700px;">
             Connecting patients with pharmacies across Uganda in four simple steps.
         </p>
