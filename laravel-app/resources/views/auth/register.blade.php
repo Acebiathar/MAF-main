@@ -45,7 +45,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label small fw-bold">NDA License Number</label>
-              <input class="form-control" name="license" placeholder="e.g. NDA/1234/2026">
+              <input class="form-control" name="license_number" placeholder="e.g. NDA/1234/2026">
             </div>
             <div class="col-md-6">
               <label class="form-label small fw-bold">Physical Location</label>
