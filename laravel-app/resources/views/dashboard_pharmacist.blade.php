@@ -26,36 +26,35 @@
                     <h5 class="fw-bold mb-4">Add / Update Stock</h5>
                     <form method="POST" action="/pharmacist/add">
                         @csrf
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Medicine Name</label>
-                            <select class="form-select bg-light border-0" name="medicine_id" required>
-                                <option value="" selected disabled>Select a medicine...</option>
-                                @foreach ($medicines as $med)
-                                    <option value="{{ $med->id }}">
-                                        {{ $med->name }} ({{ $med->category }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">Price (UGX)</label>
-                                <input class="form-control bg-light border-0" type="number" name="price" min="0" step="100" placeholder="e.g. 5000" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">Quantity</label>
-                                <input class="form-control bg-light border-0" type="number" name="quantity" min="0" step="1" placeholder="e.g. 50" required>
-                            </div>
-                        </div>
+                      <div class="mb-3">
+    <label for="medicine_name" class="form-label">Medicine Name</label>
+    <input class="form-control" list="medicineOptions" name="medicine_name" id="medicine_name" placeholder="Type to search or add new..." required>
+    <datalist id="medicineOptions">
+        @foreach($all_medicines as $med)
+            <option value="{{ $med->name }}">
+        @endforeach
+    </datalist>
+</div>
 
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold">Stock Status</label>
-                            <select class="form-select bg-light border-0" name="stock_status">
-                                <option value="in_stock">Available (In Stock)</option>
-                                <option value="out_of_stock">Unavailable (Out of Stock)</option>
-                            </select>
-                        </div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label>Price (UGX)</label>
+        <input type="number" name="price" class="form-control" placeholder="e.g. 5000" required>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label>Quantity</label>
+        <input type="number" name="stock_quantity" class="form-control" placeholder="e.g. 50" required>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label>Stock Status</label>
+    <select name="status" class="form-select">
+        <option value="Available">Available (In Stock)</option>
+        <option value="Out of Stock">Out of Stock</option>
+        <option value="Limited">Limited Stock</option>
+    </select>
+</div>
 
                         <button class="btn btn-primary w-100 fw-bold py-2 shadow-sm" type="submit">
                             Save Stock Update
@@ -65,9 +64,41 @@
             </div>
         </div>
 
-        {{-- Inventory Table --}}
-        <div class="col-lg-7">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Live Inventory</h5>
-                    <div
+       {{-- Inventory Table --}}
+<div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-3">Live Inventory</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Price (UGX)</th>
+                            <th>Qty</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($inventory as $item)
+                            <tr>
+                                <td class="fw-bold">{{ $item->medicine_name }}</td>
+                                <td>{{ number_format($item->price) }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td>
+                                    <span class="badge {{ $item->stock_status === 'in_stock' ? 'bg-success' : 'bg-danger' }}">
+                                        {{ str_replace('_', ' ', $item->stock_status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No medicines in inventory yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
