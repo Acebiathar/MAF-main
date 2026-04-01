@@ -16,23 +16,55 @@
     </div>
 
     <div class="col-lg-5 mt-4 mt-lg-0">
-      <div id="tips" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner rounded-3 shadow-sm">
-          <div class="carousel-item active p-4 bg-white">
-            <h5 class="text-primary">Stay hydrated</h5>
-            <p class="mb-0 text-muted">Drink enough water daily to help your medicine work effectively.</p>
-          </div>
-          <div class="carousel-item p-4 bg-white">
-            <h5 class="text-primary">Finish the dose</h5>
-            <p class="mb-0 text-muted">Always finish prescribed medication even if you feel better.</p>
-          </div>
-          <div class="carousel-item p-4 bg-white">
-            <h5 class="text-primary">Store safely</h5>
-            <p class="mb-0 text-muted">Keep medicines away from heat and out of reach of children.</p>
-          </div>
+    <div id="tips" class="carousel slide h-100" data-bs-ride="carousel">
+        <div class="carousel-inner rounded-4 shadow-sm h-100">
+            
+            <div class="carousel-item active h-100" data-bs-interval="5000">
+                <div class="carousel-image-container" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/hydrate.jpg');">
+                    <div class="p-4 h-100 d-flex flex-column justify-content-end">
+                        <h5 class="text-white fw-bold">Stay Hydrated</h5>
+                        <p class="mb-0 text-white-50 small">Drink enough water daily to help your medicine work effectively.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item h-100" data-bs-interval="5000">
+                <div class="carousel-image-container" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/dosage.jpg');">
+                    <div class="p-4 h-100 d-flex flex-column justify-content-end">
+                        <h5 class="text-white fw-bold">Finish the Dose</h5>
+                        <p class="mb-0 text-white-50 small">Always finish prescribed medication even if you feel better.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item h-100" data-bs-interval="5000">
+                <div class="carousel-image-container" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/storage.jpg');">
+                    <div class="p-4 h-100 d-flex flex-column justify-content-end">
+                        <h5 class="text-white fw-bold">Store Safely</h5>
+                        <p class="mb-0 text-white-50 small">Keep medicines away from heat and out of reach of children.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
     </div>
+</div>
+
+<style>
+    .carousel-image-container {
+        height: 320px; /* Adjust this to match your search box height */
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s ease;
+    }
+    #tips .carousel-item {
+        height: 320px;
+    }
+    /* Subtle hover effect */
+    .carousel-image-container:hover {
+        transform: scale(1.02);
+    }
+</style>
   </div>
 </section>
 
