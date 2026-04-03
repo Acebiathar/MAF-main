@@ -69,9 +69,21 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
 
         if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
-            flash('success', 'Welcome back!');
-            return redirect($user->role === 'pharmacist' ? '/pharmacist' : '/');
+
+            // Set the greeting to be caught by the layout on the next page
+            flash('success', "Hi, " . $user->name . "! Welcome back.");
+
+            // STRICT REDIRECT LOGIC
+            if ($user->role === 'admin') {
+                return redirect('/admin');
+            } elseif ($user->role === 'pharmacist') {
+                return redirect('/pharmacist');
+            } else {
+                // All other users (Patients) go to their requests
+                return redirect('/requests');
+            }
         }
+        
         flash('danger', 'Invalid credentials.');
         return redirect('/login');
     }
