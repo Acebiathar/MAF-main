@@ -18,36 +18,45 @@
       </button>
       
       <div class="collapse navbar-collapse" id="navbars">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/how-it-works">How it works</a></li>
-          <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-          
-          @if ($currentUser)
-              @if ($currentUser->role === 'pharmacist')
-                <li class="nav-item"><a class="nav-link" href="/pharmacist">My pharmacy</a></li>
-                <li class="nav-item"><a class="nav-link" href="/pharmacist/requests">Requests</a></li>
-              @elseif ($currentUser->role === 'admin')
-                <li class="nav-item"><a class="nav-link" href="/admin">Admin Dashboard</a></li>
-              @elseif ($currentUser->role === 'patient')
-                <li class="nav-item"><a class="nav-link" href="/requests">My requests</a></li>
-              @endif
-          @endif
-        </ul>
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item"><a class="nav-link" href="/how-it-works">How it works</a></li>
+    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+    <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+    
+    @if ($currentUser)
+        @if ($currentUser->role === 'pharmacist')
+          <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/pharmacist">My Pharmacy</a></li>
+        @elseif ($currentUser->role === 'admin')
+          <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/admin">Admin Dashboard</a></li>
+        @elseif ($currentUser->role === 'patient')
+          <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/requests">My Requests</a></li>
+        @endif
+    @endif
+  </ul>
 
-        <ul class="navbar-nav ms-auto">
-          @if ($currentUser)
-            <li class="nav-item d-flex align-items-center">
-                <span class="navbar-text me-3 text-secondary">Hi, <strong>{{ $currentUser->name }}</strong></span>
-            </li>
-            <li class="nav-item"><a class="btn btn-outline-danger btn-sm" href="/logout">Logout</a></li>
-          @else
-            <li class="nav-item me-2"><a class="btn btn-outline-primary btn-sm" href="/login">Login</a></li>
-            <li class="nav-item"><a class="btn btn-primary btn-sm" href="/register">Sign up</a></li>
-          @endif
-        </ul>
-      </div>
-    </div>
+  {{-- Mobile Divider for better spacing --}}
+  <hr class="d-lg-none my-2 text-muted">
+
+  <ul class="navbar-nav ms-auto align-items-lg-center">
+    @if ($currentUser)
+      {{-- On Mobile: Compact Profile | On Desktop: Normal Text --}}
+      <li class="nav-item py-2 py-lg-0">
+          <div class="d-flex align-items-center">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2 d-lg-none" style="width: 30px; height: 30px; font-size: 12px;">
+                  {{ substr($currentUser->name, 0, 1) }}
+              </div>
+              <span class="navbar-text me-lg-3 text-dark small">Logged in as <strong>{{ $currentUser->name }}</strong></span>
+          </div>
+      </li>
+      <li class="nav-item mt-2 mt-lg-0">
+          <a class="btn btn-outline-danger btn-sm w-100 w-lg-auto" href="/logout">Logout</a>
+      </li>
+    @else
+      <li class="nav-item me-lg-2 mb-2 mb-lg-0"><a class="btn btn-outline-primary btn-sm w-100 w-lg-auto" href="/login">Login</a></li>
+      <li class="nav-item"><a class="btn btn-primary btn-sm w-100 w-lg-auto" href="/register">Sign up</a></li>
+    @endif
+  </ul>
+</div>
   </nav>
 
   <main class="py-4">
