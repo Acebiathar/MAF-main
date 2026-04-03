@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body class="bg-light">
+  @if(Request::path() !== 'register')
   <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-white sticky-top">
     <div class="container">
       <a class="navbar-brand fw-bold text-primary" href="/">MAF</a>
@@ -56,8 +57,9 @@
       <li class="nav-item"><a class="btn btn-primary btn-sm w-100 w-lg-auto" href="/register">Sign up</a></li>
     @endif
   </ul>
-</div>
+ </div>
   </nav>
+  @endif
 
   <main class="py-4">
     <div class="container">
