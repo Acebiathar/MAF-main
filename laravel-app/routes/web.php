@@ -7,16 +7,19 @@ use Illuminate\Support\Facades\Route;
 
 // --- GLOBAL HELPERS ---
 
-function currentUser() {
+function currentUser()
+{
     $userId = session('user_id');
     return $userId ? DB::table('users')->where('id', $userId)->first() : null;
 }
 
-function flash($category, $message) {
+function flash($category, $message)
+{
     session()->push('alerts', [$category, $message]);
 }
 
-function renderView(string $view, array $data = []) {
+function renderView(string $view, array $data = [])
+{
     $data['currentUser'] = currentUser();
     $data['alerts'] = session()->pull('alerts', []);
     return view($view, $data);
@@ -55,9 +58,15 @@ Route::get('/', function (Request $request) {
     return renderView('home', compact('query', 'results', 'alternatives', 'pharmacies'));
 });
 
-Route::get('/about', function () { return renderView('about'); });
-Route::get('/how-it-works', function () { return renderView('how'); });
-Route::get('/contact', function () { return renderView('contact'); });
+Route::get('/about', function () {
+    return renderView('about');
+});
+Route::get('/how-it-works', function () {
+    return renderView('how');
+});
+Route::get('/contact', function () {
+    return renderView('contact');
+});
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
 
@@ -83,7 +92,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
                 return redirect('/requests');
             }
         }
-        
+
         flash('danger', 'Invalid credentials.');
         return redirect('/login');
     }
@@ -142,13 +151,13 @@ Route::get('/pharmacist', function () {
     $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     if (!$pharmacy) return redirect('/');
 
-// Check if the pharmacy has paid
+    // Check if the pharmacy has paid
     $isActive = ($pharmacy->subscription_status === 'active');
 
     $all_medicines = DB::table('medicines')->orderBy('name')->get();
-    
+
     // Fixed: JOIN syntax and singular table name
-  $inventory = [];
+    $inventory = [];
     if ($isActive) {
         $inventory = DB::table('pharmacy_medicine as pm')
             ->leftJoin('medicines as m', 'pm.medicine_id', '=', 'm.id')
@@ -169,7 +178,7 @@ Route::get('/pharmacist', function () {
 Route::post('/pharmacist/add', function (Request $request) {
     $user = currentUser();
     $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-    
+
     $medicineName = trim(strtolower($request->input('medicine_name')));
     $medicine = DB::table('medicines')->where('name', $medicineName)->first();
 
@@ -179,7 +188,7 @@ Route::post('/pharmacist/add', function (Request $request) {
         // Fix: Category constraint handled
         $medId = DB::table('medicines')->insertGetId([
             'name' => $medicineName,
-            'category' => 'General', 
+            'category' => 'General',
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -188,8 +197,8 @@ Route::post('/pharmacist/add', function (Request $request) {
     DB::table('pharmacy_medicine')->updateOrInsert(
         ['pharmacy_id' => $pharmacy->id, 'medicine_id' => $medId],
         [
-            'price' => (float)$request->input('price'), 
-            'quantity' => (int)$request->input('quantity'), 
+            'price' => (float)$request->input('price'),
+            'quantity' => (int)$request->input('quantity'),
             'stock_status' => $request->input('stock_status', 'in_stock'),
             'updated_at' => now()
         ]
@@ -204,7 +213,7 @@ Route::post('/pharmacist/add', function (Request $request) {
 Route::post('/reserve/{item}', function (int $item) {
     $user = currentUser();
     if (!$user || $user->role !== 'patient') return redirect('/login');
-    
+
     $itemRow = DB::table('pharmacy_medicine')->where('id', $item)->first();
     if (!$itemRow) return redirect('/');
 
@@ -216,9 +225,9 @@ Route::post('/reserve/{item}', function (int $item) {
         'created_at' => now(),
         'note' => request('note', ''),
     ]);
-    
+
     flash('success', 'Reservation sent.');
-    return redirect()->back();
+    return redirect('/');
 });
 
 Route::get('/requests', function () {
@@ -240,7 +249,7 @@ Route::get('/requests', function () {
 Route::get('/pharmacist/requests', function () {
     $user = currentUser();
     $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-    
+
     $reservations = DB::table('reservations as r')
         ->join('users as u', 'r.user_id', '=', 'u.id')
         ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
@@ -255,7 +264,7 @@ Route::post('/pharmacist/requests/{reservation}/{action}', function (int $reserv
     $user = currentUser();
     $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
     $status = $action === 'confirm' ? 'confirmed' : 'declined';
-    
+
     DB::table('reservations')
         ->where('id', $reservation)
         ->where('pharmacy_id', $pharmacy->id)
@@ -281,7 +290,7 @@ Route::get('/admin/{action?}/{type?}', function ($action = null, $type = null) {
 
     // 2. Always fetch Pending Pharmacies for the bottom table
     $pending = DB::table('pharmacies')->where('status', 'pending')->get();
-    
+
     // 3. Logic for the Clickable Cards
     $viewList = null;
     $viewType = $type;

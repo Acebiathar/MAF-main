@@ -1,70 +1,189 @@
-@extends('layouts.app')
+@extends('layouts.app') {{-- Changed from 'public' to 'app' --}}
 
 @section('content')
-<div class="py-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold mb-3 text-primary">How Medicine Availability Finder Works</h2>
-        <p class="lead text-secondary mx-auto" style="max-width: 700px;">
-            Connecting patients with pharmacies across Uganda in four simple steps.
-        </p>
-    </div>
+<div class="container py-5">
 
-    <div class="row g-4">
-      {{-- Step 1 --}}
-      <div class="col-md-6">
-        <div class="card shadow-sm h-100 border-0 p-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">1</div>
-                <h5 class="fw-bold mb-0">Search</h5>
-            </div>
-            <p class="text-muted">Enter the medicine name in our search bar. We instantly scan our database of vetted and approved pharmacies near your location.</p>
-          </div>
-        </div>
-      </div>
+  <div class="text-center mb-5">
+    <h2 class="fw-bold mb-3 text-primary">How Medicine Availability Finder Works</h2>
+    <p class="lead text-secondary mx-auto" style="max-width: 700px;">
+      Connecting patients with pharmacies across Uganda in four simple steps.
+    </p>
+  </div>
 
-      {{-- Step 2 --}}
-      <div class="col-md-6">
-        <div class="card shadow-sm h-100 border-0 p-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">2</div>
-                <h5 class="fw-bold mb-0">Compare</h5>
-            </div>
-            <p class="text-muted">View a live list of results showing real-time availability, exact pricing in UGX, and the pharmacy's specific location.</p>
-          </div>
-        </div>
-      </div>
-
-      {{-- Step 3 --}}
-      <div class="col-md-6">
-        <div class="card shadow-sm h-100 border-0 p-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">3</div>
-                <h5 class="fw-bold mb-0">Reserve or Visit</h5>
-            </div>
-            <p class="text-muted">Pick the pharmacy that suits your budget and distance. Use our "Reserve" feature to hold your medicine or get the contact details to visit immediately.</p>
-          </div>
-        </div>
-      </div>
-
-      {{-- Step 4 --}}
-      <div class="col-md-6">
-        <div class="card shadow-sm h-100 border-0 p-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">4</div>
-                <h5 class="fw-bold mb-0">Notifications</h5>
-            </div>
-            <p class="text-muted">Can't find what you need? Subscribe to specific medicine alerts to get notified the moment a pharmacy restocks or if a better price becomes available.</p>
-          </div>
-        </div>
+  {{-- Step 1 --}}
+  <section class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6">
+      <div class="public-card shadow-sm rounded-4 p-4 h-100 border">
+        <div class="badge bg-primary mb-2">Step 1</div>
+        <h2 class="h3 fw-bold mb-3">Search medicine</h2>
+        <p class="text-secondary mb-0">Users search by medicine name, category, or dosage with smart suggestions.</p>
       </div>
     </div>
-
-    <div class="text-center mt-5">
-        <a href="/" class="btn btn-primary btn-lg px-5 shadow-sm fw-bold">Start Searching Now</a>
+    <div class="col-lg-6">
+      <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded-4 shadow" alt="Search">
     </div>
+  </section>
+
+  {{-- Step 2 --}}
+  <section class="row g-5 align-items-center mb-5 flex-lg-row-reverse">
+    <div class="col-lg-6">
+      <div class="public-card shadow-sm rounded-4 p-4 h-100 border">
+        <div class="badge bg-primary mb-2">Step 2</div>
+        <h2 class="h3 fw-bold mb-3">Compare Prices</h2>
+        <p class="text-secondary mb-0">View live results showing real-time availability and exact pricing in UGX.</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <img src="{{ asset('images/image 2.png') }}" class="img-fluid rounded-4 shadow" alt="Compare">
+    </div>
+  </section>
+
+  {{-- Add Step 3 and 4 following the same pattern --}}
+  {{-- Step 3 --}}
+  <section class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6">
+      <div class="public-card shadow-sm rounded-4 p-4 h-100 border">
+        <div class="badge bg-primary mb-2">Step 3</div>
+        <h2 class="h3 fw-bold mb-3">Find Nearest Pharmacy</h2>
+        <p class="text-secondary mb-0">Locate pharmacies closest to you using integrated GPS mapping.</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      {{-- Notice the hyphen instead of a space --}}
+      <img src="{{ asset('images/image 3.png') }}" class="img-fluid rounded-4 shadow" alt="Location Map">
+    </div>
+  </section>
+
+  {{-- Step 4 --}}
+  <section class="row g-5 align-items-center mb-5 flex-lg-row-reverse">
+    <div class="col-lg-6">
+      <div class="public-card shadow-sm rounded-4 p-4 h-100 border">
+        <div class="badge bg-primary mb-2">Step 4</div>
+        <h2 class="h3 fw-bold mb-3">Order & Pickup</h2>
+        <p class="text-secondary mb-0">Confirm your order and get a digital receipt for a fast pickup experience.</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <img src="{{ asset('images/image 4.png') }}" class="img-fluid rounded-4 shadow" alt="Pickup Confirmation">
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-4">
+          <div class="stat-box">
+            <h2 class="stat-number" id="timeSaved">0</h2>
+            <p>Minutes Saved <br> per Search</p>
+            <small>⏱️ 25–110 min faster</small>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-box">
+            <h2 class="stat-number" id="costSaved">0</h2>
+            <p>Dollars Saved <br> per Prescription</p>
+            <small>💰 $15–$75 less</small>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-box">
+            <h2 class="stat-number" id="monthlySaved">0</h2>
+            <p>Monthly Savings <br> per Patient</p>
+            <small>📉 $50–$250 / month</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .stats-section {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      padding: 40px 0;
+      border-radius: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-box {
+      background: white;
+      padding: 22px 16px;
+      border-radius: 18px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-bottom: 18px;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-number {
+      font-size: 2.4rem;
+      font-weight: bold;
+      color: #2e7d32;
+      margin-bottom: 8px;
+    }
+
+    .highlight {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .highlight .stat-number {
+      color: #ffeb3b;
+    }
+
+    .highlight small {
+      color: #ddd;
+    }
+  </style>
+
+  @section('scripts')
+  <script>
+    function animateCounter(elementId, start, end, duration) {
+      let element = document.getElementById(elementId);
+      let startTime = null;
+
+      function updateCounter(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        let progress = (currentTime - startTime) / duration;
+        progress = Math.min(progress, 1);
+        let value = Math.floor(start + progress * (end - start));
+        element.innerText = value;
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.innerText = end;
+        }
+      }
+      requestAnimationFrame(updateCounter);
+    }
+
+    const targets = {
+      timeSaved: 68,
+      costSaved: 45,
+      monthlySaved: 150,
+      annualSaved: 1800
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter('timeSaved', 0, targets.timeSaved, 2000);
+          animateCounter('costSaved', 0, targets.costSaved, 2000);
+          animateCounter('monthlySaved', 0, targets.monthlySaved, 2000);
+          animateCounter('annualSaved', 0, targets.annualSaved, 2000);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.3
+    });
+
+    observer.observe(document.querySelector('.stats-section'));
+  </script>
+  @endsection
+
 </div>
 @endsection
