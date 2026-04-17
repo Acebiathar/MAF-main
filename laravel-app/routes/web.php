@@ -67,6 +67,9 @@ Route::get('/how-it-works', function () {
 Route::get('/contact', function () {
     return renderView('contact');
 });
+Route::get('/privacy', function () {
+    return renderView('privacy');
+});
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
 
