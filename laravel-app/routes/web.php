@@ -28,33 +28,41 @@ function renderView(string $view, array $data = [])
 // --- PUBLIC PAGES (Home, Search, About) ---
 
 Route::get('/', function (Request $request) {
-    $query = trim((string)$request->query('q', ''));
+    $items = $request->query('item_names', []);
     $results = collect();
     $alternatives = collect();
 
-    if ($query !== '') {
-        // Search using singular pharmacy_medicine table
+    if (!empty($items)) {
+        // Search using the array of items
         $results = DB::table('pharmacy_medicine as pm')
             ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
             ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
             ->select('pm.*', 'm.name as medicine_name', 'm.category as medicine_category', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
-            ->where('m.name', 'like', "%{$query}%")
+            ->where(function($query) use ($items) {
+                foreach ($items as $item) {
+                    $query->orWhere('m.name', 'like', "%{$item}%");
+                }
+            })
             ->where('p.status', '=', 'approved')
             ->where('p.subscription_status', '=', 'active')
+            ->orderBy('p.name')
             ->get();
-
+            
+        // Suggestions based on the first item found
         $category = $results->first()->medicine_category ?? null;
-
         if ($category) {
             $alternatives = DB::table('medicines')
                 ->where('category', $category)
-                ->where('name', 'not like', "%{$query}%")
                 ->limit(4)
                 ->get();
         }
     }
 
     $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
+    
+    // Convert array back to comma-string for the view logic if needed
+    $query = implode(', ', $items); 
+    
     return renderView('home', compact('query', 'results', 'alternatives', 'pharmacies'));
 });
 

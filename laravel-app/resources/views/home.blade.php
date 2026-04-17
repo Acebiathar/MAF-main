@@ -6,13 +6,21 @@
     <div class="col-lg-7">
       <p class="badge bg-primary-subtle text-primary mb-2">Medicine Availability Finder</p>
       <h1 class="fw-bold mb-3">Find medicine near you faster.</h1>
-      <p class="lead text-secondary">Search trusted pharmacies, compare prices, see availability, and get alternatives instantly.</p>
+      <p class="lead text-secondary">Manage your list of medicines below. You can edit the names directly before searching.</p>
 
-      <form class="d-flex gap-2 mt-3" method="get" action="/">
-        <input class="form-control form-control-lg" type="search" name="q" placeholder="Search for a medicine..." value="{{ $query }}" required>
-        <button class="btn btn-lg btn-primary" type="submit">Search</button>
+      <div class="input-group input-group-lg mb-4">
+        <input type="text" id="itemInput" class="form-control" placeholder="Add a medicine (e.g. Insulin)..." onkeypress="if(event.key === 'Enter') addItem()">
+        <button class="btn btn-primary" type="button" onclick="addItem()">Add to List</button>
+      </div>
+
+      <form action="/" method="GET" id="searchForm">
+        <div id="editableItemList" class="mb-3">
+          </div>
+        
+        <button type="submit" class="btn btn-lg btn-success w-100 shadow-sm" id="searchBtn" style="display: none;">
+          <i class="bi bi-search me-2"></i>Search All Items
+        </button>
       </form>
-      <div class="small text-muted mt-2">Try Panadol, Paracetamol, Insulin…</div>
     </div>
 
     <div class="col-lg-5 mt-4 mt-lg-0">
@@ -68,6 +76,45 @@
         transform: scale(1.02);
       }
     </style>
+
+    <script>
+ function addItem() {
+    const input = document.getElementById('itemInput');
+    const list = document.getElementById('editableItemList');
+    const value = input.value.trim();
+
+    if (value === "") return;
+
+    const itemId = 'item_' + Date.now();
+
+    // Create a row container
+    const div = document.createElement('div');
+    // Removed the icon span and kept just the input and the delete button
+    div.className = "input-group mb-2 shadow-sm animate__animated animate__fadeIn";
+    div.id = itemId;
+
+    div.innerHTML = `
+      <input type="text" name="item_names[]" class="form-control bg-white" value="${value}" placeholder="Medicine name">
+      <button class="btn btn-outline-danger" type="button" onclick="document.getElementById('${itemId}').remove(); updateUI();">
+        <i class="bi bi-trash"></i>
+      </button>
+    `;
+
+    list.appendChild(div);
+    input.value = "";
+    input.focus();
+    updateUI();
+  }
+
+  function updateUI() {
+    const list = document.getElementById('editableItemList');
+    const btn = document.getElementById('searchBtn');
+    const count = list.children.length;
+    btn.style.display = count > 0 ? 'block' : 'none';
+    btn.innerHTML = `<i class="bi bi-search me-2"></i>Search ${count} Item${count > 1 ? 's' : ''}`;
+  }
+</script>
+
   </div>
 </section>
 
