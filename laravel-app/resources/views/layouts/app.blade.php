@@ -136,8 +136,8 @@
           <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
           <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
 
-          @if ($currentUser)
-          @if ($currentUser->role === 'pharmacist')
+        @if (auth()->check())
+    @if (auth()->user()->role === 'pharmacist')
           <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/pharmacist">My Pharmacy</a></li>
           @elseif ($currentUser->role === 'admin')
           <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/admin">Admin Dashboard</a></li>

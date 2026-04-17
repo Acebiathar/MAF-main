@@ -9,7 +9,7 @@
       <p class="lead text-secondary">Manage your list of medicines below. You can edit the names directly before searching.</p>
 
       <div class="input-group input-group-lg mb-4">
-        <input type="text" id="itemInput" class="form-control" placeholder="Add a medicine (e.g. Insulin)..." onkeypress="if(event.key === 'Enter') addItem()">
+        <input type="text" id="itemInput" class="form-control" placeholder="Add a medicine (e.g. Panadol)..." onkeypress="if(event.key === 'Enter') addItem()">
         <button class="btn btn-primary" type="button" onclick="addItem()">Add to List</button>
       </div>
 
@@ -123,13 +123,12 @@
   <div class="d-flex justify-content-between align-items-center mb-2">
     <h4 class="fw-semibold mb-0">Results for "{{ $query }}"</h4>
   </div>
-  @if(count($results) > 0)
-  <div class="table-responsive card shadow-sm">
+ @if(count($results) > 0)
+  <div class="table-responsive card shadow-sm border-0">
     <table class="table align-middle mb-0">
       <thead class="table-light">
         <tr>
           <th>Medicine</th>
-          <th>Pharmacy</th>
           <th>Price (UGX)</th>
           <th>Status</th>
           <th>Quantity</th>
@@ -137,19 +136,38 @@
         </tr>
       </thead>
       <tbody>
-        @foreach ($results as $item)
+        {{-- 1. Group results by Pharmacy Name --}}
+        @foreach ($results->groupBy('pharmacy_name') as $pharmacyName => $meds)
+        
+        {{-- 2. Header for each Pharmacy --}}
+        <tr class="table-secondary">
+          <td colspan="5" class="py-2 px-3">
+             <div class="d-flex justify-content-between align-items-center">
+                <div>
+                   <i class="bi bi-shop text-primary me-2"></i>
+                   <strong class="text-dark">{{ $pharmacyName }}</strong>
+                   <span class="small text-muted ms-2">({{ $meds->first()->pharmacy_location }})</span>
+                </div>
+                {{-- Show how many items from the search list are found here --}}
+                <span class="badge bg-primary rounded-pill">
+                  {{ $meds->count() }} items available
+                </span>
+             </div>
+          </td>
+        </tr>
+
+        {{-- 3. List of medicines found at THIS specific pharmacy --}}
+        @foreach ($meds as $item)
         <tr>
-          <td><strong>{{ $item->medicine_name }}</strong></td>
-          <td>
-            {{ $item->pharmacy_name }}
-            <div class="small text-muted">{{ $item->pharmacy_location }}</div>
+          <td class="ps-4">
+            <strong>{{ $item->medicine_name }}</strong>
           </td>
           <td>{{ number_format((float)($item->price ?? 0), 0) }}</td>
           <td>
-            @if (($item->stock_status ?? '') === 'in_stock')
-            <span class="badge bg-success">In stock</span>
+            @if ((int)$item->quantity > 0)
+              <span class="badge bg-success">In stock</span>
             @else
-            <span class="badge bg-secondary">Out of stock</span>
+              <span class="badge bg-secondary">Out of stock</span>
             @endif
           </td>
           <td>{{ (int)$item->quantity }}</td>
@@ -161,6 +179,8 @@
             </form>
           </td>
         </tr>
+        @endforeach
+
         @endforeach
       </tbody>
     </table>
