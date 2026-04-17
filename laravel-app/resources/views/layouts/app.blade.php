@@ -7,11 +7,8 @@
   <title>Medicine Availability Finder</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<<<<<<< HEAD
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-=======
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
->>>>>>> 87cf962e18bfc4363953c9da6a4870eec87554ab
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
   <style>
     .footer-gradient {
@@ -178,10 +175,10 @@
       <!-- Alerts Section -->
       @if(session('alerts'))
       @foreach (session('alerts') as $alert)
-      <div class="alert alert-{{ $alert['category'] }} alert-dismissible fade show shadow-sm" role="alert">
-        {{ $alert['message'] }}
-        <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+ <div class="alert alert-{{ $alertData['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+            {{ $alertData['message'] ?? 'No message content' }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       @endforeach
       @endif
 
