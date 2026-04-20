@@ -15,8 +15,8 @@
 
       <form action="/" method="GET" id="searchForm">
         <div id="editableItemList" class="mb-3">
-          </div>
-        
+        </div>
+
         <button type="submit" class="btn btn-lg btn-success w-100 shadow-sm" id="searchBtn" style="display: none;">
           <i class="bi bi-search me-2"></i>Search All Items
         </button>
@@ -78,42 +78,60 @@
     </style>
 
     <script>
- function addItem() {
-    const input = document.getElementById('itemInput');
-    const list = document.getElementById('editableItemList');
-    const value = input.value.trim();
+      // Check for focus parameter and auto-focus search input
+      document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('focus') === 'search') {
+          const searchInput = document.getElementById('itemInput');
+          if (searchInput) {
+            // Small delay to ensure page is fully loaded
+            setTimeout(() => {
+              searchInput.focus();
+              searchInput.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              });
+            }, 500);
+          }
+        }
+      });
 
-    if (value === "") return;
+      function addItem() {
+        const input = document.getElementById('itemInput');
+        const list = document.getElementById('editableItemList');
+        const value = input.value.trim();
 
-    const itemId = 'item_' + Date.now();
+        if (value === "") return;
 
-    // Create a row container
-    const div = document.createElement('div');
-    // Removed the icon span and kept just the input and the delete button
-    div.className = "input-group mb-2 shadow-sm animate__animated animate__fadeIn";
-    div.id = itemId;
+        const itemId = 'item_' + Date.now();
 
-    div.innerHTML = `
+        // Create a row container
+        const div = document.createElement('div');
+        // Removed the icon span and kept just the input and the delete button
+        div.className = "input-group mb-2 shadow-sm animate__animated animate__fadeIn";
+        div.id = itemId;
+
+        div.innerHTML = `
       <input type="text" name="item_names[]" class="form-control bg-white" value="${value}" placeholder="Medicine name">
       <button class="btn btn-outline-danger" type="button" onclick="document.getElementById('${itemId}').remove(); updateUI();">
         <i class="bi bi-trash"></i>
       </button>
     `;
 
-    list.appendChild(div);
-    input.value = "";
-    input.focus();
-    updateUI();
-  }
+        list.appendChild(div);
+        input.value = "";
+        input.focus();
+        updateUI();
+      }
 
-  function updateUI() {
-    const list = document.getElementById('editableItemList');
-    const btn = document.getElementById('searchBtn');
-    const count = list.children.length;
-    btn.style.display = count > 0 ? 'block' : 'none';
-    btn.innerHTML = `<i class="bi bi-search me-2"></i>Search ${count} Item${count > 1 ? 's' : ''}`;
-  }
-</script>
+      function updateUI() {
+        const list = document.getElementById('editableItemList');
+        const btn = document.getElementById('searchBtn');
+        const count = list.children.length;
+        btn.style.display = count > 0 ? 'block' : 'none';
+        btn.innerHTML = `<i class="bi bi-search me-2"></i>Search ${count} Item${count > 1 ? 's' : ''}`;
+      }
+    </script>
 
   </div>
 </section>
@@ -123,7 +141,7 @@
   <div class="d-flex justify-content-between align-items-center mb-2">
     <h4 class="fw-semibold mb-0">Results for "{{ $query }}"</h4>
   </div>
- @if(count($results) > 0)
+  @if(count($results) > 0)
   <div class="table-responsive card shadow-sm border-0">
     <table class="table align-middle mb-0">
       <thead class="table-light">
@@ -138,21 +156,21 @@
       <tbody>
         {{-- 1. Group results by Pharmacy Name --}}
         @foreach ($results->groupBy('pharmacy_name') as $pharmacyName => $meds)
-        
+
         {{-- 2. Header for each Pharmacy --}}
         <tr class="table-secondary">
           <td colspan="5" class="py-2 px-3">
-             <div class="d-flex justify-content-between align-items-center">
-                <div>
-                   <i class="bi bi-shop text-primary me-2"></i>
-                   <strong class="text-dark">{{ $pharmacyName }}</strong>
-                   <span class="small text-muted ms-2">({{ $meds->first()->pharmacy_location }})</span>
-                </div>
-                {{-- Show how many items from the search list are found here --}}
-                <span class="badge bg-primary rounded-pill">
-                  {{ $meds->count() }} items available
-                </span>
-             </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <i class="bi bi-shop text-primary me-2"></i>
+                <strong class="text-dark">{{ $pharmacyName }}</strong>
+                <span class="small text-muted ms-2">({{ $meds->first()->pharmacy_location }})</span>
+              </div>
+              {{-- Show how many items from the search list are found here --}}
+              <span class="badge bg-primary rounded-pill">
+                {{ $meds->count() }} items available
+              </span>
+            </div>
           </td>
         </tr>
 
@@ -165,9 +183,9 @@
           <td>{{ number_format((float)($item->price ?? 0), 0) }}</td>
           <td>
             @if ((int)$item->quantity > 0)
-              <span class="badge bg-success">In stock</span>
+            <span class="badge bg-success">In stock</span>
             @else
-              <span class="badge bg-secondary">Out of stock</span>
+            <span class="badge bg-secondary">Out of stock</span>
             @endif
           </td>
           <td>{{ (int)$item->quantity }}</td>
