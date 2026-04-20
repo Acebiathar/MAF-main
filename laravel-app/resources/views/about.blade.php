@@ -125,6 +125,53 @@
     </div>
 </section>
 
+@php
+    $teamMembers = [
+        [
+            'name' => 'Amina N.',
+            'role' => 'Founder',
+            'image' => 'images/team-1.jpeg',
+            'position' => 'center 18%',
+            'bio' => 'Guides the MedFinder vision and long-term growth.',
+        ],
+        [
+            'name' => 'Brian K.',
+            'role' => 'Lead Developer',
+            'image' => 'images/team-2.png',
+            'position' => 'center 20%',
+            'bio' => 'Builds and improves the core platform experience.',
+        ],
+        [
+            'name' => 'Clara S.',
+            'role' => 'Pharmacist Advisor',
+            'image' => 'images/team 3.jpeg',
+            'position' => 'center 16%',
+            'bio' => 'Supports medicine information and pharmacy workflows.',
+        ],
+        [
+            'name' => 'David O.',
+            'role' => 'Project Coordinator',
+            'image' => 'images/team-1.jpeg',
+            'position' => 'center 18%',
+            'bio' => 'Keeps the team aligned and project delivery on track.',
+        ],
+        [
+            'name' => 'Esther M.',
+            'role' => 'UI/UX Designer',
+            'image' => 'images/team-2.png',
+            'position' => 'center 20%',
+            'bio' => 'Designs simple and easy-to-use patient journeys.',
+        ],
+        [
+            'name' => 'Frank P.',
+            'role' => 'Support Lead',
+            'image' => 'images/team 3.jpeg',
+            'position' => 'center 16%',
+            'bio' => 'Helps patients and pharmacies use the platform smoothly.',
+        ],
+    ];
+@endphp
+
 <!-- Team Section -->
 <section class="bg-light py-5">
     <div class="container text-center">
@@ -134,65 +181,26 @@
             The people behind MedFinder working to improve access to medicine in Uganda.
         </p>
 
-        <div class="row justify-content-center">
-
-            <!-- Team Member 1 -->
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
-                    <img src="{{ asset('images/team1.jpg') }}" class="card-img-top team-img" alt="Team Member">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-1">Your Name</h5>
-                        <p class="text-primary mb-2">System Developer</p>
-                        <p class="text-muted small">
-                            Responsible for designing and developing the MedFinder system.
-                        </p>
-                        <div class="social-links mt-3">
-                            <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
-                            <a href="#" class="text-primary me-3"><i class="bi bi-github fs-5"></i></a>
-                            <a href="#" class="text-primary"><i class="bi bi-envelope fs-5"></i></a>
+        <div class="row g-4 justify-content-center">
+            @foreach ($teamMembers as $member)
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
+                        <img src="{{ asset($member['image']) }}" class="card-img-top team-img" alt="{{ $member['name'] }}" style="object-position: {{ $member['position'] }};">
+                        <div class="card-body">
+                            <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
+                            <p class="text-primary mb-2">{{ $member['role'] }}</p>
+                            <p class="text-muted small">
+                                {{ $member['bio'] }}
+                            </p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
+                                <a href="#" class="text-primary me-3"><i class="bi bi-envelope fs-5"></i></a>
+                                <a href="#" class="text-primary"><i class="bi bi-person-badge fs-5"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Team Member 2 -->
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
-                    <img src="{{ asset('images/team2.jpg') }}" class="card-img-top team-img" alt="Team Member">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-1">Member Name</h5>
-                        <p class="text-primary mb-2">UI/UX Designer</p>
-                        <p class="text-muted small">
-                            Designed the user interface to ensure the system is easy to use.
-                        </p>
-                        <div class="social-links mt-3">
-                            <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
-                            <a href="#" class="text-primary me-3"><i class="bi bi-dribbble fs-5"></i></a>
-                            <a href="#" class="text-primary"><i class="bi bi-envelope fs-5"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Team Member 3 -->
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
-                    <img src="{{ asset('images/team3.jpg') }}" class="card-img-top team-img" alt="Team Member">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-1">Member Name</h5>
-                        <p class="text-primary mb-2">Project Coordinator</p>
-                        <p class="text-muted small">
-                            Managed project planning and ensured smooth development progress.
-                        </p>
-                        <div class="social-links mt-3">
-                            <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
-                            <a href="#" class="text-primary me-3"><i class="bi bi-twitter fs-5"></i></a>
-                            <a href="#" class="text-primary"><i class="bi bi-envelope fs-5"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @endforeach
         </div>
 
     </div>
@@ -342,16 +350,27 @@
         transition: all 0.3s ease;
         cursor: pointer;
         overflow: hidden;
+        border-radius: 28px;
+        background: #fff;
+    }
+
+    .team-card .card-img-top {
+        width: 100%;
+        margin: 0;
+        border-radius: 28px 28px 0 0;
+        background: #eef3f8;
     }
 
     .team-img {
-        height: 250px;
+        display: block;
+        width: 100%;
+        height: 340px;
         object-fit: cover;
         transition: transform 0.3s ease;
     }
 
     .team-card:hover .team-img {
-        transform: scale(1.05);
+        transform: scale(1.02);
     }
 
     .social-links a {
@@ -410,6 +429,12 @@
 
     .animate-on-scroll:nth-child(5) {
         transition-delay: 0.5s;
+    }
+
+    @media (max-width: 767.98px) {
+        .team-img {
+            height: 300px;
+        }
     }
 </style>
 @endsection

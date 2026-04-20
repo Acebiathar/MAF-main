@@ -114,31 +114,129 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
     }
+
+    .site-navbar .navbar-brand {
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      letter-spacing: -0.02em;
+      max-width: calc(100% - 72px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .site-navbar .navbar-toggler {
+      border: 0;
+      padding: 0.45rem 0.65rem;
+      border-radius: 14px;
+      background: #f4f8fc;
+      box-shadow: none;
+    }
+
+    .site-navbar .navbar-toggler:focus {
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+    .site-navbar .navbar-collapse {
+      transition: all 0.2s ease;
+    }
+
+    .site-navbar .nav-link {
+      position: relative;
+      border-radius: 12px;
+      padding: 0.7rem 0.85rem;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .site-navbar .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0.85rem;
+      right: 0.85rem;
+      bottom: 0.3rem;
+      height: 2px;
+      border-radius: 999px;
+      background: #0d6efd;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.2s ease;
+    }
+
+    .site-navbar .nav-link:hover {
+      color: #0d6efd;
+      background: #f4f8fc;
+    }
+
+    .site-navbar .nav-link:hover::after,
+    .site-navbar .nav-link.active::after {
+      transform: scaleX(1);
+    }
+
+    .site-navbar .nav-link.active {
+      color: #0d6efd !important;
+      font-weight: 700;
+    }
+
+    .navbar-usertext {
+      word-break: break-word;
+    }
+
+    @media (max-width: 991.98px) {
+      .site-navbar .navbar-collapse {
+        margin-top: 0.9rem;
+        padding: 1rem;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 12px 32px rgba(15, 52, 96, 0.08);
+      }
+
+      .site-navbar .navbar-nav .nav-item,
+      .site-navbar .navbar-actions .nav-item {
+        width: 100%;
+      }
+
+      .site-navbar .navbar-nav .nav-link {
+        display: block;
+        width: 100%;
+        padding: 0.8rem 0.9rem;
+      }
+
+      .site-navbar .nav-link::after {
+        left: 0.9rem;
+        right: auto;
+        bottom: 0.35rem;
+        width: 2rem;
+        transform-origin: left;
+      }
+
+      .site-navbar .navbar-usertext {
+        margin-right: 0;
+      }
+    }
   </style>
 </head>
 
 <body class="bg-light">
   @if(Request::path() !== 'register')
-  <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-white sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-white sticky-top site-navbar">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="/">MAF</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbars">
+      <a class="navbar-brand fw-bold text-primary" href="/">Medfinder Ug</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbars" aria-controls="navbars" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbars">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/how-it-works">How it works</a></li>
-          <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('how-it-works') ? 'active' : '' }}" href="/how-it-works">How it works</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('about') ? 'active' : '' }}" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('contact') ? 'active' : '' }}" href="/contact">Contact</a></li>
 
           @if ($currentUser)
           @if ($currentUser->role === 'pharmacist')
-          <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/pharmacist">My Pharmacy</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('pharmacist') ? 'active' : '' }}" href="/pharmacist">My Pharmacy</a></li>
           @elseif ($currentUser->role === 'admin')
-          <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/admin">Admin Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('admin') ? 'active' : '' }}" href="/admin">Admin Dashboard</a></li>
           @elseif ($currentUser->role === 'patient')
-          <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/requests">My Requests</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('requests') ? 'active' : '' }}" href="/requests">My Requests</a></li>
           @endif
           @endif
         </ul>
@@ -146,7 +244,7 @@
         <!-- Mobile Divider for better spacing -->
         <hr class="d-lg-none my-2 text-muted">
 
-        <ul class="navbar-nav ms-auto align-items-lg-center">
+        <ul class="navbar-nav ms-auto align-items-lg-center navbar-actions">
           @if ($currentUser)
           <!-- On Mobile: Compact Profile | On Desktop: Normal Text -->
           <li class="nav-item py-2 py-lg-0">
@@ -154,7 +252,7 @@
               <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2 d-lg-none" style="width: 30px; height: 30px; font-size: 12px;">
                 {{ substr($currentUser->name, 0, 1) }}
               </div>
-              <span class="navbar-text me-lg-3 text-dark small">Logged in as <strong>{{ $currentUser->name }}</strong></span>
+              <span class="navbar-text me-lg-3 text-dark small navbar-usertext">Logged in as <strong>{{ $currentUser->name }}</strong></span>
             </div>
           </li>
           <li class="nav-item mt-2 mt-lg-0">
@@ -193,7 +291,7 @@
       <div class="row">
         <!-- Brand Column -->
         <div class="col-lg-4 col-md-6 mb-4">
-          <div class="fw-bold fs-4 mb-3 brand-glow"><i class="bi bi-pills text-primary me-2"></i>MAF Uganda</div>
+          <div class="fw-bold fs-4 mb-3 brand-glow"><i class="bi bi-pills text-primary me-2"></i>Medfinder Ug</div>
           <p class="small opacity-75 mb-0">Connecting patients to pharmacies. Making medicine accessible by helping patients locate drugs quickly and reliably.</p>
         </div>
         <!-- Links Column -->
@@ -235,7 +333,7 @@
       <hr class="my-4 opacity-25">
       <div class="row align-items-center">
         <div class="col-md-6">
-          <small class="text-white-50">&amp;copy; 2026 MAF Uganda. All rights reserved. | <a href="{{ url('/privacy') }}" class="text-white-50 text-decoration-none">Privacy Policy</a></small>
+          <small class="text-white-50">&amp;copy; 2026 Medfinder Ug. All rights reserved. | <a href="{{ url('/privacy') }}" class="text-white-50 text-decoration-none">Privacy Policy</a></small>
         </div>
         <div class="col-md-6 text-md-end">
           <small class="text-white-50">Made with <i class="bi bi-heart-fill text-danger"></i> for better healthcare</small>
