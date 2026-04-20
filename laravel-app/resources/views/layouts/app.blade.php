@@ -7,16 +7,16 @@
   <title>Medicine Availability Finder</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<<<<<<< Updated upstream
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-=======
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
->>>>>>> Stashed changes
+
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
   <style>
     .footer-gradient {
@@ -141,8 +141,8 @@
           <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
           <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
 
-        @if (auth()->check())
-    @if (auth()->user()->role === 'pharmacist')
+          @if (auth()->check())
+          @if (auth()->user()->role === 'pharmacist')
           <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/pharmacist">My Pharmacy</a></li>
           @elseif ($currentUser->role === 'admin')
           <li class="nav-item"><a class="nav-link fw-bold text-primary" href="/admin">Admin Dashboard</a></li>
@@ -183,10 +183,10 @@
       <!-- Alerts Section -->
       @if(session('alerts'))
       @foreach (session('alerts') as $alert)
- <div class="alert alert-{{ $alertData['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
-            {{ $alertData['message'] ?? 'No message content' }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+      <div class="alert alert-{{ $alertData['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+        {{ $alertData['message'] ?? 'No message content' }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
       @endforeach
       @endif
 
