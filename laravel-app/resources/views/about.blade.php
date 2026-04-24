@@ -4,53 +4,60 @@
 
 @section('content')
 
-<!-- Page Header -->
-<div class="container py-5 text-center">
-    <h1 class="fw-bold text-primary animate-on-scroll">About MedFinder</h1>
-    <p class="text-muted animate-on-scroll">
-        Helping people in Uganda easily find available medicine from nearby pharmacies.
-    </p>
-</div>
-
-<!-- About Section -->
-<section class="container mb-5">
-    <div class="row align-items-center">
-
-        <!-- Text -->
-        <div class="col-lg-6 mb-4 animate-on-scroll">
-            <h2 class="fw-bold">Making Medicine Access Simple</h2>
-            <p class="lead text-secondary">
-                MedFinder (MAF) is a web-based platform designed to connect patients with pharmacies that have the medicine they need.
-            </p>
-
-            <p>
-                Many people waste time moving from one pharmacy to another searching for medicine.
-                MedFinder solves this by allowing users to quickly check availability, compare options, and save time.
-            </p>
-
-            <!-- Stats -->
-            <div class="row text-center mt-4">
-                <div class="col-4">
-                    <h4 class="fw-bold text-primary counter" data-target="100">0</h4>
-                    <small>Pharmacies</small>
+<!-- Hero Section -->
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-6 animate-on-scroll">
+                <span class="badge bg-primary bg-opacity-10 text-primary mb-3 d-inline-flex align-items-center">
+                    <i class="bi bi-heart-pulse-fill me-2"></i> Trusted healthcare search
+                </span>
+                <h1 class="display-5 fw-bold mb-4">Finding medicine nearby should be fast, simple, and reliable.</h1>
+                <p class="lead text-secondary mb-4">
+                    MedFinder helps people across Uganda locate available medicines at nearby pharmacies, compare options, and reserve what they need in minutes.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <a href="/{{ request()->getQueryString() ? '?'.request()->getQueryString() : '' }}" class="btn btn-primary btn-lg px-5 py-3">
+                        Start Searching
+                    </a>
+                    <a href="#mission" class="btn btn-outline-primary btn-lg px-5 py-3">
+                        Learn More
+                    </a>
                 </div>
-                <div class="col-4">
-                    <h4 class="fw-bold text-primary counter" data-target="1000">0</h4>
-                    <small>Users</small>
-                </div>
-                <div class="col-4">
-                    <h4 class="fw-bold text-primary">24/7</h4>
-                    <small>Access</small>
+            </div>
+            <div class="col-lg-6 animate-on-scroll">
+                <div class="hero-card position-relative overflow-hidden rounded-4 shadow-sm">
+                    <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded-4 hero-img" alt="MedFinder hero image">
+                    <div class="hero-card-overlay p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <h6 class="text-white mb-0">200+ pharmacies</h6>
+                                <small class="text-white-50">Connected in your area</small>
+                            </div>
+                            <i class="bi bi-check-circle-fill fs-2 text-white"></i>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-white mb-0">24/7 access</h6>
+                                <small class="text-white-50">Search anytime</small>
+                            </div>
+                            <div class="badge bg-white text-primary py-2 px-3 rounded-pill">Fast results</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Image -->
-        <div class="col-lg-6 animate-on-scroll">
-            <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded shadow hover-lift" alt="Pharmacy">
-        </div>
-
     </div>
+</section>
+
+
+
+<!-- Image -->
+<div class="col-lg-6 animate-on-scroll">
+    <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded shadow hover-lift" alt="Pharmacy">
+</div>
+
+</div>
 </section>
 
 <!-- Features / Values -->
@@ -126,50 +133,50 @@
 </section>
 
 @php
-    $teamMembers = [
-        [
-            'name' => 'Amina N.',
-            'role' => 'Founder',
-            'image' => 'images/team-1.jpeg',
-            'position' => 'center 18%',
-            'bio' => 'Guides the MedFinder vision and long-term growth.',
-        ],
-        [
-            'name' => 'Brian K.',
-            'role' => 'Lead Developer',
-            'image' => 'images/team-2.png',
-            'position' => 'center 20%',
-            'bio' => 'Builds and improves the core platform experience.',
-        ],
-        [
-            'name' => 'Clara S.',
-            'role' => 'Pharmacist Advisor',
-            'image' => 'images/team 3.jpeg',
-            'position' => 'center 16%',
-            'bio' => 'Supports medicine information and pharmacy workflows.',
-        ],
-        [
-            'name' => 'David O.',
-            'role' => 'Project Coordinator',
-            'image' => 'images/team-1.jpeg',
-            'position' => 'center 18%',
-            'bio' => 'Keeps the team aligned and project delivery on track.',
-        ],
-        [
-            'name' => 'Esther M.',
-            'role' => 'UI/UX Designer',
-            'image' => 'images/team-2.png',
-            'position' => 'center 20%',
-            'bio' => 'Designs simple and easy-to-use patient journeys.',
-        ],
-        [
-            'name' => 'Frank P.',
-            'role' => 'Support Lead',
-            'image' => 'images/team 3.jpeg',
-            'position' => 'center 16%',
-            'bio' => 'Helps patients and pharmacies use the platform smoothly.',
-        ],
-    ];
+$teamMembers = [
+[
+'name' => 'Amina N.',
+'role' => 'Founder',
+'image' => 'images/team-1.jpeg',
+'position' => 'center 18%',
+'bio' => 'Guides the MedFinder vision and long-term growth.',
+],
+[
+'name' => 'Brian K.',
+'role' => 'Lead Developer',
+'image' => 'images/team-2.png',
+'position' => 'center 20%',
+'bio' => 'Builds and improves the core platform experience.',
+],
+[
+'name' => 'Clara S.',
+'role' => 'Pharmacist Advisor',
+'image' => 'images/team 3.jpeg',
+'position' => 'center 16%',
+'bio' => 'Supports medicine information and pharmacy workflows.',
+],
+[
+'name' => 'David O.',
+'role' => 'Project Coordinator',
+'image' => 'images/team-1.jpeg',
+'position' => 'center 18%',
+'bio' => 'Keeps the team aligned and project delivery on track.',
+],
+[
+'name' => 'Esther M.',
+'role' => 'UI/UX Designer',
+'image' => 'images/team-2.png',
+'position' => 'center 20%',
+'bio' => 'Designs simple and easy-to-use patient journeys.',
+],
+[
+'name' => 'Frank P.',
+'role' => 'Support Lead',
+'image' => 'images/team 3.jpeg',
+'position' => 'center 16%',
+'bio' => 'Helps patients and pharmacies use the platform smoothly.',
+],
+];
 @endphp
 
 <!-- Team Section -->
@@ -183,23 +190,23 @@
 
         <div class="row g-4 justify-content-center">
             @foreach ($teamMembers as $member)
-                <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
-                        <img src="{{ asset($member['image']) }}" class="card-img-top team-img" alt="{{ $member['name'] }}" style="object-position: {{ $member['position'] }};">
-                        <div class="card-body">
-                            <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
-                            <p class="text-primary mb-2">{{ $member['role'] }}</p>
-                            <p class="text-muted small">
-                                {{ $member['bio'] }}
-                            </p>
-                            <div class="social-links mt-3">
-                                <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
-                                <a href="#" class="text-primary me-3"><i class="bi bi-envelope fs-5"></i></a>
-                                <a href="#" class="text-primary"><i class="bi bi-person-badge fs-5"></i></a>
-                            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
+                    <img src="{{ asset($member['image']) }}" class="card-img-top team-img" alt="{{ $member['name'] }}" style="object-position: {{ $member['position'] }};">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
+                        <p class="text-primary mb-2">{{ $member['role'] }}</p>
+                        <p class="text-muted small">
+                            {{ $member['bio'] }}
+                        </p>
+                        <div class="social-links mt-3">
+                            <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
+                            <a href="#" class="text-primary me-3"><i class="bi bi-envelope fs-5"></i></a>
+                            <a href="#" class="text-primary"><i class="bi bi-person-badge fs-5"></i></a>
                         </div>
                     </div>
                 </div>
+            </div>
             @endforeach
         </div>
 
@@ -407,6 +414,55 @@
         100% {
             transform: scale(1);
             box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+        }
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #f4f8ff 0%, #e7efff 100%);
+        border-radius: 32px;
+        padding: 4rem 0;
+    }
+
+    .hero-card {
+        min-height: 430px;
+        background: #fff;
+    }
+
+    .hero-img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    .hero-card-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(13, 110, 253, 0.82);
+        border-top-left-radius: 1.5rem;
+        border-top-right-radius: 1.5rem;
+    }
+
+    .hero-card-overlay h6,
+    .hero-card-overlay small {
+        color: #fff;
+    }
+
+    @media (max-width: 991.98px) {
+        .hero-card {
+            min-height: 360px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .hero-card-overlay {
+            padding: 1.5rem;
+        }
+
+        .hero-section {
+            padding: 3rem 0;
         }
     }
 

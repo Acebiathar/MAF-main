@@ -28,57 +28,62 @@ function renderView(string $view, array $data = [])
 // --- PUBLIC PAGES (Home, Search, About) ---
 
 Route::get('/', function (Request $request) {
-    // Get items from the editable list
-    $items = $request->query('item_names', []);
-    
-    $currentUser = auth()->user();
-    // Initialize collections to prevent "Undefined variable" errors
-    $results = collect();
-    $alternatives = collect(); 
+    try {
+        // Get items from the editable list
+        $items = $request->query('item_names', []);
 
-    if (!empty($items)) {
-        // 1. Get all matches for any of the items from the database
-        $allMatches = DB::table('pharmacy_medicine as pm')
-            ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
-            ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
-            ->select(
-                'pm.*', 
-                'm.name as medicine_name', 
-                'm.category as medicine_category', 
-                'p.name as pharmacy_name', 
-                'p.location as pharmacy_location'
-            )
-            ->where(function($query) use ($items) {
-                foreach ($items as $item) {
-                    $query->orWhere('m.name', 'like', "%{$item}%");
-                }
-            })
-            ->where('pm.quantity', '>', 0) 
-            ->get();
+        $currentUser = auth()->user();
+        // Initialize collections to prevent "Undefined variable" errors
+        $results = collect();
+        $alternatives = collect();
 
-        // 2. Group by pharmacy and sort so those with the MOST matches appear first
-        $results = $allMatches->groupBy('pharmacy_name')
-            ->sortByDesc(function ($group) {
-                return $group->unique('medicine_name')->count();
-            })
-            ->flatten();
-
-        // 3. Get Alternatives (Same category as the first item searched)
-        if ($allMatches->isNotEmpty()) {
-            $firstCategory = $allMatches->first()->medicine_category;
-            $alternatives = DB::table('medicines')
-                ->where('category', $firstCategory)
-                ->whereNotIn('name', $items) // Don't suggest what they already searched for
-                ->limit(4)
+        if (!empty($items)) {
+            // 1. Get all matches for any of the items from the database
+            $allMatches = DB::table('pharmacy_medicine as pm')
+                ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
+                ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
+                ->select(
+                    'pm.*',
+                    'm.name as medicine_name',
+                    'm.category as medicine_category',
+                    'p.name as pharmacy_name',
+                    'p.location as pharmacy_location'
+                )
+                ->where(function ($query) use ($items) {
+                    foreach ($items as $item) {
+                        $query->orWhere('m.name', 'like', "%{$item}%");
+                    }
+                })
+                ->where('pm.quantity', '>', 0)
                 ->get();
-        }
-    }
 
-    $query = implode(', ', $items);
-    $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
-    
-    // Added 'alternatives' to the compact list to stop the error
-    return view('home', compact('query', 'results', 'pharmacies', 'alternatives', 'currentUser'));
+            // 2. Group by pharmacy and sort so those with the MOST matches appear first
+            $results = $allMatches->groupBy('pharmacy_name')
+                ->sortByDesc(function ($group) {
+                    return $group->unique('medicine_name')->count();
+                })
+                ->flatten();
+
+            // 3. Get Alternatives (Same category as the first item searched)
+            if ($allMatches->isNotEmpty()) {
+                $firstCategory = $allMatches->first()->medicine_category;
+                $alternatives = DB::table('medicines')
+                    ->where('category', $firstCategory)
+                    ->whereNotIn('name', $items) // Don't suggest what they already searched for
+                    ->limit(4)
+                    ->get();
+            }
+        }
+
+        $query = implode(', ', $items);
+        $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
+
+        // Added 'alternatives' to the compact list to stop the error
+        return view('home', compact('query', 'results', 'pharmacies', 'alternatives', 'currentUser'));
+    } catch (\Exception $e) {
+        flash('danger', 'Search error: ' . $e->getMessage());
+        return redirect('/');
+    }
 });
 Route::get('/about', function () {
     return renderView('about');
@@ -170,35 +175,40 @@ Route::get('/logout', function () {
 // --- PHARMACIST DASHBOARD & INVENTORY ---
 
 Route::get('/pharmacist', function () {
-    $user = currentUser();
-    if (!$user || $user->role !== 'pharmacist') return redirect('/login');
+    try {
+        $user = currentUser();
+        if (!$user || $user->role !== 'pharmacist') return redirect('/login');
 
-    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-    if (!$pharmacy) return redirect('/');
+        $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
+        if (!$pharmacy) return redirect('/');
 
-    // Check if the pharmacy has paid
-    $isActive = ($pharmacy->subscription_status === 'active');
+        // Check if the pharmacy has paid
+        $isActive = ($pharmacy->subscription_status === 'active');
 
-    $all_medicines = DB::table('medicines')->orderBy('name')->get();
+        $all_medicines = DB::table('medicines')->orderBy('name')->get();
 
-    // Fixed: JOIN syntax and singular table name
-    $inventory = [];
-    if ($isActive) {
-        $inventory = DB::table('pharmacy_medicine as pm')
-            ->leftJoin('medicines as m', 'pm.medicine_id', '=', 'm.id')
-            ->select('pm.*', 'm.name as medicine_name')
-            ->where('pm.pharmacy_id', $pharmacy->id)
-            ->get();
-    } else {
-        flash('info', 'Your account is pending payment confirmation. Please contact support to activate your shop.');
+        // Fixed: JOIN syntax and singular table name
+        $inventory = [];
+        if ($isActive) {
+            $inventory = DB::table('pharmacy_medicine as pm')
+                ->leftJoin('medicines as m', 'pm.medicine_id', '=', 'm.id')
+                ->select('pm.*', 'm.name as medicine_name')
+                ->where('pm.pharmacy_id', $pharmacy->id)
+                ->get();
+        } else {
+            flash('info', 'Your account is pending payment confirmation. Please contact support to activate your shop.');
+        }
+
+        return renderView('dashboard_pharmacist', [
+            'pharmacy' => $pharmacy,
+            'all_medicines' => $all_medicines,
+            'inventory' => $inventory,
+            'isActive' => $isActive // Pass this to the view to hide/show buttons
+        ]);
+    } catch (\Exception $e) {
+        flash('danger', 'Dashboard error: ' . $e->getMessage());
+        return redirect('/');
     }
-
-    return renderView('dashboard_pharmacist', [
-        'pharmacy' => $pharmacy,
-        'all_medicines' => $all_medicines,
-        'inventory' => $inventory,
-        'isActive' => $isActive // Pass this to the view to hide/show buttons
-    ]);
 });
 Route::post('/pharmacist/add', function (Request $request) {
     $user = currentUser();

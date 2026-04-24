@@ -231,6 +231,7 @@
           <li class="nav-item"><a class="nav-link {{ Request::is('contact') ? 'active' : '' }}" href="/contact">Contact</a></li>
 
           @if ($currentUser)
+          @if (isset($currentUser) && isset($currentUser->role))
           @if ($currentUser->role === 'pharmacist')
           <li class="nav-item"><a class="nav-link {{ Request::is('pharmacist') ? 'active' : '' }}" href="/pharmacist">My Pharmacy</a></li>
           @elseif ($currentUser->role === 'admin')
@@ -239,13 +240,15 @@
           <li class="nav-item"><a class="nav-link {{ Request::is('requests') ? 'active' : '' }}" href="/requests">My Requests</a></li>
           @endif
           @endif
+
+          @endif
         </ul>
 
         <!-- Mobile Divider for better spacing -->
         <hr class="d-lg-none my-2 text-muted">
 
         <ul class="navbar-nav ms-auto align-items-lg-center navbar-actions">
-          @if ($currentUser)
+          @if (isset($currentUser) && $currentUser)
           <!-- On Mobile: Compact Profile | On Desktop: Normal Text -->
           <li class="nav-item py-2 py-lg-0">
             <div class="d-flex align-items-center">
@@ -262,6 +265,7 @@
           <li class="nav-item me-lg-2 mb-2 mb-lg-0"><a class="btn btn-outline-primary btn-sm w-100 w-lg-auto" href="/login">Login</a></li>
           <li class="nav-item"><a class="btn btn-primary btn-sm w-100 w-lg-auto" href="/register">Sign up</a></li>
           @endif
+
         </ul>
       </div>
     </div>
