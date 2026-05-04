@@ -225,11 +225,7 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbars">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link {{ Request::is('how-it-works') ? 'active' : '' }}" href="/how-it-works">How it works</a></li>
-          <li class="nav-item"><a class="nav-link {{ Request::is('about') ? 'active' : '' }}" href="/about">About</a></li>
-          <li class="nav-item"><a class="nav-link {{ Request::is('contact') ? 'active' : '' }}" href="/contact">Contact</a></li>
-
+        <ul class="navbar-nav mb-2 mb-lg-0">
           @if ($currentUser)
           @if (isset($currentUser) && isset($currentUser->role))
           @if ($currentUser->role === 'pharmacist')
@@ -242,6 +238,12 @@
           @endif
 
           @endif
+        </ul>
+
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link {{ Request::is('how-it-works') ? 'active' : '' }}" href="/how-it-works">How it works</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('about') ? 'active' : '' }}" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('contact') ? 'active' : '' }}" href="/contact">Contact</a></li>
         </ul>
 
         <!-- Mobile Divider for better spacing -->

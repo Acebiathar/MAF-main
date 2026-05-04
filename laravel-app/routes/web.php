@@ -5,25 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
-// --- GLOBAL HELPERS ---
 
-function currentUser()
-{
-    $userId = session('user_id');
-    return $userId ? DB::table('users')->where('id', $userId)->first() : null;
-}
-
-function flash($category, $message)
-{
-    session()->push('alerts', [$category, $message]);
-}
-
-function renderView(string $view, array $data = [])
-{
-    $data['currentUser'] = currentUser();
-    $data['alerts'] = session()->pull('alerts', []);
-    return view($view, $data);
-}
 
 // --- PUBLIC PAGES (Home, Search, About) ---
 
@@ -79,7 +61,7 @@ Route::get('/', function (Request $request) {
         $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
 
         // Added 'alternatives' to the compact list to stop the error
-        return view('home', compact('query', 'results', 'pharmacies', 'alternatives', 'currentUser'));
+        return view('index', compact('query', 'results', 'pharmacies', 'alternatives', 'currentUser'));
     } catch (\Exception $e) {
         flash('danger', 'Search error: ' . $e->getMessage());
         return redirect('/');

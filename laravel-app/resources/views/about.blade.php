@@ -192,7 +192,7 @@ $teamMembers = [
             @foreach ($teamMembers as $member)
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
-                    <img src="{{ asset($member['image']) }}" class="card-img-top team-img" alt="{{ $member['name'] }}" style="object-position: {{ $member['position'] }};">
+                    <img src="{{ asset($member['image']) }}" class="card-img-top team-img team-img-pos-{{ $loop->iteration }}" alt="{{ $member['name'] }}">
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
                         <p class="text-primary mb-2">{{ $member['role'] }}</p>
@@ -374,6 +374,18 @@ $teamMembers = [
         height: 340px;
         object-fit: cover;
         transition: transform 0.3s ease;
+    }
+
+    .team-img-pos-1 {
+        object-position: center 18%;
+    }
+
+    .team-img-pos-2 {
+        object-position: center 20%;
+    }
+
+    .team-img-pos-3 {
+        object-position: center 16%;
     }
 
     .team-card:hover .team-img {
