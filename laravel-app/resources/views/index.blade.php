@@ -36,9 +36,15 @@ if ($path === '/' && $method === 'GET') {
     }
     render('contact');
 } elseif ($path === '/login') {
+    if ($method === 'GET' && current_user()) {
+        redirect_after_login(current_user());
+    }
     if ($method === 'POST') handle_login($db);
     render('auth/login');
 } elseif ($path === '/register') {
+    if ($method === 'GET' && current_user()) {
+        redirect_after_login(current_user());
+    }
     if ($method === 'POST') handle_register($db);
     render('auth/register');
 } elseif ($path === '/logout') {
@@ -126,6 +132,19 @@ function redirect(string $path): void
     exit;
 }
 
+function redirect_after_login(object $user): void
+{
+    if ($user->role === 'admin') {
+        redirect('/admin');
+    }
+
+    if ($user->role === 'pharmacist') {
+        redirect('/pharmacist');
+    }
+
+    redirect('/requests');
+}
+
 // --- 5. CONTROLLER HANDLERS (ADMIN CORRECTED) ---
 
 function handle_home(PDO $db): void
@@ -159,10 +178,7 @@ function handle_login(PDO $db): void
         $_SESSION['user_id'] = $user->id;
         flash("Welcome, {$user->name}!", 'success');
 
-        // Admin Correction: Redirect to specific dashboards
-        if ($user->role === 'admin') redirect('/admin');
-        if ($user->role === 'pharmacist') redirect('/pharmacist');
-        redirect('/');
+        redirect_after_login($user);
     }
     flash('Invalid email or password.', 'danger');
     redirect('/login');

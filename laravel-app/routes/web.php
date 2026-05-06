@@ -15,7 +15,10 @@ function currentUser()
 
 function flash($category, $message)
 {
-    session()->push('alerts', [$category, $message]);
+    session()->push('alerts', [
+        'category' => $category,
+        'message' => $message,
+    ]);
 }
 
 function renderView(string $view, array $data = [])
@@ -23,6 +26,19 @@ function renderView(string $view, array $data = [])
     $data['currentUser'] = currentUser();
     $data['alerts'] = session()->pull('alerts', []);
     return view($view, $data);
+}
+
+function redirectToDashboard(object $user)
+{
+    if ($user->role === 'admin') {
+        return redirect('/admin');
+    }
+
+    if ($user->role === 'pharmacist') {
+        return redirect('/pharmacist');
+    }
+
+    return redirect('/requests');
 }
 
 // --- PUBLIC PAGES (Home, Search, About) ---
@@ -96,6 +112,10 @@ Route::get('/privacy', function () {
 // --- AUTHENTICATION (Login, Register, Logout) ---
 
 Route::match(['get', 'post'], '/login', function (Request $request) {
+    if ($request->isMethod('get') && ($user = currentUser())) {
+        return redirectToDashboard($user);
+    }
+
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
@@ -107,15 +127,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
             // Set the greeting to be caught by the layout on the next page
             flash('success', "Hi, " . $user->name . "! Welcome back.");
 
-            // STRICT REDIRECT LOGIC
-            if ($user->role === 'admin') {
-                return redirect('/admin');
-            } elseif ($user->role === 'pharmacist') {
-                return redirect('/pharmacist');
-            } else {
-                // All other users (Patients) go to their requests
-                return redirect('/requests');
-            }
+            return redirectToDashboard($user);
         }
 
         flash('danger', 'Invalid credentials.');
@@ -125,6 +137,10 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
 });
 
 Route::match(['get', 'post'], '/register', function (Request $request) {
+    if ($request->isMethod('get') && ($user = currentUser())) {
+        return redirectToDashboard($user);
+    }
+
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
         if (DB::table('users')->where('email', $email)->exists()) {
