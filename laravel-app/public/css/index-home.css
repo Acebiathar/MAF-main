@@ -1,0 +1,292 @@
+:root {
+    --primary: #0b5ed7;
+    --primary-dark: #0a58ca;
+    --primary-soft: #eef2ff;
+    --secondary: #00b4aa;
+    --dark: #1e2f3e;
+    --transition: all 0.25s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.landing-page {
+    font-family: 'Inter', sans-serif;
+    background: #f6f9fe;
+    color: #1b2e3c;
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero-carousel .carousel-item {
+    height: 90vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero-carousel .carousel-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), transparent);
+}
+
+.carousel-caption {
+    z-index: 2;
+    text-align: left;
+    left: 10%;
+    top: 30%;
+}
+
+.hero-search-wrapper {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 80px;
+    padding: 0.3rem;
+    max-width: 500px;
+    margin-top: 1.5rem;
+}
+
+.hero-search-wrapper input {
+    border: none;
+    background: transparent;
+    padding: 0.8rem 1.5rem;
+    color: white;
+    font-weight: 500;
+}
+
+.hero-search-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.hero-search-wrapper input:focus {
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    color: white;
+}
+
+.hero-search-wrapper button {
+    border-radius: 50px;
+    background: white;
+    border: none;
+    padding: 0.6rem 1.8rem;
+    font-weight: bold;
+    color: var(--primary);
+    transition: 0.2s;
+}
+
+.hero-search-wrapper button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* How It Works Carousel */
+.howit-card {
+    background: white;
+    border-radius: 2rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.howit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px rgba(11, 94, 215, 0.12);
+}
+
+.step-icon {
+    width: 85px;
+    height: 85px;
+    background: linear-gradient(135deg, #eef2ff, #e0e9ff);
+    border-radius: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: var(--primary);
+}
+
+.howit-carousel .carousel-control-prev,
+.howit-carousel .carousel-control-next {
+    width: 5%;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 40px;
+    opacity: 0.6;
+}
+
+.howit-carousel .carousel-control-prev-icon,
+.howit-carousel .carousel-control-next-icon {
+    background-color: var(--primary);
+    border-radius: 50%;
+    padding: 12px;
+}
+
+/* Testimonials slider */
+.testimonial-card {
+    background: white;
+    border-radius: 1.75rem;
+    padding: 1.8rem;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+    position: relative;
+    transition: var(--transition);
+    margin: 0.5rem;
+}
+
+.quote-icon {
+    font-size: 2.2rem;
+    color: var(--primary-soft);
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    opacity: 0.5;
+}
+
+.rating-stars {
+    color: #ffb800;
+    letter-spacing: 2px;
+}
+
+.avatar-sm {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-soft);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+/* Medical Tips with Animation */
+.tip-card {
+    background: white;
+    border-radius: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    overflow: hidden;
+    border-left: 6px solid var(--primary);
+    cursor: pointer;
+}
+
+.tip-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.tip-animate {
+    transition: all 0.4s;
+}
+
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-tip {
+    animation: fadeSlideUp 0.6s ease forwards;
+}
+
+/* MAF Quality Assurance Section */
+.maf-quality {
+    background: linear-gradient(120deg, #eef2ff, #ffffff);
+    border-radius: 2rem;
+    padding: 2rem;
+}
+
+.quality-badge-icon {
+    font-size: 2rem;
+    background: white;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.badge-stock {
+    background: #e0f7e8;
+    color: #1e7b48;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    font-weight: 600;
+}
+
+.spinner-overlay {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s;
+}
+
+.ad-card {
+    transition: var(--transition);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.ad-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.ad-img {
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.pill-link {
+    background: #eef2ff;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.pill-link:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.section-title-ads {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
