@@ -73,9 +73,17 @@
   </style>
 </head>
 
+@php
+  $isDashboardRoute = Request::is('requests')
+    || Request::is('pharmacist')
+    || Request::is('pharmacist/*')
+    || Request::is('admin')
+    || Request::is('admin/*');
+@endphp
+
 <body class="bg-light">
 
-  @if(!Request::is('register'))
+  @if(!$isDashboardRoute && !Request::is('register'))
   <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-white sticky-top site-navbar">
     <div class="container">
       <a class="navbar-brand fw-bold text-primary" href="/">Medfinder Ug</a>
@@ -132,8 +140,8 @@
   </nav>
   @endif
 
-  <main class="py-4">
-    <div class="container">
+  <main class="{{ $isDashboardRoute ? 'py-0' : 'py-4' }}">
+    <div class="{{ $isDashboardRoute ? 'container-fluid px-0' : 'container' }}">
       @if(session('alerts'))
       @foreach (session('alerts') as $alert)
       <div class="alert alert-{{ $alert['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
@@ -147,6 +155,7 @@
     </div>
   </main>
 
+  @if(!$isDashboardRoute)
   <footer class="footer-gradient text-white py-5 mt-5">
     <div class="container">
       <div class="row">
@@ -159,7 +168,6 @@
           <h6 class="fw-bold mb-3">Quick Links</h6>
           <ul class="list-unstyled">
             <li><a href="{{ url('/privacy') }}" class="footer-link text-white-50 text-decoration-none">Privacy Policy</a></li>
-            <li><a href="{{ url('/contact') }}" class="footer-link text-white-50 text-decoration-none">Contact</a></li>
           </ul>
         </div>
 
@@ -183,6 +191,7 @@
       </div>
     </div>
   </footer>
+  @endif
 
   <button id="backToTop" class="back-to-top"><i class="bi bi-arrow-up"></i></button>
 

@@ -7,37 +7,45 @@ use Illuminate\Support\Facades\Route;
 
 // --- GLOBAL HELPERS ---
 
-function currentUser()
-{
-    $userId = session('user_id');
-    return $userId ? DB::table('users')->where('id', $userId)->first() : null;
-}
-
-function flash($category, $message)
-{
-    session()->push('alerts', [
-        'category' => $category,
-        'message' => $message,
-    ]);
-}
-
-function renderView(string $view, array $data = [])
-{
-    $data['currentUser'] = currentUser();
-    return view($view, $data);
-}
-
-function redirectToDashboard(object $user)
-{
-    if ($user->role === 'admin') {
-        return redirect('/admin');
+if (!function_exists('currentUser')) {
+    function currentUser()
+    {
+        $userId = session('user_id');
+        return $userId ? DB::table('users')->where('id', $userId)->first() : null;
     }
+}
 
-    if ($user->role === 'pharmacist') {
-        return redirect('/pharmacist');
+if (!function_exists('flash')) {
+    function flash($category, $message)
+    {
+        session()->push('alerts', [
+            'category' => $category,
+            'message' => $message,
+        ]);
     }
+}
 
-    return redirect('/requests');
+if (!function_exists('renderView')) {
+    function renderView(string $view, array $data = [])
+    {
+        $data['currentUser'] = currentUser();
+        return view($view, $data);
+    }
+}
+
+if (!function_exists('redirectToDashboard')) {
+    function redirectToDashboard(object $user)
+    {
+        if ($user->role === 'admin') {
+            return redirect('/admin');
+        }
+
+        if ($user->role === 'pharmacist') {
+            return redirect('/pharmacist');
+        }
+
+        return redirect('/requests');
+    }
 }
 
 // --- PUBLIC PAGES (Home, Search, About) ---
@@ -146,36 +154,72 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
     }
 
     if ($request->isMethod('post')) {
+        $name = trim((string) $request->input('name', ''));
         $email = strtolower(trim($request->input('email', '')));
-        if (DB::table('users')->where('email', $email)->exists()) {
-            flash('warning', 'Email already registered.');
-            return redirect('/register');
+        $password = (string) $request->input('password', '');
+        $role = $request->input('role', 'patient');
+        $pharmacyName = trim((string) $request->input('pharmacy_name', ''));
+        $licenseNumber = trim((string) $request->input('license_number', ''));
+        $location = trim((string) $request->input('location', ''));
+        $phoneNumber = trim((string) $request->input('phone', ''));
+
+        if ($name === '' || $email === '' || $password === '') {
+            flash('danger', 'Name, email, and password are required.');
+            return redirect('/register')->withInput();
         }
 
-        DB::transaction(function () use ($request, $email) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('danger', 'Please enter a valid email address.');
+            return redirect('/register')->withInput();
+        }
+
+        if (strlen($password) < 8) {
+            flash('danger', 'Password must be at least 8 characters long.');
+            return redirect('/register')->withInput();
+        }
+
+        if (!in_array($role, ['patient', 'pharmacist'], true)) {
+            flash('danger', 'Please choose a valid account type.');
+            return redirect('/register')->withInput();
+        }
+
+        if ($role === 'pharmacist' && ($pharmacyName === '' || $licenseNumber === '' || $location === '' || $phoneNumber === '')) {
+            flash('danger', 'All pharmacy verification details are required for pharmacist accounts.');
+            return redirect('/register')->withInput();
+        }
+
+        if (DB::table('users')->where('email', $email)->exists()) {
+            flash('warning', 'Email already registered.');
+            return redirect('/register')->withInput();
+        }
+
+        DB::transaction(function () use ($name, $email, $password, $role, $pharmacyName, $licenseNumber, $location, $phoneNumber) {
             $userId = DB::table('users')->insertGetId([
-                'name' => $request->input('name'),
+                'name' => $name,
                 'email' => $email,
-                'password' => Hash::make($request->input('password')),
-                'role' => $request->input('role', 'patient'),
+                'password' => Hash::make($password),
+                'role' => $role,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            if ($request->role === 'pharmacist') {
+            if ($role === 'pharmacist') {
                 DB::table('pharmacies')->insert([
-                    'name' => $request->input('pharmacy_name'),
-                    'location' => $request->input('location'),
-                    'phone' => $request->input('phone'),
-                    'license_number' => $request->input('license_number'),
+                    'name' => $pharmacyName,
+                    'location' => $location,
+                    'phone_number' => $phoneNumber,
+                    'license_number' => $licenseNumber,
                     'status' => 'pending',
-                    'subscription_status' => 'inactive',
                     'owner_id' => $userId,
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
             }
         });
 
-        flash('success', 'Registration successful. Please log in.');
+        flash('success', $role === 'pharmacist'
+            ? 'Registration successful. Your pharmacy account is pending admin verification.'
+            : 'Registration successful. Please log in.');
         return redirect('/login');
     }
     return renderView('auth.register');
@@ -197,10 +241,13 @@ Route::get('/pharmacist', function () {
         $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
         if (!$pharmacy) return redirect('/');
 
-        // Check if the pharmacy has paid
-        $isActive = ($pharmacy->subscription_status === 'active');
+        $isActive = ($pharmacy->status === 'approved');
 
         $all_medicines = DB::table('medicines')->orderBy('name')->get();
+        $requestCollection = DB::table('reservations')
+            ->where('pharmacy_id', $pharmacy->id)
+            ->orderByDesc('created_at')
+            ->get();
 
         // Fixed: JOIN syntax and singular table name
         $inventory = [];
@@ -211,14 +258,15 @@ Route::get('/pharmacist', function () {
                 ->where('pm.pharmacy_id', $pharmacy->id)
                 ->get();
         } else {
-            flash('info', 'Your account is pending payment confirmation. Please contact support to activate your shop.');
+            flash('info', 'Your pharmacy account is pending admin verification. Inventory becomes visible after approval.');
         }
 
         return renderView('dashboard_pharmacist', [
             'pharmacy' => $pharmacy,
             'all_medicines' => $all_medicines,
             'inventory' => $inventory,
-            'isActive' => $isActive // Pass this to the view to hide/show buttons
+            'isActive' => $isActive,
+            'requestCollection' => $requestCollection,
         ]);
     } catch (\Exception $e) {
         flash('danger', 'Dashboard error: ' . $e->getMessage());
@@ -375,13 +423,15 @@ Route::get('/admin/pharmacies/{pharmacy}/{action}', function (int $pharmacy, str
     if ($action === 'approve') {
         DB::table('pharmacies')->where('id', $pharmacy)->update([
             'status' => 'approved',
-            'subscription_status' => 'active', // Mark as paid
-            'subscription_expiry' => now()->addDays(30), // Set expiry
-            'updated_at' => now() // Fixes the null timestamp issue
+            'updated_at' => now(),
         ]);
-        flash('success', "Pharmacy approved and subscription activated.");
+        flash('success', 'Pharmacy approved successfully.');
     } else {
-        DB::table('pharmacies')->where('id', $pharmacy)->update(['status' => 'rejected']);
+        DB::table('pharmacies')->where('id', $pharmacy)->update([
+            'status' => 'rejected',
+            'updated_at' => now(),
+        ]);
+        flash('info', 'Pharmacy application rejected.');
     }
 
     return redirect('/admin');

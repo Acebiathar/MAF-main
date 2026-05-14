@@ -31,7 +31,10 @@ if (!function_exists('flash')) {
      */
     function flash($category, $message)
     {
-        session()->push('alerts', [$category, $message]);
+        session()->push('alerts', [
+            'category' => $category,
+            'message' => $message,
+        ]);
     }
 }
 
@@ -46,7 +49,6 @@ if (!function_exists('renderView')) {
     function renderView(string $view, array $data = [])
     {
         $data['currentUser'] = currentUser();
-        $data['alerts'] = session()->pull('alerts', []);
         return view($view, $data);
     }
 }
