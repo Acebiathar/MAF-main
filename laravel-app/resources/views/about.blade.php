@@ -4,8 +4,8 @@
 
 @section('content')
 
-<!-- Hero Section -->
-<section class="hero-section py-5">
+<!-- 1. Hero Section -->
+<section class="hero-section py-5 mb-5">
     <div class="container">
         <div class="row align-items-center gy-4">
             <div class="col-lg-6 animate-on-scroll">
@@ -17,7 +17,7 @@
                     MedFinder helps people across Uganda locate available medicines at nearby pharmacies, compare options, and reserve what they need in minutes.
                 </p>
                 <div class="d-flex flex-column flex-sm-row gap-3">
-                    <a href="/{{ request()->getQueryString() ? '?'.request()->getQueryString() : '' }}" class="btn btn-primary btn-lg px-5 py-3">
+                    <a href="{{ route('home') }}" class="btn btn-primary btn-lg px-5 py-3">
                         Start Searching
                     </a>
                     <a href="#mission" class="btn btn-outline-primary btn-lg px-5 py-3">
@@ -25,6 +25,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="col-lg-6 animate-on-scroll">
                 <div class="hero-card position-relative overflow-hidden rounded-4 shadow-sm">
                     <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded-4 hero-img" alt="MedFinder hero image">
@@ -50,73 +51,49 @@
     </div>
 </section>
 
-
-
-<!-- Image -->
-<div class="col-lg-6 animate-on-scroll">
-    <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded shadow hover-lift" alt="Pharmacy">
-</div>
-
-</div>
-</section>
-
-<!-- Features / Values -->
-<section class="bg-light py-5">
+<!-- 2. Features / Values Section -->
+<section class="bg-light py-5 rounded-4">
     <div class="container text-center">
-
         <h3 class="fw-bold mb-3 animate-on-scroll">Why Choose MedFinder?</h3>
         <p class="text-muted mb-5 animate-on-scroll">
             Designed to improve healthcare access and reduce stress when searching for medicine.
         </p>
 
         <div class="row">
-
             <div class="col-md-3 mb-4">
                 <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
                     <i class="bi bi-search text-primary fs-2 icon-bounce"></i>
                     <h5 class="mt-3">Easy Search</h5>
-                    <p class="text-muted">
-                        Quickly find medicines available near you without moving around.
-                    </p>
+                    <p class="text-muted">Quickly find medicines available near you without moving around.</p>
                 </div>
             </div>
-
             <div class="col-md-3 mb-4">
                 <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
                     <i class="bi bi-geo-alt text-primary fs-2 icon-bounce"></i>
                     <h5 class="mt-3">Location Based</h5>
-                    <p class="text-muted">
-                        Discover nearby pharmacies based on your location.
-                    </p>
+                    <p class="text-muted">Discover nearby pharmacies based on your location.</p>
                 </div>
             </div>
-
             <div class="col-md-3 mb-4">
                 <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
                     <i class="bi bi-clock text-primary fs-2 icon-bounce"></i>
                     <h5 class="mt-3">Save Time</h5>
-                    <p class="text-muted">
-                        No more walking pharmacy to pharmacy searching for drugs.
-                    </p>
+                    <p class="text-muted">No more walking pharmacy to pharmacy searching for drugs.</p>
                 </div>
             </div>
-
             <div class="col-md-3 mb-4">
                 <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
                     <i class="bi bi-shield-check text-primary fs-2 icon-bounce"></i>
                     <h5 class="mt-3">Reliable Info</h5>
-                    <p class="text-muted">
-                        Get accurate and updated medicine availability.
-                    </p>
+                    <p class="text-muted">Get accurate and updated medicine availability.</p>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
-<!-- Mission Section -->
-<section class="container py-5 text-center">
+<!-- 3. Mission Section -->
+<section id="mission" class="container py-5 text-center">
     <div class="animate-on-scroll">
         <h3 class="fw-bold">Our Mission</h3>
         <p class="text-muted mx-auto" style="max-width: 700px;">
@@ -124,9 +101,8 @@
         </p>
     </div>
 
-    <!-- Interactive CTA -->
     <div class="mt-5 animate-on-scroll">
-        <a href="/?focus=search" class="btn btn-primary btn-lg px-5 py-3 pulse-btn">
+        <a href="{{ route('home') }}" class="btn btn-primary btn-lg px-5 py-3 pulse-btn">
             <i class="bi bi-search me-2"></i>Get Started Today
         </a>
     </div>
@@ -134,55 +110,18 @@
 
 @php
 $teamMembers = [
-[
-'name' => 'Amina N.',
-'role' => 'Founder',
-'image' => 'images/team-1.jpeg',
-'position' => 'center 18%',
-'bio' => 'Guides the MedFinder vision and long-term growth.',
-],
-[
-'name' => 'Brian K.',
-'role' => 'Lead Developer',
-'image' => 'images/team-2.png',
-'position' => 'center 20%',
-'bio' => 'Builds and improves the core platform experience.',
-],
-[
-'name' => 'Clara S.',
-'role' => 'Pharmacist Advisor',
-'image' => 'images/team 3.jpeg',
-'position' => 'center 16%',
-'bio' => 'Supports medicine information and pharmacy workflows.',
-],
-[
-'name' => 'David O.',
-'role' => 'Project Coordinator',
-'image' => 'images/team-1.jpeg',
-'position' => 'center 18%',
-'bio' => 'Keeps the team aligned and project delivery on track.',
-],
-[
-'name' => 'Esther M.',
-'role' => 'UI/UX Designer',
-'image' => 'images/team-2.png',
-'position' => 'center 20%',
-'bio' => 'Designs simple and easy-to-use patient journeys.',
-],
-[
-'name' => 'Frank P.',
-'role' => 'Support Lead',
-'image' => 'images/team 3.jpeg',
-'position' => 'center 16%',
-'bio' => 'Helps patients and pharmacies use the platform smoothly.',
-],
+['name' => 'Amina N.', 'role' => 'Founder', 'image' => 'images/team-1.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
+['name' => 'Brian K.', 'role' => 'Lead Developer', 'image' => 'images/team-2.png', 'bio' => 'Builds and improves the core platform experience.'],
+['name' => 'Clara S.', 'role' => 'Pharmacist Advisor', 'image' => 'images/team 3.jpeg', 'bio' => 'Supports medicine information and pharmacy workflows.'],
+['name' => 'David O.', 'role' => 'Project Coordinator', 'image' => 'images/team-1.jpeg', 'bio' => 'Keeps the team aligned and project delivery on track.'],
+['name' => 'Esther M.', 'role' => 'UI/UX Designer', 'image' => 'images/team-2.png', 'bio' => 'Designs simple and easy-to-use patient journeys.'],
+['name' => 'Frank P.', 'role' => 'Support Lead', 'image' => 'images/team 3.jpeg', 'bio' => 'Helps patients and pharmacies use the platform smoothly.'],
 ];
 @endphp
 
-<!-- Team Section -->
-<section class="bg-light py-5">
+<!-- 4. Team Section -->
+<section class="bg-light py-5 mb-5 rounded-4">
     <div class="container text-center">
-
         <h3 class="fw-bold mb-3 animate-on-scroll">Meet Our Team</h3>
         <p class="text-muted mb-5 animate-on-scroll">
             The people behind MedFinder working to improve access to medicine in Uganda.
@@ -196,20 +135,16 @@ $teamMembers = [
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
                         <p class="text-primary mb-2">{{ $member['role'] }}</p>
-                        <p class="text-muted small">
-                            {{ $member['bio'] }}
-                        </p>
+                        <p class="text-muted small">{{ $member['bio'] }}</p>
                         <div class="social-links mt-3">
                             <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
                             <a href="#" class="text-primary me-3"><i class="bi bi-envelope fs-5"></i></a>
-                            <a href="#" class="text-primary"><i class="bi bi-person-badge fs-5"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
-
     </div>
 </section>
 
@@ -218,106 +153,23 @@ $teamMembers = [
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Counter Animation
-        function animateCounters() {
-            const counters = document.querySelectorAll('.counter');
-            const speed = 200;
-
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                const increment = target / speed;
-
-                function updateCount() {
-                    const count = +counter.innerText;
-                    if (count < target) {
-                        counter.innerText = Math.ceil(count + increment);
-                        setTimeout(updateCount, 1);
-                    } else {
-                        counter.innerText = target + '+';
-                    }
-                }
-
-                updateCount();
-            });
-        }
-
         // Scroll Animation Observer
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 }
             });
-        }, observerOptions);
-
-        // Observe all animate-on-scroll elements
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Trigger counter animation when stats section is visible
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    statsObserver.unobserve(entry.target);
-                }
-            });
         }, {
-            threshold: 0.5
+            threshold: 0.1
         });
 
-        const statsSection = document.querySelector('.row.text-center.mt-4');
-        if (statsSection) {
-            statsObserver.observe(statsSection);
-        }
-
-        // Feature card hover effects
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px)';
-                this.style.boxShadow = '0 15px 35px rgba(0,0,0,0.1)';
-            });
-
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 4px 6px rgba(0,0,0,0.07)';
-            });
-        });
-
-        // Team card hover effects
-        document.querySelectorAll('.team-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-15px)';
-                this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
-            });
-
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 4px 6px rgba(0,0,0,0.07)';
-            });
-        });
-
-        // Pulse button effect
-        const pulseBtn = document.querySelector('.pulse-btn');
-        if (pulseBtn) {
-            setInterval(() => {
-                pulseBtn.classList.add('pulse-animation');
-                setTimeout(() => {
-                    pulseBtn.classList.remove('pulse-animation');
-                }, 1000);
-            }, 3000);
-        }
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
     });
 </script>
 
 <style>
-    /* Scroll Animation Styles */
+    /* Cleaned up CSS */
     .animate-on-scroll {
         opacity: 0;
         transform: translateY(30px);
@@ -329,122 +181,30 @@ $teamMembers = [
         transform: translateY(0);
     }
 
-    /* Hover Effects */
-    .hover-lift {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-    }
-
     .feature-card {
         transition: all 0.3s ease;
-        cursor: pointer;
+        border: none;
     }
 
-    .icon-bounce {
-        transition: transform 0.3s ease;
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
-    .feature-card:hover .icon-bounce {
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    /* Team Card Styles */
     .team-card {
-        transition: all 0.3s ease;
-        cursor: pointer;
+        border-radius: 20px;
         overflow: hidden;
-        border-radius: 28px;
-        background: #fff;
-    }
-
-    .team-card .card-img-top {
-        width: 100%;
-        margin: 0;
-        border-radius: 28px 28px 0 0;
-        background: #eef3f8;
+        transition: 0.3s;
     }
 
     .team-img {
-        display: block;
-        width: 100%;
-        height: 340px;
+        height: 300px;
         object-fit: cover;
-        transition: transform 0.3s ease;
     }
 
-    .team-img-pos-1 {
-        object-position: center 18%;
-    }
-
-    .team-img-pos-2 {
-        object-position: center 20%;
-    }
-
-    .team-img-pos-3 {
-        object-position: center 16%;
-    }
-
-    .team-card:hover .team-img {
-        transform: scale(1.02);
-    }
-
-    .social-links a {
-        transition: all 0.3s ease;
-        display: inline-block;
-    }
-
-    .social-links a:hover {
-        transform: translateY(-3px);
-        color: #0d6efd !important;
-    }
-
-    /* Pulse Button */
-    .pulse-btn {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .pulse-animation {
-        animation: pulse 1s ease-in-out;
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
-        }
-
-        50% {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5);
-        }
-
-        100% {
-            transform: scale(1);
-            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
-        }
-    }
-
-    /* Hero Section */
     .hero-section {
         background: linear-gradient(135deg, #f4f8ff 0%, #e7efff 100%);
         border-radius: 32px;
-        padding: 4rem 0;
-    }
-
-    .hero-card {
-        min-height: 430px;
-        background: #fff;
-    }
-
-    .hero-img {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
     }
 
     .hero-card-overlay {
@@ -452,57 +212,8 @@ $teamMembers = [
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(13, 110, 253, 0.82);
-        border-top-left-radius: 1.5rem;
-        border-top-right-radius: 1.5rem;
-    }
-
-    .hero-card-overlay h6,
-    .hero-card-overlay small {
-        color: #fff;
-    }
-
-    @media (max-width: 991.98px) {
-        .hero-card {
-            min-height: 360px;
-        }
-    }
-
-    @media (max-width: 767.98px) {
-        .hero-card-overlay {
-            padding: 1.5rem;
-        }
-
-        .hero-section {
-            padding: 3rem 0;
-        }
-    }
-
-    /* Staggered animation delays */
-    .animate-on-scroll:nth-child(1) {
-        transition-delay: 0.1s;
-    }
-
-    .animate-on-scroll:nth-child(2) {
-        transition-delay: 0.2s;
-    }
-
-    .animate-on-scroll:nth-child(3) {
-        transition-delay: 0.3s;
-    }
-
-    .animate-on-scroll:nth-child(4) {
-        transition-delay: 0.4s;
-    }
-
-    .animate-on-scroll:nth-child(5) {
-        transition-delay: 0.5s;
-    }
-
-    @media (max-width: 767.98px) {
-        .team-img {
-            height: 300px;
-        }
+        background: rgba(13, 110, 253, 0.85);
+        color: white;
     }
 </style>
 @endsection
