@@ -4,7 +4,6 @@
 
 @section('styles')
 <link rel="preload" as="image" href="https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1200">
-<link rel="stylesheet" href="{{ asset('css/index-home.css') }}">
 @endsection
 
 @section('fullwidth')
@@ -33,6 +32,86 @@
             </div>
         </div>
     </div>
+
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold h3 mb-0">Featured <span class="text-primary">Partners & Products</span></h2>
+                <div class="carousel-controls">
+                    <button class="btn btn-outline-primary btn-sm rounded-circle" type="button" data-bs-target="#adCarousel" data-bs-slide="prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm rounded-circle" type="button" data-bs-target="#adCarousel" data-bs-slide="next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="adCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <!-- Slide 1: Hospitals -->
+                    <div class="carousel-item active" data-bs-interval="5000">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="ad-card">
+                                    <span class="badge bg-danger mb-2">Hospital</span>
+                                    <h4>Mulago National Referral</h4>
+                                    <p class="text-muted small">Specialized care and 24/7 emergency services.</p>
+                                    <img src="{{ asset('images/pharmacy3.jpg') }}" alt="pharmacy3" class="img-fluid">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="ad-card">
+                                    <span class="badge bg-danger mb-2">Hospital</span>
+                                    <h4>Case Medical Centre</h4>
+                                    <p class="text-muted small">Quality healthcare for your entire family.</p>
+                                    <img src="{{ asset('images/pharmacy.jpg') }}" alt="pharmacy" class="img-fluid">
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-none d-md-block">
+                                <div class="ad-card border-primary border">
+                                    <span class="badge bg-primary mb-2">Promoted Drug</span>
+                                    <h4>Panadol Extra</h4>
+                                    <p class="text-muted small">Fast-acting relief for tough headaches.</p>
+                                    <img src="{{ asset('images/drugs.jpg') }}" class="img-fluid rounded-3" alt="drugs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Drugs & Pharmacies -->
+                    <div class="carousel-item" data-bs-interval="5000">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="ad-card">
+                                    <span class="badge bg-primary mb-2">Featured Drug</span>
+                                    <h4>Amoxicillin</h4>
+                                    <p class="text-muted small">Wide spectrum antibiotics available at verified stores.</p>
+                                    <img src="{{ asset('images/amoxy.jpg') }}" class="img-fluid rounded-3" alt="amoxy">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="ad-card">
+                                    <span class="badge bg-success mb-2">Pharmacy</span>
+                                    <h4>First Pharmacy</h4>
+                                    <p class="text-muted small">Your neighborhood partner for genuine medicine.</p>
+                                    <img src="https://via.placeholder.com/400x200?text=First+Pharmacy" class="img-fluid rounded-3" alt="Pharmacy">
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-none d-md-block">
+                                <div class="ad-card border-warning border">
+                                    <span class="badge bg-warning text-dark mb-2">Limited Offer</span>
+                                    <h4>Vitamin C Boost</h4>
+                                    <p class="text-muted small">20% off at all Kampala-based pharmacies.</p>
+                                    <img src="https://via.placeholder.com/400x200?text=Vitamin+C" class="img-fluid rounded-3" alt="Drug">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- ========== NEW SECTION: HOW IT WORKS (CAROUSEL) ========== -->
     <div class="container py-5 my-3">

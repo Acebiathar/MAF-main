@@ -6,8 +6,8 @@
     <div class="card shadow border-0 rounded-4">
       <div class="card-body p-4 p-md-5">
         <div class="text-center mb-4">
-            <h4 class="fw-bold mb-1">Create Your MAF Account</h4>
-            <p class="text-muted small">Join our network of patients and pharmacies in Uganda</p>
+          <h4 class="fw-bold mb-1">Create Your MAF Account</h4>
+          <p class="text-muted small">Join our network of patients and pharmacies in Uganda</p>
         </div>
 
         <form method="POST" action="/register">
@@ -37,7 +37,7 @@
           {{-- Extra fields for Pharmacists (Hidden by default) --}}
           <div id="pharmacyFields" class="row g-3 mt-2 d-none pt-3 border-top">
             <div class="col-12">
-                <h6 class="fw-bold text-primary mb-3">Pharmacy Verification Details</h6>
+              <h6 class="fw-bold text-primary mb-3">Pharmacy Verification Details</h6>
             </div>
             <div class="col-md-6">
               <label class="form-label small fw-bold">Pharmacy Name</label>
@@ -56,17 +56,22 @@
               <input class="form-control" name="phone" placeholder="+256...">
             </div>
             <div class="col-12">
-                <div class="alert alert-warning py-2 small mb-0">
-                    <i class="bi bi-info-circle me-2"></i>Note: Pharmacist accounts require verification by our Admin team before you can list medicine.
-                </div>
+              <div class="alert alert-warning py-2 small mb-0">
+                <i class="bi bi-info-circle me-2"></i>Note: Pharmacist accounts require verification by our Admin team before you can list medicine.
+              </div>
             </div>
           </div>
 
           <button class="btn btn-primary w-100 mt-4 py-2 fw-bold shadow-sm" type="submit">
             Create My Account
           </button>
-          
+
           <div class="text-center mt-3 small">
             Already registered? <a href="/login" class="fw-bold text-decoration-none">Log In Here</a>
           </div>
-        </
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection

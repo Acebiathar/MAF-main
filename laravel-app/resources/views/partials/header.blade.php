@@ -6,9 +6,13 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ route('how') }}">How it Works</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+                <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('how') }}">How it Works</a></li>
+                <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
+                <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+                <li class="nav-item auth-buttons d-flex gap-2 align-items-center">
+                    <a href="{{ route('login') }}" class="btn btn-outline-primary btn-login px-4 rounded-pill" data-label="Login">Login</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary btn-register text-white px-4 rounded-pill" data-label="Register">Register</a>
+                </li>
             </ul>
         </div>
     </div>
