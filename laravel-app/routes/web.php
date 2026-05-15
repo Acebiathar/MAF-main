@@ -108,18 +108,22 @@ Route::get('/', function (Request $request) {
         return redirect('/');
     }
 });
+Route::get('/home', function () {
+    return redirect('home');
+})->name('home');
 Route::get('/about', function () {
     return renderView('about');
-});
-Route::get('/how-it-works', function () {
-    return renderView('how');
-});
+})->name('about');
+
+Route::get('/how', function () {
+    return view('how'); // Ensure this view exists
+})->name('how');
 Route::get('/contact', function () {
     return renderView('contact');
-});
+})->name('contact');
 Route::get('/privacy', function () {
     return renderView('privacy');
-});
+})->name('privacy');
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
 
