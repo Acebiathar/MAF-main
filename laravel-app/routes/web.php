@@ -150,7 +150,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
         return redirect('/login');
     }
     return renderView('auth.login');
-});
+})->name('login');
 
 Route::match(['get', 'post'], '/register', function (Request $request) {
     if ($request->isMethod('get') && ($user = currentUser())) {
@@ -227,7 +227,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
         return redirect('/login');
     }
     return renderView('auth.register');
-});
+})->name('register');
 
 Route::get('/logout', function () {
     session()->forget('user_id');
