@@ -18,7 +18,7 @@ if (!function_exists('currentUser')) {
 if (!function_exists('flash')) {
     function flash($category, $message)
     {
-        session()->push('alerts', [
+        session()->put('alerts', [
             'category' => $category,
             'message' => $message,
         ]);
