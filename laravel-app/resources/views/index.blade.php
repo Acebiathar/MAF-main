@@ -292,60 +292,74 @@
             </div>
         </div>
     </div>
-    </tr>
-    </thead>
-    <tbody>
-        @forelse ($results as $item)
-        <tr>
-            <td class="ps-4"><strong>{{ $item->medicine_name }}</strong></td>
-            <td>
-                <div class="fw-semibold text-primary">{{ $item->pharmacy_name }}</div>
-                <small class="text-muted">{{ $item->pharmacy_location }}</small>
-            </td>
-            <td>{{ number_format($item->price, 0) }} UGX</td>
-            <td>
-                @if($item->quantity > 0)
-                <span class="badge-stock">In Stock ({{ $item->quantity }})</span>
-                @else
-                <span class="badge bg-light text-danger">Out of Stock</span>
-                @endif
-            </td>
-            <td class="text-end pe-4">
-                @if(isset($currentUser) && $currentUser->role === 'patient')
-                <form action="/reserve/{{ $item->id }}" method="POST">
-                    @csrf
-                    <button class="btn btn-sm btn-primary rounded-pill px-3">Reserve</button>
-                </form>
-                @elseif(isset($currentUser))
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" type="button" disabled>
-                    Patients can reserve
-                </button>
-                @else
-                <a href="/login" class="btn btn-sm btn-primary rounded-pill px-3">Login to Reserve</a>
-                @endif
-            </td>
-        </tr>
-        @empty
-        <tr>
-            <td colspan="5" class="text-center py-5 text-muted">No medicines found. Try another search.</td>
-        </tr>
-        @endforelse
-    </tbody>
-    </table>
-</div>
-</div>
-</div>
-@endif
 
-<div class="container mb-5">
-    <div class="bg-danger text-white rounded-4 p-4 d-flex justify-content-between align-items-center flex-wrap">
-        <div>
-            <h4 class="fw-bold mb-1"><i class="bi bi-telephone-fill me-2"></i> Emergency Support</h4>
-            <p class="mb-0 opacity-75">Need urgent medication? Call our 24/7 hotline.</p>
+    @if($results->isNotEmpty())
+    <div class="container py-5">
+        <div class="glass-card">
+            <h3 class="fw-bold mb-4"><i class="bi bi-table me-2"></i> Search Results</h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-4">Medicine</th>
+                            <th>Pharmacy</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($results as $item)
+                        <tr>
+                            <td class="ps-4"><strong>{{ $item->medicine_name }}</strong></td>
+                            <td>
+                                <div class="fw-semibold text-primary">{{ $item->pharmacy_name }}</div>
+                                <small class="text-muted">{{ $item->pharmacy_location }}</small>
+                            </td>
+                            <td>{{ number_format($item->price, 0) }} UGX</td>
+                            <td>
+                                @if($item->quantity > 0)
+                                <span class="badge-stock">In Stock ({{ $item->quantity }})</span>
+                                @else
+                                <span class="badge bg-light text-danger">Out of Stock</span>
+                                @endif
+                            </td>
+                            <td class="text-end pe-4">
+                                @if(isset($currentUser) && $currentUser->role === 'patient')
+                                <form action="/reserve/{{ $item->id }}" method="POST">
+                                    @csrf
+                                    <button class="btn btn-sm btn-primary rounded-pill px-3">Reserve</button>
+                                </form>
+                                @elseif(isset($currentUser))
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" type="button" disabled>
+                                    Patients can reserve
+                                </button>
+                                @else
+                                <a href="/login" class="btn btn-sm btn-primary rounded-pill px-3">Login to Reserve</a>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">No medicines found. Try another search.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <h2 class="fw-bold mb-0">0800 199 199</h2>
     </div>
-</div>
+    @endif
+
+    <div class="container mb-5">
+        <div class="bg-danger text-white rounded-4 p-4 d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-telephone-fill me-2"></i> Emergency Support</h4>
+                <p class="mb-0 opacity-75">Need urgent medication? Call our 24/7 hotline.</p>
+            </div>
+            <h2 class="fw-bold mb-0">0800 199 199</h2>
+        </div>
+    </div>
 </div>
 
 <div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11"></div>

@@ -25,14 +25,6 @@ if (!function_exists('flash')) {
     }
 }
 
-if (!function_exists('renderView')) {
-    function renderView(string $view, array $data = [])
-    {
-        $data['currentUser'] = currentUser();
-        return view($view, $data);
-    }
-}
-
 if (!function_exists('redirectToDashboard')) {
     function redirectToDashboard(object $user)
     {
@@ -50,64 +42,7 @@ if (!function_exists('redirectToDashboard')) {
 
 // --- PUBLIC PAGES (Home, Search, About) ---
 
-Route::get('/', function (Request $request) {
-    try {
-        // Get items from the editable list
-        $items = $request->query('item_names', []);
-
-        $currentUser = currentUser();
-        // Initialize collections to prevent "Undefined variable" errors
-        $results = collect();
-        $alternatives = collect();
-
-        if (!empty($items)) {
-            // 1. Get all matches for any of the items from the database
-            $allMatches = DB::table('pharmacy_medicine as pm')
-                ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
-                ->join('pharmacies as p', 'pm.pharmacy_id', '=', 'p.id')
-                ->select(
-                    'pm.*',
-                    'm.name as medicine_name',
-                    'm.category as medicine_category',
-                    'p.name as pharmacy_name',
-                    'p.location as pharmacy_location'
-                )
-                ->where(function ($query) use ($items) {
-                    foreach ($items as $item) {
-                        $query->orWhere('m.name', 'like', "%{$item}%");
-                    }
-                })
-                ->where('pm.quantity', '>', 0)
-                ->get();
-
-            // 2. Group by pharmacy and sort so those with the MOST matches appear first
-            $results = $allMatches->groupBy('pharmacy_name')
-                ->sortByDesc(function ($group) {
-                    return $group->unique('medicine_name')->count();
-                })
-                ->flatten();
-
-            // 3. Get Alternatives (Same category as the first item searched)
-            if ($allMatches->isNotEmpty()) {
-                $firstCategory = $allMatches->first()->medicine_category;
-                $alternatives = DB::table('medicines')
-                    ->where('category', $firstCategory)
-                    ->whereNotIn('name', $items) // Don't suggest what they already searched for
-                    ->limit(4)
-                    ->get();
-            }
-        }
-
-        $query = implode(', ', $items);
-        $pharmacies = DB::table('pharmacies')->where('status', 'approved')->limit(4)->get();
-
-        // Added 'alternatives' to the compact list to stop the error
-        return renderView('index', compact('query', 'results', 'pharmacies', 'alternatives', 'currentUser'));
-    } catch (\Exception $e) {
-        flash('danger', 'Search error: ' . $e->getMessage());
-        return redirect('/');
-    }
-});
+Route::get('/', 'App\Http\Controllers\HomeController@index');
 Route::get('/home', function () {
     return redirect('home');
 })->name('home');
