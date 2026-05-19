@@ -211,7 +211,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
                 DB::table('pharmacies')->insert([
                     'name' => $pharmacyName,
                     'location' => $location,
-                    'phone_number' => $phoneNumber,
+                    'phone' => $phoneNumber,
                     'license_number' => $licenseNumber,
                     'status' => 'pending',
                     'owner_id' => $userId,
@@ -254,7 +254,7 @@ Route::get('/pharmacist', function () {
             ->get();
 
         // Fixed: JOIN syntax and singular table name
-        $inventory = [];
+        $inventory = collect();
         if ($isActive) {
             $inventory = DB::table('pharmacy_medicine as pm')
                 ->leftJoin('medicines as m', 'pm.medicine_id', '=', 'm.id')
