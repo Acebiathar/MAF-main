@@ -10,8 +10,14 @@
                 <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
                 <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
                 <li class="nav-item auth-buttons d-flex gap-2 align-items-center">
-                    <a href="{{ route('login') }}" class="btn btn-outline-primary btn-login px-4 rounded-pill" data-label="Login">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary btn-register text-white px-4 rounded-pill" data-label="Register">Register</a>
+                    {{-- Check if a user is logged in using your global helper --}}
+                    @if(currentUser())
+                        <a href="{{ url('/logout') }}" class="btn btn-outline-danger px-4 rounded-pill">Logout</a>
+                    @else
+                        {{-- Your original buttons --}}
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary btn-login px-4 rounded-pill" data-label="Login">Login</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary btn-register text-white px-4 rounded-pill" data-label="Register">Register</a>
+                    @endif
                 </li>
             </ul>
         </div>

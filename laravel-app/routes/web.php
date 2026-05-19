@@ -18,7 +18,7 @@ if (!function_exists('currentUser')) {
 if (!function_exists('flash')) {
     function flash($category, $message)
     {
-        session()->push('alerts', [
+        session()->put('alerts', [
             'category' => $category,
             'message' => $message,
         ]);
@@ -85,7 +85,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
         return redirect('/login');
     }
     return renderView('auth.login');
-});
+})->name('login');
 
 Route::match(['get', 'post'], '/register', function (Request $request) {
     if ($request->isMethod('get') && ($user = currentUser())) {
@@ -146,7 +146,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
                 DB::table('pharmacies')->insert([
                     'name' => $pharmacyName,
                     'location' => $location,
-                    'phone_number' => $phoneNumber,
+                    'phone' => $phoneNumber,
                     'license_number' => $licenseNumber,
                     'status' => 'pending',
                     'owner_id' => $userId,
@@ -162,7 +162,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
         return redirect('/login');
     }
     return renderView('auth.register');
-});
+})->name('register');
 
 Route::get('/logout', function () {
     session()->forget('user_id');
@@ -189,7 +189,7 @@ Route::get('/pharmacist', function () {
             ->get();
 
         // Fixed: JOIN syntax and singular table name
-        $inventory = [];
+        $inventory = collect();
         if ($isActive) {
             $inventory = DB::table('pharmacy_medicine as pm')
                 ->leftJoin('medicines as m', 'pm.medicine_id', '=', 'm.id')
