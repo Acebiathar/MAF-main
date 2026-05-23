@@ -320,7 +320,6 @@
                                                     <th>Pharmacy Details</th>
                                                     <th>Price</th>
                                                     <th>Availability Status</th>
-                                                    >>>>>>> 465936978b381bee5ce01252723434e57e26c4ea
                                                     <th class="text-end pe-4">Action</th>
                                                 </tr>
                                             </thead>
@@ -366,39 +365,38 @@
                                 </div>
                             </div>
                             @endif
-                            <<<<<<< HEAD
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
 
-                                <div class="container mb-5">
-                                <div class="bg-danger text-white rounded-4 p-4 d-flex justify-content-between align-items-center flex-wrap">
-                                    <div>
-                                        <h4 class="fw-bold mb-1"><i class="bi bi-telephone-fill me-2"></i> Emergency Support</h4>
-                                        <p class="mb-0 opacity-75">Need urgent medication? Call our 24/7 hotline.</p>
-                                    </div>
-                                    <h2 class="fw-bold mb-0">0800 199 199</h2>
-                                    =======
-                                    <div class="container mb-5">
-                                        <div class="bg-danger text-white rounded-4 p-4 d-flex justify-content-between align-items-center flex-wrap">
-                                            <div>
-                                                <h4 class="fw-bold mb-1"><i class="bi bi-telephone-fill me-2"></i> Emergency Support</h4>
-                                                <p class="mb-0 opacity-75">Need urgent medication? Call our 24/7 hotline.</p>
-                                                >>>>>>> 465936978b381bee5ce01252723434e57e26c4ea
-                                            </div>
-                                        </div>
-                                    </div>
+    <div class="container mb-5">
+        <div class="bg-danger text-white rounded-4 p-4 d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-telephone-fill me-2"></i> Emergency Support</h4>
+                <p class="mb-0 opacity-75">Need urgent medication? Call our 24/7 hotline.</p>
+            </div>
+            <h2 class="fw-bold mb-0">0800 199 199</h2>
+        </div>
+    </div>
 
-                                    <div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11"></div>
-                                    @endsection
+    <div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11"></div>
+</div>
+@endsection
 
-                                    @section('scripts')
-                                    <script>
-                                        function showToast(message, type = 'info') {
-                                            const container = document.getElementById('toastRoot');
-                                            if (!container) return;
+@section('scripts')
+<script>
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastRoot');
+        if (!container) return;
 
-                                            const toast = document.createElement('div');
-                                            toast.className = 'toast-notify';
-                                            toast.style.borderLeftColor = type === 'error' ? '#dc3545' : (type === 'success' ? '#198754' : '#0b5ed7');
-                                            toast.innerHTML = `
+        const toast = document.createElement('div');
+        toast.className = 'toast-notify';
+        toast.style.borderLeftColor = type === 'error' ? '#dc3545' : (type === 'success' ? '#198754' : '#0b5ed7');
+        toast.innerHTML = `
             <div class="d-flex justify-content-between align-items-center">
                 <strong>${type === 'error' ? 'Warning' : type === 'success' ? 'Success' : 'Info'}</strong>
                 <button class="btn-close btn-sm" type="button" aria-label="Close"></button>
@@ -406,35 +404,35 @@
             <div class="mt-1">${message}</div>
         `;
 
-                                            toast.querySelector('.btn-close')?.addEventListener('click', () => toast.remove());
-                                            container.appendChild(toast);
-                                            setTimeout(() => toast.remove(), 4200);
-                                        }
+        toast.querySelector('.btn-close')?.addEventListener('click', () => toast.remove());
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4200);
+    }
 
-                                        function escapeHtml(str) {
-                                            return str.replace(/[&<>]/g, function(m) {
-                                                if (m === '&') return '&amp;';
-                                                if (m === '<') return '&lt;';
-                                                if (m === '>') return '&gt;';
-                                                return m;
-                                            });
-                                        }
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
-                                        function updateSearchBtn() {
-                                            const list = document.getElementById('editableItemList');
-                                            const btn = document.getElementById('searchBtn');
-                                            const form = document.getElementById('searchForm');
-                                            if (!list || !btn || !form) return;
+    function updateSearchBtn() {
+        const list = document.getElementById('editableItemList');
+        const btn = document.getElementById('searchBtn');
+        const form = document.getElementById('searchForm');
+        if (!list || !btn || !form) return;
 
-                                            btn.style.display = list.children.length > 0 ? 'block' : 'none';
-                                            form.querySelectorAll('input[name="item_names[]"]').forEach((el) => el.remove());
-                                            list.querySelectorAll('input[type="hidden"]').forEach((inp) => form.appendChild(inp.cloneNode(true)));
-                                        }
+        btn.style.display = list.children.length > 0 ? 'block' : 'none';
+        form.querySelectorAll('input[name="item_names[]"]').forEach((el) => el.remove());
+        list.querySelectorAll('input[type="hidden"]').forEach((inp) => form.appendChild(inp.cloneNode(true)));
+    }
 
-                                        function createTag(value) {
-                                            const wrap = document.createElement('div');
-                                            wrap.className = 'tag-item';
-                                            wrap.innerHTML = `
+    function createTag(value) {
+        const wrap = document.createElement('div');
+        wrap.className = 'tag-item';
+        wrap.innerHTML = `
             <span>${escapeHtml(value)}</span>
             <button class="btn btn-sm p-0 border-0 bg-transparent text-danger" type="button" aria-label="Remove medicine">
                 <i class="bi bi-x-circle-fill"></i>
@@ -442,85 +440,85 @@
             <input type="hidden" name="item_names[]" value="${escapeHtml(value)}">
         `;
 
-                                            wrap.querySelector('button')?.addEventListener('click', () => {
-                                                wrap.remove();
-                                                updateSearchBtn();
-                                            });
+        wrap.querySelector('button')?.addEventListener('click', () => {
+            wrap.remove();
+            updateSearchBtn();
+        });
 
-                                            return wrap;
-                                        }
+        return wrap;
+    }
 
-                                        function addItem() {
-                                            const input = document.getElementById('itemInput');
-                                            const mainList = document.getElementById('editableItemList');
-                                            if (!input || !mainList) return;
+    function addItem() {
+        const input = document.getElementById('itemInput');
+        const mainList = document.getElementById('editableItemList');
+        if (!input || !mainList) return;
 
-                                            const value = input.value.trim();
-                                            if (!value) {
-                                                showToast('Please enter a medicine name', 'error');
-                                                input.focus();
-                                                return;
-                                            }
+        const value = input.value.trim();
+        if (!value) {
+            showToast('Please enter a medicine name', 'error');
+            input.focus();
+            return;
+        }
 
-                                            mainList.appendChild(createTag(value));
-                                            input.value = '';
-                                            updateSearchBtn();
-                                            showToast(`Added "${value}" to the search list`, 'success');
-                                            input.focus();
-                                        }
+        mainList.appendChild(createTag(value));
+        input.value = '';
+        updateSearchBtn();
+        showToast(`Added "${value}" to the search list`, 'success');
+        input.focus();
+    }
 
-                                        function animateCounterEl(el, target) {
-                                            let current = 0;
-                                            const step = Math.ceil(target / 45);
-                                            const interval = setInterval(() => {
-                                                current += step;
-                                                if (current >= target) {
-                                                    el.innerText = target.toLocaleString();
-                                                    clearInterval(interval);
-                                                } else {
-                                                    el.innerText = current.toLocaleString();
-                                                }
-                                            }, 20);
-                                        }
+    function animateCounterEl(el, target) {
+        let current = 0;
+        const step = Math.ceil(target / 45);
+        const interval = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                el.innerText = target.toLocaleString();
+                clearInterval(interval);
+            } else {
+                el.innerText = current.toLocaleString();
+            }
+        }, 20);
+    }
 
-                                        window.addEventListener('load', function() {
-                                            const spinner = document.getElementById('spinnerOverlay');
-                                            if (spinner) {
-                                                spinner.style.opacity = '0';
-                                                setTimeout(() => {
-                                                    spinner.style.display = 'none';
-                                                }, 400);
-                                            }
-                                        });
+    window.addEventListener('load', function() {
+        const spinner = document.getElementById('spinnerOverlay');
+        if (spinner) {
+            spinner.style.opacity = '0';
+            setTimeout(() => {
+                spinner.style.display = 'none';
+            }, 400);
+        }
+    });
 
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            const input = document.getElementById('itemInput');
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('itemInput');
 
-                                            if (document.getElementById('medCount')) animateCounterEl(document.getElementById('medCount'), 2480);
-                                            if (document.getElementById('pharCount')) animateCounterEl(document.getElementById('pharCount'), 186);
-                                            if (document.getElementById('stockCount')) animateCounterEl(document.getElementById('stockCount'), 58200);
+        if (document.getElementById('medCount')) animateCounterEl(document.getElementById('medCount'), 2480);
+        if (document.getElementById('pharCount')) animateCounterEl(document.getElementById('pharCount'), 186);
+        if (document.getElementById('stockCount')) animateCounterEl(document.getElementById('stockCount'), 58200);
 
-                                            if (input) {
-                                                input.addEventListener('keydown', (event) => {
-                                                    if (event.key === 'Enter') {
-                                                        event.preventDefault();
-                                                        addItem();
-                                                    }
-                                                });
-                                            }
+        if (input) {
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addItem();
+                }
+            });
+        }
 
-                                            const urlParams = new URLSearchParams(window.location.search);
-                                            if (urlParams.get('focus') === 'search' && input) {
-                                                setTimeout(() => {
-                                                    input.focus();
-                                                    input.scrollIntoView({
-                                                        behavior: 'smooth',
-                                                        block: 'center'
-                                                    });
-                                                }, 500);
-                                            }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('focus') === 'search' && input) {
+            setTimeout(() => {
+                input.focus();
+                input.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 500);
+        }
 
-                                            updateSearchBtn();
-                                        });
-                                    </script>
-                                    @endsection
+        updateSearchBtn();
+    });
+</script>
+@endsection
