@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 
 // --- GLOBAL HELPERS ---
 if (!function_exists('renderView')) {
@@ -380,4 +381,31 @@ Route::get('/admin/pharmacies/{pharmacy}/{action}', function (int $pharmacy, str
     }
 
     return redirect('/admin');
+});
+
+
+// Inject testimonials directly into the index view automatically
+View::composer('index', function ($view) {
+    $testimonials = [
+        [
+            'name' => 'John Doe',
+            'role' => 'Patient',
+            'quote' => 'Finding my prescribed medication used to take hours. With this platform, I found a nearby pharmacy carrying it in under two minutes!',
+            'avatar' => 'https://i.pravatar.cc/150?img=11'
+        ],
+        [
+            'name' => 'Dr. Sarah Jane',
+            'role' => 'Pharmacist (City Pharma)',
+            'quote' => 'This system has streamlined our inventory requests. We can easily confirm stock availability and help patients when they need it most.',
+            'avatar' => 'https://i.pravatar.cc/150?img=47'
+        ],
+        [
+            'name' => 'Michael Carter',
+            'role' => 'Patient',
+            'quote' => 'Excellent service! The reservation feature gave me peace of mind knowing my chronic illness medication was held for pickup.',
+            'avatar' => 'https://i.pravatar.cc/150?img=33'
+        ]
+    ];
+
+    $view->with('testimonials', $testimonials);
 });
