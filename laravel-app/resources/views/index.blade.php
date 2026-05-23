@@ -3,7 +3,6 @@
 @section('title', 'Home | Medfinder')
 
 @section('styles')
-<!-- Inter Font & Bootstrap Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="preload" as="image" href="https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1200">
@@ -191,7 +190,6 @@
 
 @section('content')
 <div class="landing-page">
-    <!-- Network Loader Animation overlay -->
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="text-center">
             <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem; stroke-width: 3;"></div>
@@ -199,7 +197,6 @@
         </div>
     </div>
 
-    <!-- Hero Framework Section -->
     <div id="heroCarousel" class="carousel slide hero-carousel">
         <div class="carousel-inner">
             <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1600');">
@@ -211,7 +208,6 @@
                                 <h1 class="display-4 fw-bold text-white mb-3">Find Prescriptions Near You, Instantly.</h1>
                                 <p class="lead text-white-50 mb-4">Unified platform mapping local medical stock configurations directly to real-time consumer and emergency needs.</p>
                                 
-                                <!-- Core Medicine Input Engine -->
                                 <div class="search-container">
                                     <h3 class="mb-3 text-white fw-semibold h5"><i class="bi bi-search me-2 text-info"></i> Search Medication</h3>
                                     
@@ -221,12 +217,10 @@
                                             <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold transition" onclick="addItem()">Add to List</button>
                                         </div>
                                         
-                                        <!-- Container dynamically managed via JavaScript tagging architecture -->
                                         <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-3" style="min-height: 40px;"></div>
                                         
-                                        <!-- Submission button triggered when items are queued -->
                                         <button type="submit" id="searchBtn" class="btn btn-info text-white w-100 rounded-pill py-2.5 fw-bold transition shadow-sm" style="display: none;">
-                                            <i class="bi bi-patch-check-fill me-2"></i>Scan Verified Registries
+                                            <i class="bi bi-patch-check-fill me-2"></i>Search
                                         </button>
                                     </form>
                                 </div>
@@ -237,33 +231,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>    
 
-    <!-- Live Performance Network Cluster Stats -->
-    <section class="container mt-n5 position-relative" style="z-index: 10; margin-top: -4rem;">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="glass-card dark-bg p-4 px-md-5">
-                    <div class="row text-center align-items-center">
-                        <div class="col-4">
-                            <h2 class="display-6 fw-bold mb-1 tracking-tight text-white" id="medCount">0</h2>
-                            <span class="text-white-50 small text-uppercase tracking-wider fw-semibold">Tracked Meds</span>
-                        </div>
-                        <div class="col-4 border-start border-end border-white border-opacity-10">
-                            <h2 class="display-6 fw-bold mb-1 tracking-tight text-white" id="pharCount">0</h2>
-                            <span class="text-white-50 small text-uppercase tracking-wider fw-semibold">Pharmacies</span>
-                        </div>
-                        <div class="col-4">
-                            <h2 class="display-6 fw-bold mb-1 tracking-tight text-white" id="stockCount">0</h2>
-                            <span class="text-white-50 small text-uppercase tracking-wider fw-semibold">Stock Units</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Results Rendering Grid Infrastructure -->
     @if(isset($results) && $results->isNotEmpty())
     <div class="container py-5">
         <div class="glass-card p-0 overflow-hidden border-0 shadow-lg">
@@ -326,7 +295,6 @@
     </div>
     @endif
 
-    <!-- Promotional Partner Slider Sections -->
     <section class="py-5 bg-white mt-5">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -382,7 +350,6 @@
         </div>
     </section>
 
-    <!-- Operational System Overview Steps -->
     <section class="container py-5 my-4">
         <div class="text-center mb-5">
             <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">System Pipeline</span>
@@ -415,7 +382,6 @@
         </div>
     </section>
 
-    <!-- Testimonials Layout Section Component -->
     <section style="background-color: #f1f5f9; padding: 5rem 1.5rem; border-top: 1px solid var(--slate-200);">
         <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
             <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
@@ -425,7 +391,6 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
                 @foreach($testimonials as $testimonial)
                     <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                        <!-- Security Patch: Escaped output via double braces prevents arbitrary XSS injection attacks -->
                         <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">
                             "{{ $testimonial['quote'] }}"
                         </p>
@@ -443,7 +408,6 @@
         </div>
     </section>
 
-    <!-- Dynamic System Notification Mount Node -->
     <div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11000"></div>
 </div>
 @endsection

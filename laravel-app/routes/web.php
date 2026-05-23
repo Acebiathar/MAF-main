@@ -5,7 +5,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
+use App\Http\Controllers\HomeController;
 
+
+// Define your landing route pointing to the controller class matrix
+Route::get('/', [HomeController::class, 'index']);
 // --- GLOBAL HELPERS ---
 if (!function_exists('renderView')) {
     function renderView($view, $data = [])
