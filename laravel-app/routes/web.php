@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 // --- GLOBAL HELPERS ---
+if (!function_exists('renderView')) {
+    function renderView($view, $data = [])
+    {
+        return view($view, $data);
+    }
+}
 
 if (!function_exists('currentUser')) {
     function currentUser()
@@ -18,7 +24,7 @@ if (!function_exists('currentUser')) {
 if (!function_exists('flash')) {
     function flash($category, $message)
     {
-        session()->put('alerts', [
+        session()->flash('alerts', [
             'category' => $category,
             'message' => $message,
         ]);

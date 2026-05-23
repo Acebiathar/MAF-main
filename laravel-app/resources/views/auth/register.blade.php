@@ -106,7 +106,6 @@
 
             <div class="col-12">
               <div class="alert alert-warning py-2 small mb-0">
-                <<<<<<< HEAD
                   <i class="bi bi-info-circle me-2"></i>Note: Pharmacist accounts require verification by our Admin team before you can list medicine.
                   <i class="bi bi-info-circle me-2"></i>
                   Pharmacist accounts require admin approval before inventory appears in patient searches.
@@ -153,4 +152,3 @@
   });
 </script>
 @endsection
->>>>>>> 264cb12a1125063bd77d4034c2b7e7385f0e1bdf
