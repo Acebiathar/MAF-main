@@ -56,58 +56,6 @@
   </a>
 @endsection
 
-@section('dashboard_stats')
-  <div class="col-12 col-md-6 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Total Requests</div>
-          <div class="dashboard-stat-value">{{ $reservationCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-journal-check"></i></div>
-      </div>
-      <div class="small text-muted">Everything you have submitted so far.</div>
-    </div>
-  </div>
-  <div class="col-12 col-md-6 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Pending</div>
-          <div class="dashboard-stat-value">{{ $pendingCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-clock-history"></i></div>
-      </div>
-      <div class="small text-muted">Awaiting pharmacist review.</div>
-    </div>
-  </div>
-  <div class="col-12 col-md-6 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Ready for Pickup</div>
-          <div class="dashboard-stat-value">{{ $confirmedCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-bag-check"></i></div>
-      </div>
-      <div class="small text-muted">Confirmed and ready to collect.</div>
-    </div>
-  </div>
-  <div class="col-12 col-md-6 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Unavailable</div>
-          <div class="dashboard-stat-value">{{ $declinedCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-x-octagon"></i></div>
-      </div>
-      <div class="small text-muted">Requests that need a fresh search.</div>
-    </div>
-  </div>
-@endsection
-
-
 
 @section('dashboard_main')
   <div class="dashboard-table-card p-3 p-lg-4">
@@ -171,6 +119,60 @@
     </div>
   </div>
 @endsection
+
+@section('dashboard_stats')
+  <div class="col-12 col-md-6 col-xxl-3">
+    <div class="dashboard-stat">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="small text-muted text-uppercase">Total Requests</div>
+          <div class="dashboard-stat-value">{{ $reservationCount }}</div>
+        </div>
+        <div class="dashboard-stat-icon"><i class="bi bi-journal-check"></i></div>
+      </div>
+      <div class="small text-muted">Everything you have submitted so far.</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6 col-xxl-3">
+    <div class="dashboard-stat">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="small text-muted text-uppercase">Pending</div>
+          <div class="dashboard-stat-value">{{ $pendingCount }}</div>
+        </div>
+        <div class="dashboard-stat-icon"><i class="bi bi-clock-history"></i></div>
+      </div>
+      <div class="small text-muted">Awaiting pharmacist review.</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6 col-xxl-3">
+    <div class="dashboard-stat">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="small text-muted text-uppercase">Ready for Pickup</div>
+          <div class="dashboard-stat-value">{{ $confirmedCount }}</div>
+        </div>
+        <div class="dashboard-stat-icon"><i class="bi bi-bag-check"></i></div>
+      </div>
+      <div class="small text-muted">Confirmed and ready to collect.</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6 col-xxl-3">
+    <div class="dashboard-stat">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="small text-muted text-uppercase">Unavailable</div>
+          <div class="dashboard-stat-value">{{ $declinedCount }}</div>
+        </div>
+        <div class="dashboard-stat-icon"><i class="bi bi-x-octagon"></i></div>
+      </div>
+      <div class="small text-muted">Requests that need a fresh search.</div>
+    </div>
+  </div>
+@endsection
+
+
+
 
 @section('dashboard_notifications')
   <div class="dashboard-notice mb-4">

@@ -208,22 +208,47 @@
                                 <h1 class="display-4 fw-bold text-white mb-3">Find Prescriptions Near You, Instantly.</h1>
                                 <p class="lead text-white-50 mb-4">Unified platform mapping local medical stock configurations directly to real-time consumer and emergency needs.</p>
                                 
-                                <div class="search-container">
-                                    <h3 class="mb-3 text-white fw-semibold h5"><i class="bi bi-search me-2 text-info"></i> Search Medication</h3>
-                                    
-                                    <form id="searchForm" action="{{ url()->current() }}" method="GET">
-                                        <div class="input-group bg-white rounded-pill p-1.5 mb-3 shadow-sm">
-                                            <input type="text" id="itemInput" class="form-control border-0 bg-transparent ps-3 text-dark" placeholder="Type medicine name (e.g., Amoxicillin)..." style="outline: none; box-shadow: none;">
-                                            <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold transition" onclick="addItem()">Add to List</button>
-                                        </div>
-                                        
-                                        <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-3" style="min-height: 40px;"></div>
-                                        
-                                        <button type="submit" id="searchBtn" class="btn btn-info text-white w-100 rounded-pill py-2.5 fw-bold transition shadow-sm" style="display: none;">
-                                            <i class="bi bi-patch-check-fill me-2"></i>Search
-                                        </button>
-                                    </form>
-                                </div>
+                                <div class="search-container position-relative overflow-hidden p-4 p-md-5" style="background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); max-width: 700px;">
+    
+    <div class="position-absolute" style="width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 180, 170, 0.25) 0%, rgba(0,0,0,0) 70%); top: -50px; right: -50px; pointer-events: none;"></div>
+    
+    <div class="position-relative z-3">
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-3" style="width: 36px; height: 36px; border: 1px solid rgba(0, 180, 170, 0.25);">
+                <i class="bi bi-search text-info" style="font-size: 1rem;"></i>
+            </div>
+            <div>
+                <h3 class="text-white fw-bold h5 mb-0" style="letter-spacing: -0.02em;">Search For Your Medicine</h3>
+                <p class="text-white-50 mb-0" style="font-size: 0.775rem;">Type your medicine here. Seperate items with a comma.</p>
+            </div>
+        </div>
+        
+        <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
+            <div class="input-group bg-white rounded-4 shadow-lg p-2 border border-white border-2" style="transition: var(--transition);">
+                
+                <span class="input-group-text border-0 bg-transparent ps-3 pe-2 text-slate-600">
+                    <i class="bi bi-capsule-capsule" style="font-size: 1.1rem; color: #64748b;"></i>
+                </span>
+                
+                <input type="text" 
+                       name="search" 
+                       id="itemInput" 
+                       value="{{ request('search') }}" 
+                       class="form-control border-0 bg-transparent text-dark px-2 py-3" 
+                       placeholder="Enter prescription criteria (e.g., Panadol, Amoxicillin)..." 
+                       style="outline: none; box-shadow: none; font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
+                
+                <button type="submit" 
+                        class="btn btn-dark rounded-4 px-4 fw-bold text-uppercase tracking-wider transition d-flex align-items-center gap-2" 
+                        style="font-size: 0.8rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
+                    <span>Search</span>
+                    <i class="bi bi-arrow-right-short" style="font-size: 1.2rem;"></i>
+                </button>
+                
+            </div>
+        </form>
+    </div>
+</div>
 
                             </div>
                         </div>
@@ -233,12 +258,28 @@
         </div>
     </div>    
 
+    {{-- Fallback validation alert notice check structure --}}
+@if(request()->has('search') && isset($results) && $results->isEmpty())
+<div class="container mt-5">
+    <div class="alert alert-warning text-center shadow-sm border-0 rounded-3">
+        <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+        No approved pharmacies currently have "{{ request('search') }}" in stock. Please try a different medicine.
+    </div>
+</div>
+@endif
+
+{{-- Results Table --}}
+@if(isset($results) && $results->isNotEmpty())
+<div class="container py-5">
+...
+@endif
+    {{-- Clean structure looping through prioritized pharmacies and nested items inside your table layout --}}
     @if(isset($results) && $results->isNotEmpty())
     <div class="container py-5">
         <div class="glass-card p-0 overflow-hidden border-0 shadow-lg">
             <div class="p-4 bg-white border-bottom border-light d-flex align-items-center justify-content-between">
                 <h3 class="fw-bold h5 mb-0 text-dark"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i> Live Availability Records</h3>
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fw-medium">Cluster Refreshed Live</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fw-medium">Prioritized by Stock Matches</span>
             </div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0 table-hover">
@@ -252,41 +293,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($results as $item)
-                        <tr class="transition">
-                            <td class="ps-4 py-3.5">
-                                <span class="d-block fw-bold text-dark h6 mb-0">{{ $item->medicine_name }}</span>
-                                <small class="text-muted text-xs">ID: {{ 1000 + $item->id }}</small>
-                            </td>
-                            <td class="py-3.5">
-                                <div class="fw-bold text-primary mb-0.5"><i class="bi bi-patch-check-fill me-1 text-info"></i>{{ $item->pharmacy_name }}</div>
-                                <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ $item->pharmacy_location }}</small>
-                            </td>
-                            <td class="py-3.5 font-medium text-dark fw-bold">
-                                {{ number_format($item->price, 0) }} <span class="text-xs text-muted" style="font-size:0.75rem;">UGX</span>
-                            </td>
-                            <td class="py-3.5">
-                                @if($item->quantity > 0)
-                                <span class="badge-stock"><i class="bi bi-check2-circle"></i> In Stock ({{ $item->quantity }} units)</span>
-                                @else
-                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
-                                @endif
-                            </td>
-                            <td class="text-end pe-4 py-3.5">
-                                @if(isset($currentUser) && $currentUser->role === 'patient')
-                                <form action="/reserve/{{ $item->id }}" method="POST" class="m-0">
-                                    @csrf
-                                    <button class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm fw-bold transition">Reserve Allocation</button>
-                                </form>
-                                @elseif(isset($currentUser))
-                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" type="button" disabled style="font-size: 0.8rem;">
-                                    Patients Only
-                                </button>
-                                @else
-                                <a href="/login" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold transition">Login to Secure Allocation</a>
-                                @endif
-                            </td>
-                        </tr>
+                        @foreach ($results as $pharmacy)
+                            @foreach ($pharmacy->medicines as $medicine)
+                            <tr class="transition">
+                                <td class="ps-4 py-3.5">
+                                    <span class="d-block fw-bold text-dark h6 mb-0 text-capitalize">{{ $medicine->name }}</span>
+                                    <small class="text-muted text-xs">ID: {{ 1000 + $medicine->id }}</small>
+                                </td>
+                                <td class="py-3.5">
+                                    <div class="fw-bold text-primary mb-0.5">
+                                        <i class="bi bi-patch-check-fill me-1 text-info"></i>{{ $pharmacy->name }}
+                                        <span class="badge bg-primary-subtle text-primary rounded-pill text-xs ms-1" style="font-size: 0.7rem;">
+                                            {{ $pharmacy->available_items_count }} Matches
+                                        </span>
+                                    </div>
+                                    <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ $pharmacy->location ?? $pharmacy->pharmacy_location }}</small>
+                                </td>
+                                <td class="py-3.5 font-medium text-dark fw-bold">
+                                    {{ number_format($medicine->pivot->price, 0) }} <span class="text-xs text-muted" style="font-size:0.75rem;">UGX</span>
+                                </td>
+                                <td class="py-3.5">
+                                    @if($medicine->pivot->quantity == 0)
+                                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
+                                    @elseif($medicine->pivot->quantity <= 5)
+                                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited Stock ({{ $medicine->pivot->quantity }} units)</span>
+                                    @else
+                                        <span class="badge-stock"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }} units)</span>
+                                    @endif
+                                </td>
+                               <td class="text-end pe-4 py-3.5">
+    @if(isset($currentUser) && $currentUser->role === 'patient')
+        <form action="{{ url('/reserve/' . ($medicine->pivot->id ?? $medicine->id)) }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm fw-bold transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.8rem; letter-spacing: -0.01em;">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Reserve Allocation</span>
+            </button>
+        </form>
+    @elseif(isset($currentUser))
+        <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill fw-medium" style="font-size: 0.775rem;">
+            <i class="bi bi-person-x me-1"></i> Patient Account Required
+        </span>
+    @else
+        <a href="{{ route('login') }}" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold text-uppercase tracking-wider transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.75rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05);">
+            <span>Login to Secure</span>
+            <i class="bi bi-arrow-right-short" style="font-size: 1rem;"></i>
+        </a>
+    @endif
+</td>
+                            </tr>
+                            @endforeach
                         @endforeach
                     </tbody>
                 </table>
@@ -449,13 +505,10 @@
         const form = document.getElementById('searchForm');
         if (!list || !btn || !form) return;
 
-        // Toggle search visibility depending on tag list allocation depth
         btn.style.display = list.children.length > 0 ? 'block' : 'none';
         
-        // Clean old variable strings inside form scope mapping rules
         form.querySelectorAll('input[name="item_names[]"]').forEach((el) => el.remove());
         
-        // Append synchronized deep copies down to processing execution level
         list.querySelectorAll('input[type="hidden"]').forEach((inp) => form.appendChild(inp.cloneNode(true)));
     }
 

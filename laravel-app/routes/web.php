@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use App\Http\Controllers\HomeController;
 
-
-// Define your landing route pointing to the controller class matrix
-Route::get('/', [HomeController::class, 'index']);
 // --- GLOBAL HELPERS ---
 if (!function_exists('renderView')) {
     function renderView($view, $data = [])
@@ -53,20 +50,110 @@ if (!function_exists('redirectToDashboard')) {
 
 // --- PUBLIC PAGES (Home, Search, About) ---
 
-Route::get('/', 'App\Http\Controllers\HomeController@index');
+// Integrated Multi-Item Prioritized Stock Match Search Engine (Unified Root Route)
+Route::get('/', function (Request $request) {
+    // Read the single search query string instead of the array
+    $searchQuery = $request->input('search', '');
+    $results = collect();
+
+    if (!empty(trim($searchQuery))) {
+        // Break up comma-separated terms so users can search multiple drugs at once
+        $requestedNames = explode(',', $searchQuery);
+
+        // Normalize strings to strip accidental spaces and lower case variations smoothly
+        $cleanNames = array_filter(array_map(function($name) {
+            return trim(strtolower($name));
+        }, $requestedNames));
+
+        if (!empty($cleanNames)) {
+            // 1. Fetch matching pharmacies ordered by how many requested items they have in stock (> 0)
+            $pharmacies = DB::table('pharmacies as p')
+                ->where('p.status', 'approved')
+                ->whereExists(function ($query) use ($cleanNames) {
+                    $query->select(DB::raw(1))
+                        ->from('pharmacy_medicine as pm')
+                        ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
+                        ->whereColumn('pm.pharmacy_id', 'p.id')
+                        ->where(function($q) use ($cleanNames) {
+                            foreach ($cleanNames as $name) {
+                                $q->orWhere(DB::raw('LOWER(m.name)'), 'LIKE', '%' . $name . '%');
+                            }
+                        });
+                })
+                ->select('p.*')
+                // Calculates intersection hit depth parameters dynamically for row ranking
+                ->selectSub(function ($query) use ($cleanNames) {
+                    $query->select(DB::raw('count(*)'))
+                        ->from('pharmacy_medicine as pm')
+                        ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
+                        ->whereColumn('pm.pharmacy_id', 'p.id')
+                        ->where('pm.quantity', '>', 0)
+                        ->where(function($q) use ($cleanNames) {
+                            foreach ($cleanNames as $name) {
+                                $q->orWhere(DB::raw('LOWER(m.name)'), 'LIKE', '%' . $name . '%');
+                            }
+                        });
+                }, 'available_items_count')
+                ->orderBy('available_items_count', 'desc')
+                ->get();
+
+            // 2. Fetch the concrete medicine specifications linked via pivot table constraints
+            if ($pharmacies->isNotEmpty()) {
+                $pharmacyIds = $pharmacies->pluck('id')->toArray();
+
+                $allMedicines = DB::table('pharmacy_medicine as pm')
+                    ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
+                    ->whereIn('pm.pharmacy_id', $pharmacyIds)
+                    ->where(function($q) use ($cleanNames) {
+                        foreach ($cleanNames as $name) {
+                            $q->orWhere(DB::raw('LOWER(m.name)'), 'LIKE', '%' . $name . '%');
+                        }
+                    })
+                    ->select('pm.id as pivot_id', 'pm.pharmacy_id', 'pm.price', 'pm.quantity', 'm.id as medicine_id', 'm.name')
+                    ->get()
+                    ->groupBy('pharmacy_id');
+
+                // 3. Construct nested object maps to natively feed structural blades parameters safely
+                $results = $pharmacies->map(function ($pharmacy) use ($allMedicines) {
+                    $pharmacy->medicines = collect($allMedicines->get($pharmacy->id, []))->map(function ($med) {
+                        return (object) [
+                            'id' => $med->medicine_id,
+                            'name' => $med->name,
+                            'pivot' => (object) [
+                                'id' => $med->pivot_id,
+                                'price' => $med->price,
+                                'quantity' => $med->quantity
+                            ]
+                        ];
+                    });
+                    return $pharmacy;
+                });
+            }
+        }
+    }
+
+    return renderView('index', [
+        'results'     => $results,
+        'currentUser' => currentUser()
+    ]);
+});
+
 Route::get('/home', function () {
-    return redirect('home');
+    return redirect('/');
 })->name('home');
+
 Route::get('/about', function () {
     return renderView('about');
 })->name('about');
 
 Route::get('/how', function () {
-    return view('how'); // Ensure this view exists
+    return view('how'); 
 })->name('how');
+
 Route::get('/contact', function () {
     return renderView('contact');
 })->name('contact');
+
 Route::get('/privacy', function () {
     return renderView('privacy');
 })->name('privacy');
@@ -85,10 +172,7 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
 
         if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
-
-            // Set the greeting to be caught by the layout on the next page
             flash('success', "Hi, " . $user->name . "! Welcome back.");
-
             return redirectToDashboard($user);
         }
 
@@ -199,7 +283,6 @@ Route::get('/pharmacist', function () {
             ->orderByDesc('created_at')
             ->get();
 
-        // Fixed: JOIN syntax and singular table name
         $inventory = collect();
         if ($isActive) {
             $inventory = DB::table('pharmacy_medicine as pm')
@@ -223,6 +306,7 @@ Route::get('/pharmacist', function () {
         return redirect('/');
     }
 });
+
 Route::post('/pharmacist/add', function (Request $request) {
     $user = currentUser();
     $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
@@ -233,7 +317,6 @@ Route::post('/pharmacist/add', function (Request $request) {
     if ($medicine) {
         $medId = $medicine->id;
     } else {
-        // Fix: Category constraint handled
         $medId = DB::table('medicines')->insertGetId([
             'name' => $medicineName,
             'category' => 'General',
@@ -328,7 +411,6 @@ Route::get('/admin/{action?}/{type?}', function ($action = null, $type = null) {
     $user = currentUser();
     if (!$user || $user->role !== 'admin') return redirect('/');
 
-    // 1. Fetch the Top Stats
     $stats = [
         'users' => DB::table('users')->count(),
         'pharmacies' => DB::table('pharmacies')->where('status', 'approved')->count(),
@@ -336,10 +418,8 @@ Route::get('/admin/{action?}/{type?}', function ($action = null, $type = null) {
         'reservations' => DB::table('reservations')->count(),
     ];
 
-    // 2. Always fetch Pending Pharmacies for the bottom table
     $pending = DB::table('pharmacies')->where('status', 'pending')->get();
 
-    // 3. Logic for the Clickable Cards
     $viewList = null;
     $viewType = $type;
 
@@ -386,7 +466,6 @@ Route::get('/admin/pharmacies/{pharmacy}/{action}', function (int $pharmacy, str
 
     return redirect('/admin');
 });
-
 
 // Inject testimonials directly into the index view automatically
 View::composer('index', function ($view) {
