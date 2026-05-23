@@ -14,13 +14,13 @@
         --primary-soft: #eef2ff;
         --secondary: #00b4aa;
         --dark: #1e2f3e;
-        --transition: all 0.25s ease;
+        --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .landing-page {
         font-family: 'Inter', sans-serif;
-        background: #f6f9fe;
-        color: #1b2e3c;
+        background: #f8fafc;
+        color: #0f172a;
         min-height: 100vh;
     }
 
@@ -35,78 +35,126 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(to right, rgba(0, 0, 0, 0.7), transparent);
+        background: linear-gradient(to right, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.3));
     }
 
     .carousel-caption {
         z-index: 2;
         text-align: left;
-        left: 10%;
-        top: 30%;
+        left: 8%;
+        top: 32%;
     }
 
     .glass-card {
-        background: rgba(255, 255, 255, 0.96);
-        backdrop-filter: blur(8px);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 1.5rem;
-        padding: 2rem;
+        padding: 2.25rem;
         height: 100%;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
         transition: var(--transition);
     }
 
     .glass-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.08);
     }
 
     .primary-bg {
-        background: linear-gradient(135deg, var(--primary), #0d47a1);
+        background: linear-gradient(135deg, #0b5ed7 0%, #0346a7 100%);
+        border: none;
         color: white;
     }
 
     .dark-bg {
-        background: linear-gradient(145deg, #1e2f3e, #15262e);
+        background: linear-gradient(145deg, #1e2f3e 0%, #111c24 100%);
+        border: none;
         color: white;
     }
 
     .tag-item {
-        background: rgba(13, 110, 253, 0.12);
-        color: var(--primary);
-        border-radius: 40px;
-        padding: 0.4rem 1rem;
-        font-weight: 600;
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        padding: 0.45rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        margin-bottom: 5px;
+        transition: var(--transition);
+        backdrop-filter: blur(4px);
+    }
+
+    .tag-item:hover {
+        background: rgba(255, 255, 255, 0.25);
     }
 
     .badge-stock {
-        background: #e0f7e8;
-        color: #1e7b48;
-        padding: 0.35rem 0.9rem;
+        background: #ecfdf5;
+        color: #065f46;
+        padding: 0.4rem 1rem;
         border-radius: 50px;
         font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .ad-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        height: 100%;
+        transition: var(--transition);
+    }
+
+    .ad-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    }
+
+    .howit-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 1.25rem;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+        transition: var(--transition);
+    }
+
+    .step-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        font-size: 1.5rem;
     }
 
     .spinner-overlay {
         position: fixed;
         inset: 0;
-        background: white;
+        background: #ffffff;
         z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: opacity 0.5s;
+        transition: opacity 0.4s ease;
     }
 
     .toast-notify {
-        width: min(360px, calc(100vw - 2rem));
-        background: #fff;
+        width: min(380px, calc(100vw - 2rem));
+        background: #ffffff;
         border-left: 4px solid var(--primary);
         border-radius: 1rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-        padding: 1rem;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+        padding: 1.25rem;
         margin-bottom: 0.75rem;
     }
 </style>
@@ -114,8 +162,8 @@
 <div class="landing-page">
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="text-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
-            <p class="mt-3 fw-bold text-primary">MedFinder Loading...</p>
+            <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem; stroke-width: 3;"></div>
+            <p class="mt-3 fw-bold text-slate-700 tracking-wide">Securing Network Connections...</p>
         </div>
     </div>
 
@@ -123,23 +171,24 @@
         <div class="carousel-inner">
             <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1600');">
                 <div class="carousel-caption">
-                    <h5 class="text-white text-uppercase">Smart Healthcare Access</h5>
-                    <h1 class="display-3 fw-bold text-white">Find Medicine<br>Near You. Instantly.</h1>
-                    <a href="#searchSection" class="btn btn-primary btn-lg rounded-pill mt-3 px-5">Start Searching</a>
+                    <span class="badge bg-primary px-3 py-2 rounded-pill text-uppercase mb-3 tracking-wider font-semibold" style="font-size: 0.75rem;">Smart Healthcare Access</span>
+                    <h1 class="display-3 fw-bold text-white mb-3">Find Medicine<br>Near You. Instantly.</h1>
+                    <p class="lead text-white-50 mb-4 max-w-xl">Unified platform connecting local stock intelligence to emergency health demands across Uganda network hubs.</p>
+                    <a href="#searchSection" class="btn btn-primary btn-lg rounded-pill px-5 py-3 font-semibold shadow-lg">Start Searching</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="py-5 bg-light">
+    <section class="py-5">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold h3 mb-0">Featured <span class="text-primary">Partners & Products</span></h2>
                 <div class="carousel-controls">
-                    <button class="btn btn-outline-primary btn-sm rounded-circle" type="button" data-bs-target="#adCarousel" data-bs-slide="prev">
+                    <button class="btn btn-outline-primary btn-sm rounded-circle p-2 px-3 me-1" type="button" data-bs-target="#adCarousel" data-bs-slide="prev">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="btn btn-outline-primary btn-sm rounded-circle" type="button" data-bs-target="#adCarousel" data-bs-slide="next">
+                    <button class="btn btn-outline-primary btn-sm rounded-circle p-2 px-3" type="button" data-bs-target="#adCarousel" data-bs-slide="next">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -147,61 +196,71 @@
 
             <div id="adCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <!-- Slide 1: Hospitals -->
                     <div class="carousel-item active" data-bs-interval="5000">
                         <div class="row g-4">
                             <div class="col-md-4">
-                                <div class="ad-card">
-                                    <span class="badge bg-danger mb-2">Hospital</span>
-                                    <h4>Mulago National Referral</h4>
-                                    <p class="text-muted small">Specialized care and 24/7 emergency services.</p>
-                                    <img src="{{ asset('images/pharmacy3.jpg') }}" alt="pharmacy3" class="img-fluid">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-danger bg-opacity-10 text-danger mb-3 px-2.5 py-1.5 rounded-md font-semibold">Hospital</span>
+                                        <h4 class="fw-bold h5 mb-2">Mulago National Referral</h4>
+                                        <p class="text-muted small mb-4">Specialized care and 24/7 emergency infrastructure networks.</p>
+                                    </div>
+                                    <img src="{{ asset('images/pharmacy3.jpg') }}" alt="pharmacy3" class="img-fluid rounded-3 object-cover" style="height: 160px; w-100;">
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="ad-card">
-                                    <span class="badge bg-danger mb-2">Hospital</span>
-                                    <h4>Case Medical Centre</h4>
-                                    <p class="text-muted small">Quality healthcare for your entire family.</p>
-                                    <img src="{{ asset('images/pharmacy.jpg') }}" alt="pharmacy" class="img-fluid">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-danger bg-opacity-10 text-danger mb-3 px-2.5 py-1.5 rounded-md font-semibold">Hospital</span>
+                                        <h4 class="fw-bold h5 mb-2">Case Medical Centre</h4>
+                                        <p class="text-muted small mb-4">Quality professional healthcare configurations for your entire family.</p>
+                                    </div>
+                                    <img src="{{ asset('images/pharmacy.jpg') }}" alt="pharmacy" class="img-fluid rounded-3 object-cover" style="height: 160px; w-100;">
                                 </div>
                             </div>
                             <div class="col-md-4 d-none d-md-block">
-                                <div class="ad-card border-primary border">
-                                    <span class="badge bg-primary mb-2">Promoted Drug</span>
-                                    <h4>Panadol Extra</h4>
-                                    <p class="text-muted small">Fast-acting relief for tough headaches.</p>
-                                    <img src="{{ asset('images/drugs.jpg') }}" class="img-fluid rounded-3" alt="drugs">
+                                <div class="ad-card border-primary border d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-primary mb-3 px-2.5 py-1.5 rounded-md font-semibold">Promoted Drug</span>
+                                        <h4 class="fw-bold h5 mb-2">Panadol Extra</h4>
+                                        <p class="text-muted small mb-4">Fast-acting advanced chemical composition relief for tough headaches.</p>
+                                    </div>
+                                    <img src="{{ asset('images/drugs.jpg') }}" class="img-fluid rounded-3 object-cover" style="height: 160px; w-100;" alt="drugs">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Slide 2: Drugs & Pharmacies -->
                     <div class="carousel-item" data-bs-interval="5000">
                         <div class="row g-4">
                             <div class="col-md-4">
-                                <div class="ad-card">
-                                    <span class="badge bg-primary mb-2">Featured Drug</span>
-                                    <h4>Amoxicillin</h4>
-                                    <p class="text-muted small">Wide spectrum antibiotics available at verified stores.</p>
-                                    <img src="{{ asset('images/amoxy.jpg') }}" class="img-fluid rounded-3" alt="amoxy">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-primary mb-3 px-2.5 py-1.5 rounded-md font-semibold">Featured Drug</span>
+                                        <h4 class="fw-bold h5 mb-2">Amoxicillin</h4>
+                                        <p class="text-muted small mb-4">Wide spectrum antibiotics ready for distribution at checked nodes.</p>
+                                    </div>
+                                    <img src="{{ asset('images/amoxy.jpg') }}" class="img-fluid rounded-3 object-cover" style="height: 160px; w-100;" alt="amoxy">
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="ad-card">
-                                    <span class="badge bg-success mb-2">Pharmacy</span>
-                                    <h4>First Pharmacy</h4>
-                                    <p class="text-muted small">Your neighborhood partner for genuine medicine.</p>
-                                    <img src="https://via.placeholder.com/400x200?text=First+Pharmacy" class="img-fluid rounded-3" alt="Pharmacy">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-success bg-opacity-10 text-success mb-3 px-2.5 py-1.5 rounded-md font-semibold">Pharmacy</span>
+                                        <h4 class="fw-bold h5 mb-2">First Pharmacy</h4>
+                                        <p class="text-muted small mb-4">Your neighborhood partner for genuine medicine stocks.</p>
+                                    </div>
+                                    <img src="https://via.placeholder.com/400x200?text=First+Pharmacy" class="img-fluid rounded-3 object-cover" style="height: 160px; w-100;" alt="Pharmacy">
                                 </div>
                             </div>
                             <div class="col-md-4 d-none d-md-block">
-                                <div class="ad-card border-warning border">
-                                    <span class="badge bg-warning text-dark mb-2">Limited Offer</span>
-                                    <h4>Vitamin C Boost</h4>
-                                    <p class="text-muted small">20% off at all Kampala-based pharmacies.</p>
-                                    <img src="https://via.placeholder.com/400x200?text=Vitamin+C" class="img-fluid rounded-3" alt="Drug">
+                                <div class="ad-card border-warning border d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-warning text-dark mb-3 px-2.5 py-1.5 rounded-md font-semibold">Limited Offer</span>
+                                        <h4 class="fw-bold h5 mb-2">Vitamin C Boost</h4>
+                                        <p class="text-muted small mb-4">Special 20% system offset at all verified Kampala outlets.</p>
+                                    </div>
+                                    <img src="https://via.placeholder.com/400x200?text=Vitamin+C" class="img-fluid rounded-3 object-cover" style="height: 160px; w-100;" alt="Drug">
                                 </div>
                             </div>
                         </div>
@@ -211,12 +270,11 @@
         </div>
     </section>
 
-    <!-- ========== NEW SECTION: HOW IT WORKS (CAROUSEL) ========== -->
-    <div class="container py-5 my-3">
-        <div class="text-center mb-4">
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">Simple Process</span>
+    <div class="container py-5 my-2">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill font-semibold">Simple Process</span>
             <h2 class="fw-bold mt-2 display-6">How MedFinder Works</h2>
-            <p class="text-muted">From search to doorstep delivery in three smart steps</p>
+            <p class="text-muted">From search analytics to client handoff in three clear execution steps</p>
         </div>
         <div id="howItWorksCarousel" class="carousel slide howit-carousel" data-bs-ride="carousel" data-bs-interval="4000">
             <div class="carousel-inner">
@@ -225,22 +283,22 @@
                         <div class="col-md-4">
                             <div class="howit-card">
                                 <div class="step-icon"><i class="fas fa-search-location"></i></div>
-                                <h4 class="fw-bold">1. Search & Compare</h4>
-                                <p class="text-muted">Enter medicine name, view real-time stock & price across 180+ partner pharmacies near you.</p>
+                                <h4 class="fw-bold h5 mb-2">1. Search & Compare</h4>
+                                <p class="text-muted small mb-0">Query medical names, parse live stocks & compare prices instantly across 180+ verified pharmacies near you.</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="howit-card">
                                 <div class="step-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                                <h4 class="fw-bold">2. Reserve Instantly</h4>
-                                <p class="text-muted">Click reserve to secure your medication. Pay online or at pickup — simple & transparent.</p>
+                                <h4 class="fw-bold h5 mb-2">2. Reserve Instantly</h4>
+                                <p class="text-muted small mb-0">Trigger hold requests to lock down allocation buffers. Complete transactions online or during physical pick-up phases.</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="howit-card">
                                 <div class="step-icon"><i class="fas fa-truck-fast"></i></div>
-                                <h4 class="fw-bold">3. Fast Delivery/Pickup</h4>
-                                <p class="text-muted">Same-day delivery or collect from pharmacy. Real-time tracking for peace of mind.</p>
+                                <h4 class="fw-bold h5 mb-2">3. Fast Delivery/Pickup</h4>
+                                <p class="text-muted small mb-0">Deploy same-day dispatch routing or gather item items onsite with full transit logging layers.</p>
                             </div>
                         </div>
                     </div>
@@ -249,20 +307,21 @@
         </div>
     </div>
 
-    <!-- Search & Statistics Section -->
     <div class="container py-5" id="searchSection">
-        <div class="row g-4">
+        <div class="row g-4 align-items-stretch">
             <div class="col-lg-5">
-                <div class="glass-card primary-bg">
-                    <h3 class="mb-4 fw-bold"><i class="bi bi-search me-2"></i> Medicine Search</h3>
-                    <div class="input-group bg-white rounded-pill p-1 mb-3">
-                        <input type="text" id="itemInput" class="form-control border-0 bg-transparent ps-3" placeholder="e.g., Amoxicillin...">
-                        <button type="button" class="btn btn-dark rounded-pill px-4" onclick="addItem()">Add</button>
+                <div class="glass-card primary-bg d-flex flex-column justify-content-between p-4 px-md-5">
+                    <div>
+                        <h3 class="mb-4 fw-bold tracking-tight h4"><i class="bi bi-search me-2"></i> Medicine Search</h3>
+                        <div class="input-group bg-white rounded-pill p-1.5 mb-4 shadow-sm border border-white border-opacity-20">
+                            <input type="text" id="itemInput" class="form-control border-0 bg-transparent ps-3 text-dark font-medium" placeholder="e.g., Amoxicillin..." style="outline: none; box-shadow: none;">
+                            <button type="button" class="btn btn-dark rounded-pill px-4 font-semibold shadow-sm transition hover:bg-slate-800" onclick="addItem()">Add</button>
+                        </div>
+                        <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-4" style="min-height: 60px;">
+                        </div>
                     </div>
-                    <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-3" style="min-height: 50px;">
-                    </div>
-                    <form id="searchForm" action="/" method="GET">
-                        <button type="submit" id="searchBtn" class="btn btn-light w-100 rounded-pill fw-bold py-2" style="display: none;">
+                    <form id="searchForm" action="/" method="GET" class="w-100">
+                        <button type="submit" id="searchBtn" class="btn btn-light w-100 rounded-pill fw-bold py-3 text-primary shadow-md hover:bg-slate-50 transition" style="display: none;">
                             Find Availability
                         </button>
                     </form>
@@ -270,37 +329,40 @@
             </div>
 
             <div class="col-lg-7">
-                <div class="glass-card dark-bg">
-                    <h3 class="fw-bold mb-4"><i class="bi bi-graph-up-arrow me-2"></i> Live Uganda Network</h3>
-                    <div class="row text-center mt-4">
-                        <div class="col-4">
-                            <h2 class="fw-bold mb-0" id="medCount">0</h2>
-                            <small class="opacity-75">Medicines</small>
-                        </div>
-                        <div class="col-4 border-start border-end border-white-20">
-                            <h2 class="fw-bold mb-0" id="pharCount">0</h2>
-                            <small class="opacity-75">Pharmacies</small>
-                        </div>
-                        <div class="col-4">
-                            <h2 class="fw-bold mb-0" id="stockCount">0</h2>
-                            <small class="opacity-75">Stock Units</small>
+                <div class="glass-card dark-bg d-flex flex-column justify-content-between p-4 px-md-5">
+                    <div>
+                        <h3 class="fw-bold mb-4 tracking-tight h4"><i class="bi bi-graph-up-arrow me-2"></i> Live Uganda Network</h3>
+                        <div class="row text-center my-auto py-3">
+                            <div class="col-4">
+                                <h2 class="display-5 fw-bold mb-1 tracking-tight text-white" id="medCount">0</h2>
+                                <span class="text-white-50 small tracking-wider uppercase font-semibold">Medicines</span>
+                            </div>
+                            <div class="col-4 border-start border-end border-white border-opacity-10">
+                                <h2 class="display-5 fw-bold mb-1 tracking-tight text-white" id="pharCount">0</h2>
+                                <span class="text-white-50 small tracking-wider uppercase font-semibold">Pharmacies</span>
+                            </div>
+                            <div class="col-4">
+                                <h2 class="display-5 fw-bold mb-1 tracking-tight text-white" id="stockCount">0</h2>
+                                <span class="text-white-50 small tracking-wider uppercase font-semibold">Stock Units</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-4">
-                        <p class="small mb-0 text-center"><i class="bi bi-info-circle me-1"></i> Data syncs with pharmacies every 2 hours.</p>
+                    <div class="mt-4 p-3 bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5">
+                        <p class="small mb-0 text-center text-white-50"><i class="bi bi-info-circle me-1 text-info"></i> Cluster synchronized endpoints refresh every 2 hours natively.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
     @if($results->isNotEmpty())
-    <div class="container py-5">
-        <div class="glass-card">
-            <h3 class="fw-bold mb-4"><i class="bi bi-table me-2"></i> Search Results</h3>
+    <div class="container py-4">
+        <div class="glass-card p-0 overflow-hidden border-0 shadow-sm">
+            <div class="p-4 bg-white border-b border-slate-100 flex items-center">
+                <h3 class="fw-bold h4 mb-0 text-slate-800"><i class="bi bi-table me-2 text-primary"></i> Search Results</h3>
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
                             <th class="ps-4">Medicine</th>
@@ -308,60 +370,57 @@
                             <th>Price</th>
                             <th>Stock</th>
 
-                            <!-- ========== MEDICINE RESULTS TABLE SECTION ========== -->
                             @if(isset($results))
-                            <div class="container pb-5">
-                                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                                    <div class="table-responsive">
-                                        <table class="table align-middle mb-0">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th class="ps-4">Medicine Name</th>
-                                                    <th>Pharmacy Details</th>
-                                                    <th>Price</th>
-                                                    <th>Availability Status</th>
-                                                    <th class="text-end pe-4">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($results as $item)
-                                                <tr>
-                                                    <td class="ps-4"><strong>{{ $item->medicine_name }}</strong></td>
-                                                    <td>
-                                                        <div class="fw-semibold text-primary">{{ $item->pharmacy_name }}</div>
-                                                        <small class="text-muted">{{ $item->pharmacy_location }}</small>
-                                                    </td>
-                                                    <td>{{ number_format($item->price, 0) }} UGX</td>
-                                                    <td>
-                                                        @if($item->quantity > 0)
-                                                        <span class="badge-stock">In Stock ({{ $item->quantity }})</span>
-                                                        @else
-                                                        <span class="badge bg-light text-danger">Out of Stock</span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-end pe-4">
-                                                        @if(isset($currentUser) && $currentUser->role === 'patient')
-                                                        <form action="/reserve/{{ $item->id }}" method="POST">
-                                                            @csrf
-                                                            <button class="btn btn-sm btn-primary rounded-pill px-3">Reserve</button>
-                                                        </form>
-                                                        @elseif(isset($currentUser))
-                                                        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" type="button" disabled>
-                                                            Patients can reserve
-                                                        </button>
-                                                        @else
-                                                        <a href="/login" class="btn btn-sm btn-primary rounded-pill px-3">Login to Reserve</a>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                                @empty
-                                                <tr>
-                                                    <td colspan="5" class="text-center py-5 text-muted">No medicines found. Try another search.</td>
-                                                </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            <div class="container-fluid p-0">
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr class="text-uppercase tracking-wider text-muted" style="font-size: 0.75rem;">
+                                                <th class="ps-4 py-3">Medicine Name</th>
+                                                <th class="py-3">Pharmacy Details</th>
+                                                <th class="py-3">Price</th>
+                                                <th class="py-3">Availability Status</th>
+                                                <th class="text-end pe-4 py-3">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($results as $item)
+                                            <tr class="transition hover:bg-slate-50">
+                                                <td class="ps-4 py-3.5"><strong class="text-slate-900 font-semibold">{{ $item->medicine_name }}</strong></td>
+                                                <td class="py-3.5">
+                                                    <div class="fw-semibold text-primary font-semibold mb-0.5">{{ $item->pharmacy_name }}</div>
+                                                    <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ $item->pharmacy_location }}</small>
+                                                </td>
+                                                <td class="py-3.5 font-medium text-slate-700">{{ number_format($item->price, 0) }} UGX</td>
+                                                <td class="py-3.5">
+                                                    @if($item->quantity > 0)
+                                                    <span class="badge-stock">In Stock ({{ $item->quantity }})</span>
+                                                    @else
+                                                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-full font-semibold" style="font-size: 0.825rem;">Out of Stock</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-end pe-4 py-3.5">
+                                                    @if(isset($currentUser) && $currentUser->role === 'patient')
+                                                    <form action="/reserve/{{ $item->id }}" method="POST">
+                                                        @csrf
+                                                        <button class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm font-semibold transition hover:bg-primary-dark">Reserve</button>
+                                                    </form>
+                                                    @elseif(isset($currentUser))
+                                                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" type="button" disabled style="font-size: 0.8rem;">
+                                                        Patients can reserve
+                                                    </button>
+                                                    @else
+                                                    <a href="/login" class="btn btn-sm btn-outline-primary rounded-pill px-4 font-semibold transition">Login to Reserve</a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center py-5 text-muted font-medium">No identical medicines resolved. Try another system string array input query.</td>
+                                            </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                             @endif
@@ -373,13 +432,13 @@
     </div>
     @endif
 
-    <div class="container mb-5">
-        <div class="bg-danger text-white rounded-4 p-4 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="container mb-5 py-3">
+        <div class="bg-danger text-white rounded-4 p-4 px-md-5 d-flex justify-content-between align-items-center flex-wrap gap-3 shadow-lg border-0" style="background: linear-gradient(135deg, #dc3545 0%, #b01a2b 100%) !important;">
             <div>
-                <h4 class="fw-bold mb-1"><i class="bi bi-telephone-fill me-2"></i> Emergency Support</h4>
-                <p class="mb-0 opacity-75">Need urgent medication? Call our 24/7 hotline.</p>
+                <h4 class="fw-bold mb-1 tracking-tight"><i class="bi bi-telephone-fill me-2"></i> Emergency Support Network</h4>
+                <p class="mb-0 opacity-75 small font-medium">Critical medication drop failures resolved through active local cell dispatch lines.</p>
             </div>
-            <h2 class="fw-bold mb-0">0800 199 199</h2>
+            <h2 class="display-6 fw-bold mb-0 tracking-tight">0800 199 199</h2>
         </div>
     </div>
 
@@ -394,14 +453,14 @@
         if (!container) return;
 
         const toast = document.createElement('div');
-        toast.className = 'toast-notify';
+        toast.className = 'toast-notify animate__animated animate__fadeInUp';
         toast.style.borderLeftColor = type === 'error' ? '#dc3545' : (type === 'success' ? '#198754' : '#0b5ed7');
         toast.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center">
-                <strong>${type === 'error' ? 'Warning' : type === 'success' ? 'Success' : 'Info'}</strong>
-                <button class="btn-close btn-sm" type="button" aria-label="Close"></button>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong class="text-slate-800" style="font-size: 0.9rem;">${type === 'error' ? 'Warning Alert' : type === 'success' ? 'Success Transaction' : 'System Notice'}</strong>
+                <button class="btn-close btn-sm shadow-none" type="button" aria-label="Close" style="font-size: 0.75rem;"></button>
             </div>
-            <div class="mt-1">${message}</div>
+            <div class="text-slate-600 small font-medium">${message}</div>
         `;
 
         toast.querySelector('.btn-close')?.addEventListener('click', () => toast.remove());
@@ -434,8 +493,8 @@
         wrap.className = 'tag-item';
         wrap.innerHTML = `
             <span>${escapeHtml(value)}</span>
-            <button class="btn btn-sm p-0 border-0 bg-transparent text-danger" type="button" aria-label="Remove medicine">
-                <i class="bi bi-x-circle-fill"></i>
+            <button class="btn btn-sm p-0 border-0 bg-transparent text-white opacity-75 hover:opacity-100 ms-1 d-flex align-items-center" type="button" aria-label="Remove medicine">
+                <i class="bi bi-x-circle-fill" style="font-size: 0.95rem;"></i>
             </button>
             <input type="hidden" name="item_names[]" value="${escapeHtml(value)}">
         `;
@@ -455,7 +514,7 @@
 
         const value = input.value.trim();
         if (!value) {
-            showToast('Please enter a medicine name', 'error');
+            showToast('Please specify a valid medicine identifier payload string', 'error');
             input.focus();
             return;
         }
@@ -463,7 +522,7 @@
         mainList.appendChild(createTag(value));
         input.value = '';
         updateSearchBtn();
-        showToast(`Added "${value}" to the search list`, 'success');
+        showToast(`Added cluster item: "${value}" to execution queue stack`, 'success');
         input.focus();
     }
 
