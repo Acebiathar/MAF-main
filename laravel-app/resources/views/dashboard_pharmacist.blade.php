@@ -150,7 +150,7 @@
       <div class="dashboard-action-icon flex-shrink-0"><i class="bi bi-shield-exclamation"></i></div>
       <div>
         <h5 class="fw-bold mb-2">Verification Pending</h5>
-        <p class="text-muted mb-0">Your pharmacy is still under admin review. Patients will not see your inventory until approval is complete, and stock tools remain visible for preparation only.</p>
+        <p class="text-muted mb-0">Kindly make payment on 0773496048.Your pharmacy is still under admin review. Patients will not see your inventory until approval is complete, and stock tools remain visible for preparation only.</p>
       </div>
     </div>
   </div>

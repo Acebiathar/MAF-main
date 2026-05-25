@@ -313,7 +313,7 @@
         @yield('dashboard_sidebar')
       </div>
 
-      <div class="dashboard-sidebar-note small rounded-4 p-3 border border-light border-opacity-10">
+      <div class="dashboard-sidebar-note small rounded-4 p-2 border border-light border-opacity-10">
         <div class="fw-semibold text-white mb-1">Today</div>
         <div>Keep updates current, respond quickly, and use the quick actions panel to move faster.</div>
       </div>
