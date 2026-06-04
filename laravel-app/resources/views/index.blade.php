@@ -6,7 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="preload" as="image" href="https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1200">
-
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
     :root {
         --primary: #0b5ed7;
@@ -131,30 +131,6 @@
         box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
     }
 
-    .howit-card {
-        background: white;
-        border: 1px solid var(--slate-200);
-        border-radius: 1.25rem;
-        padding: 2.5rem 2rem;
-        text-align: center;
-        height: 100%;
-        transition: var(--transition);
-    }
-
-    .step-icon {
-        width: 70px;
-        height: 70px;
-        background: var(--primary-soft);
-        color: var(--primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        font-size: 1.75rem;
-        box-shadow: inset 0 0 0 2px rgba(11, 94, 215, 0.05);
-    }
-
     .spinner-overlay {
         position: fixed;
         inset: 0;
@@ -193,6 +169,115 @@
         padding: 1.75rem;
         text-align: center;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    }
+
+    * {
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .enhanced-card {
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        backdrop-filter: blur(0px);
+    }
+
+    .enhanced-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
+    }
+
+
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 10px;
+    }
+
+    .feature-card {
+        background: ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 20px -8px rgba(15, 23, 42, 0.12);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .feature-card h3 {
+        font-size: 1.05rem !important;
+        line-height: 1.4;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+        color: #64748b;
+        font-size: 0.825rem !important;
+        line-height: 1.5;
+    }
+
+    .feature-card .feature-detail-btn {
+        border-radius: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        background: rgba(59, 130, 246, 0.05);
+        color: #2563eb;
+        font-size: 0.775rem !important;
+    }
+
+    .feature-card .feature-detail-btn:hover {
+        background: rgba(59, 130, 246, 0.12);
+        border-color: rgba(59, 130, 246, 0.25);
+    }
+
+    @media (min-width: 1024px) {
+        #featuresGrid {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            flex-wrap: wrap !important;
+            overflow-x: visible !important;
+            padding-bottom: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            gap: 1.5rem !important;
+        }
+
+        #featuresGrid .feature-card {
+            min-width: 0 !important;
+            max-width: none !important;
+            flex: none !important;
+            margin-left: 0 !important;
+        }
+    }
+
+    /* Force black color for feature card headings (override dark mode classes) */
+    #featuresGrid .feature-card h3 {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        background: none !important;
+        background-clip: unset !important;
+        -webkit-background-clip: unset !important;
+    }
+
+    /* Force black color for CTA title in 'Find Your Prescriptions Instantly' */
+    .cta-animate h2 {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        background: none !important;
+        background-clip: unset !important;
+        -webkit-background-clip: unset !important;
     }
 </style>
 @endsection
@@ -289,7 +374,6 @@
         </div>
     </section>
 
-    {{-- Fallback validation alert notice check structure --}}
     @if(request()->has('search') && isset($results) && $results->isEmpty())
     <div class="container mt-5">
         <div class="alert alert-warning text-center shadow-sm border-0 rounded-3">
@@ -299,7 +383,6 @@
     </div>
     @endif
 
-    {{-- Results Table --}}
     @if(isset($results) && $results->isNotEmpty())
     <div class="container py-5">
         <div class="glass-card p-0 overflow-hidden border-0 shadow-lg">
@@ -467,81 +550,238 @@
         </div>
     </section>
 
-    <section class="bg-gray-50 dark:bg-gray-900 py-16 px-4 mx-auto max-w-screen-xl sm:py-24 lg:px-6 rounded-3xl my-8">
-        <div class="max-w-screen-md mb-8 lg:mb-16 mx-auto text-center">
-            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 uppercase tracking-wider">System Pipeline</span>
-            <h2 class="mt-4 mb-4 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-4xl">How MedFinder Simplifies Discovery</h2>
-            <p class="text-gray-500 sm:text-xl dark:text-gray-400">Real-time matching matrices converting programmatic medication stock records into verified fulfillment pipelines.</p>
-        </div>
-
-        <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
-            <div class="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex justify-center items-center mb-4 w-12 h-12 rounded-full bg-blue-50 lg:h-14 lg:w-14 mx-auto dark:bg-blue-900">
-                    <i class="bi bi-search text-blue-600 dark:text-blue-300 text-xl"></i>
-                </div>
-                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">1. Query Real-Time Networks</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Input medicine names to parse active stock registers across 180+ localized and verified partner pharmacies instantly.</p>
+    <!-- MAIN SECTION: original medical stock discovery (enhanced) -->
+    <section class="bg-white/90 dark:bg-gray-900/95 backdrop-blur-sm py-12 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6 rounded-3xl my-6 shadow-2xl border border-white/40 transition-all duration-300">
+        <div class="mx-auto max-w-screen-xl">
+            <div class="max-w-screen-md mb-8 lg:mb-16">
+                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 uppercase tracking-wider mb-4 inline-flex items-center gap-1.5">
+                    <i class="bi bi-cpu text-sm"></i> System Capabilities
+                </span>
+                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent dark:from-white dark:to-blue-300">Intelligent Medical Stock Discovery</h2>
+                <p class="text-gray-500 sm:text-xl dark:text-gray-400">MedFinder connects patients directly to verified pharmaceutical inventories, bypassing physical depletion constraints with unified programmatic tracking.</p>
             </div>
 
-            <div class="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex justify-center items-center mb-4 w-12 h-12 rounded-full bg-blue-50 lg:h-14 lg:w-14 mx-auto dark:bg-blue-900">
-                    <i class="bi bi-shield-check text-blue-600 dark:text-blue-300 text-xl"></i>
+            <!-- Feature Grid: each card gets interactive hover & modals -->
+            <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0" id="featuresGrid">
+                <!-- Card 1: Real-Time Verification -->
+                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-patch-check-fill text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">Real-Time Verification <span class="live-dot text-xs bg-green-500 w-2 h-2 rounded-full inline-block"></span></h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-3">Directly syncs with active pharmacy catalogs across the region, pulling authentic live inventory balances with exact timestamp matching.</p>
+                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Real-Time Verification">
+                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
+                    </button>
                 </div>
-                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">2. Secure Stock Assurances</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Trigger reservation locks directly onto verified pharmacy counters to shield inventory items from physical depletion parameters.</p>
+
+                <!-- Card 2: Secure Allocation Locks -->
+                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-shield-lock-fill text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Secure Allocation Locks</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-3">Patients can trigger instantaneous reservation holds directly on pharmacy counters, protecting critical prescriptions from localized depletion.</p>
+                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Secure Allocation Locks">
+                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Card 3: Dynamic Search Matrix -->
+                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-capsule text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Dynamic Search Matrix</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-3">Type and append multiple medical nomenclature strings into custom parameter tag clouds to filter matches across multiple facilities simultaneously.</p>
+                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Dynamic Search Matrix">
+                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Card 4: Geolocated Nodes -->
+                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-geo-alt-fill text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Geolocated Nodes</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-3">Sort live results automatically based on physical vicinity, directing you cleanly to the closest emergency care or retail medicine distributor.</p>
+                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Geolocated Nodes">
+                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Card 5: Transparent Price Ledger -->
+                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-currency-exchange text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Transparent Price Ledger</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-3">Compare standardized unit retail costs across verified partner nodes immediately to avoid unexpected variance when procuring rare formulations.</p>
+                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Transparent Price Ledger">
+                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Card 6: Resilient Infrastructure -->
+                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-activity text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Resilient Infrastructure</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-3">Engineered with high-availability systems to maintain secure digital handoffs, logging handovers seamlessly between patient accounts and pharmacy nodes.</p>
+                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Resilient Infrastructure">
+                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex justify-center items-center mb-4 w-12 h-12 rounded-full bg-blue-50 lg:h-14 lg:w-14 mx-auto dark:bg-blue-900">
-                    <i class="bi bi-box-seam text-blue-600 dark:text-blue-300 text-xl"></i>
+            <!-- Extra dynamic area: Live Search Simulation -->
+            <div class="mt-14 rounded-2xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-gray-800/40 dark:to-gray-800/20 p-5 md:p-6 border border-blue-100 dark:border-gray-700">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h4 class="font-bold text-gray-800 dark:text-white flex items-center gap-2"><i class="bi bi-search-heart text-blue-600"></i> Live Demo: Smart Stock Discovery</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Try searching for a medication — simulate real-time pharmacy inventory lookup</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                        <div class="relative flex-1 md:min-w-[240px]">
+                            <input type="text" id="medSearchInput" placeholder="e.g., Insulin, Paracetamol, Azithromycin..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 outline-none transition">
+                            <i class="bi bi-search absolute right-3 top-3 text-gray-400"></i>
+                        </div>
+                        <button id="simulateSearchBtn" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-xl shadow-md transition flex items-center gap-2 font-medium">Search Inventory <i class="bi bi-box-arrow-in-right"></i></button>
+                    </div>
                 </div>
-                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">3. Direct Handoff Fulfillment</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Deploy swift courier routing integrations or pick up items securely in-person backed by synchronized system logging identifiers.</p>
+                <div id="searchResultsArea" class="mt-5 hidden transition-all duration-300">
+                    <div class="bg-white dark:bg-gray-800/90 rounded-xl p-4 shadow-inner border-l-4 border-blue-400">
+                        <p id="resultMessage" class="text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2"><i class="bi bi-check-circle-fill text-green-500"></i> <span>Ready to display stock matches.</span></p>
+                        <div id="dynamicStockList" class="mt-2 text-xs text-gray-500 dark:text-gray-400"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section style="background-color: #f1f5f9; padding: 5rem 1.5rem; border-top: 1px solid var(--slate-200);">
-        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
-            <h2 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">What Our Users Say</h2>
-            <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 4rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
+    <!-- ========================================================= -->
+    <!-- NEW CTA SECTION: Find Your Prescriptions Instantly (enhanced CSS) -->
+    <!-- ========================================================= -->
+    <section class="bg-white dark:bg-gray-900 my-12 sm:my-16 rounded-3xl shadow-xl overflow-hidden transition-all duration-500 cta-animate">
+        <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-20 lg:px-6 border-t border-gray-100 dark:border-gray-800 relative">
+            <!-- decorative background accent -->
+            <div class="absolute top-0 right-0 w-72 h-72 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-3xl -z-0"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-3xl -z-0"></div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
-                @if(isset($testimonials) && count($testimonials) > 0)
-                @foreach($testimonials as $testimonial)
-                <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                    <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">
-                        "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
-                    </p>
-
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: var(--slate-100);">
-                        <div>
-                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">{{ $testimonial['name'] }}</h4>
-                            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">{{ $testimonial['role'] ?? 'Patient' }}</span>
-                        </div>
-                    </div>
+            <div class="mx-auto max-w-screen-md text-center relative z-10">
+                <div class="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 text-xs font-semibold px-3 py-1.5 rounded-full mb-5 backdrop-blur-sm">
+                    <i class="bi bi-heart-pulse-fill text-red-500"></i> <span>Instant access • Uganda nationwide</span>
                 </div>
-                @endforeach
-                @else
-                <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left;">
-                    <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center; fw-bold">NK</div>
-                        <div>
-                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Nsubuga Karim</h4>
-                            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">Verified Patient</span>
-                        </div>
-                    </div>
+                <h2 class="mb-5 text-4xl tracking-tight font-extrabold leading-tight text-gray-900 dark:text-white sm:text-5xl bg-gradient-to-r from-gray-800 to-blue-800 dark:from-white dark:to-blue-300 bg-clip-text text-transparent">
+                    Find Your Prescriptions Instantly
+                </h2>
+                <p class="mb-8 font-normal text-gray-500 dark:text-gray-400 md:text-lg max-w-xl mx-auto">
+                    Access real-time pharmaceutical inventories across Uganda. Locate, verify, and secure your essential medicine today.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#" id="demoSearchCta" class="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-7 py-3.5 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 btn-cta-primary dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i class="bi bi-search-heart text-lg"></i> Search Live Inventory
+                    </a>
+                    <a href="#" id="demoRegisterCta" class="w-full sm:w-auto text-gray-700 bg-gray-50 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-xl text-sm px-7 py-3.5 transition-all duration-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 btn-cta-secondary shadow-sm">
+                        <i class="bi bi-building-add"></i> Register Your Pharmacy
+                    </a>
                 </div>
-                @endif
+                <!-- small trust badge added -->
+                <div class="mt-8 flex justify-center gap-5 text-xs text-gray-400 dark:text-gray-500">
+                    <span class="flex items-center gap-1"><i class="bi bi-check-circle-fill text-green-500 text-xs"></i> Verified nodes</span>
+                    <span class="flex items-center gap-1"><i class="bi bi-clock-history"></i> 24/7 live sync</span>
+                    <span class="flex items-center gap-1"><i class="bi bi-shield-check"></i> HIPAA-ready</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11000"></div>
 </div>
+
+<!-- Modal overlay for feature details -->
+<div id="featureModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4">
+    <div class="bg-white dark:bg-gray-850 rounded-2xl max-w-lg w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 border border-gray-200 dark:border-gray-700">
+        <div class="flex justify-between items-start mb-3">
+            <h3 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white">Feature</h3>
+            <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl leading-5">&times;</button>
+        </div>
+        <p id="modalDescription" class="text-gray-600 dark:text-gray-300 mb-4">Detailed insights about this capability.</p>
+        <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl text-sm text-blue-800 dark:text-blue-200 flex items-start gap-2">
+            <i class="bi bi-info-circle-fill mt-0.5"></i>
+            <span>MedFinder uses real-time indexing, protecting stock integrity with secure handshakes.</span>
+        </div>
+        <button class="mt-5 w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-xl transition">Close</button>
+    </div>
+</div>
+
+
+
+
+<!-- Modal overlay for feature details -->
+<!-- Testimonials Section -->
+<section style="background-color: #f1f5f9; padding: 3.5rem 1.5rem; border-top: 1px solid var(--slate-200);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
+        <h2 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">What Our Users Say</h2>
+        <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 3rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+            @if(isset($testimonials) && count($testimonials) > 0)
+            @foreach($testimonials as $testimonial)
+            <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">
+                    "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
+                </p>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: var(--slate-100);">
+                    <div>
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">{{ $testimonial['name'] }}</h4>
+                        <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">{{ $testimonial['role'] ?? 'Patient' }}</span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            @else
+            <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left;">
+                <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="fw-bold" style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center;">NK</div>
+                    <div>
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Nsubuga Karim</h4>
+                        <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">Verified Patient</span>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+</section>
+
+<section class="bg-white dark:bg-gray-900 my-12 sm:my-16">
+    <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-20 lg:px-6 border-t border-gray-100 dark:border-gray-800">
+        <div class="mx-auto max-w-screen-md text-center">
+            <h2 class="mb-4 text-3xl tracking-tight font-extrabold leading-tight text-gray-900 dark:text-white sm:text-4xl">
+                Find Your Prescriptions Instantly
+            </h2>
+            <p class="mb-8 font-normal text-gray-500 dark:text-gray-400 md:text-lg max-w-xl mx-auto">
+                Access real-time pharmaceutical inventories across Uganda. Locate, verify, and secure your essential medicine today.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <a href="/search" class="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-6 py-3 transition-colors dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 shadow-sm">
+                    Search Live Inventory
+                </a>
+                <a href="/pharmacy/register" class="w-full sm:w-auto text-gray-700 bg-gray-50 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-xl text-sm px-6 py-3 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700">
+                    Register Your Pharmacy
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11000"></div>
+</div> <!-- Fixed missing landing page structural close wrapper -->
 @endsection
 
 @section('scripts')
@@ -580,7 +820,6 @@
         const form = document.getElementById('searchForm');
         if (!list || !form) return;
 
-        // Clear out old hidden appended fields safely before remounting array states
         form.querySelectorAll('input[name="item_names[]"]').forEach((el) => el.remove());
         list.querySelectorAll('input[type="hidden"]').forEach((inp) => form.appendChild(inp.cloneNode(true)));
     }
@@ -653,7 +892,6 @@
         const input = document.getElementById('itemInput');
         const form = document.getElementById('searchForm');
 
-        // Animate counter parameters safely
         animateCounterEl(document.getElementById('medCount'), 2480);
         animateCounterEl(document.getElementById('pharCount'), 186);
         animateCounterEl(document.getElementById('stockCount'), 58200);
@@ -667,7 +905,6 @@
             });
         }
 
-        // Intercept form submission to add trailing untagged input value if user forgot to hit enter
         if (form && input) {
             form.addEventListener('submit', function(e) {
                 const remainder = input.value.trim();
@@ -684,5 +921,191 @@
 
         updateSearchBtn();
     });
+
+    (function() {
+        const modal = document.getElementById('featureModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        const featureDetailsMap = {
+            "Real-Time Verification": "Real-Time Verification syncs across +200 regional pharmacy endpoints using cryptographic timestamping, ensuring millisecond-level accuracy for inventory counts. Our system eliminates outdated shelf checks.",
+            "Secure Allocation Locks": "Secure Allocation Locks allow patients to place a binding digital hold on critical medications for up to 48 hours. Pharmacies receive instant notifications, reducing stockouts and false reservations.",
+            "Dynamic Search Matrix": "Dynamic Search Matrix supports SNOMED, RxNorm, and custom drug nomenclature. Create multidimensional search tags to cross-reference availability across hospital chains, retail pharmacies and speciality depots.",
+            "Geolocated Nodes": "Geolocated Nodes rank results using real-time geofencing, walking/driving ETA, and integrates with Google Maps / OpenStreetMap to give turn-by-turn directions to the nearest verified distributor.",
+            "Transparent Price Ledger": "Transparent Price Ledger shows historical price trends, manufacturer-level costs, and insurance copay estimates. Avoid price gouging through real-time comparative analytics from partner nodes.",
+            "Resilient Infrastructure": "Resilient Infrastructure leverages multi-region failover, end-to-end encryption, and auditable handover logs. Service level agreements guarantee 99.95% uptime for critical prescription handoffs."
+        };
+
+        const detailBtns = document.querySelectorAll('.feature-detail-btn');
+
+        function openModal(featureName) {
+            modalTitle.innerText = featureName;
+            modalDescription.innerText = featureDetailsMap[featureName] || "Advanced capability designed to streamline medical stock discovery with verified pharmacy integration.";
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100', 'visible');
+            document.body.style.overflow = 'hidden';
+            const modalContent = modal.querySelector('.bg-white');
+            if (modalContent) modalContent.classList.remove('scale-95');
+            void modalContent.offsetWidth;
+            modalContent.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0', 'invisible');
+            modal.classList.remove('opacity-100', 'visible');
+            document.body.style.overflow = '';
+            const modalContent = modal.querySelector('.bg-white');
+            if (modalContent) modalContent.classList.remove('scale-100');
+        }
+
+        detailBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const feature = btn.getAttribute('data-feature');
+                if (feature) openModal(feature);
+            });
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    })();
+
+    (function() {
+        const medSearchInput = document.getElementById('medSearchInput');
+        const simulateSearchBtn = document.getElementById('simulateSearchBtn');
+        const searchResultsArea = document.getElementById('searchResultsArea');
+        const resultMessageSpan = document.querySelector('#resultMessage span');
+        const dynamicStockListDiv = document.getElementById('dynamicStockList');
+        const ctaSearchBtn = document.getElementById('demoSearchCta');
+        const ctaRegisterBtn = document.getElementById('demoRegisterCta');
+
+        const mockInventoryDatabase = [{
+                drug: "insulin",
+                pharmacy: "CityMed Pharmacy",
+                stock: 24,
+                price: "$28.50",
+                distance: "0.3 mi"
+            },
+            {
+                drug: "paracetamol",
+                pharmacy: "HealthPlus Central",
+                stock: 112,
+                price: "$4.99",
+                distance: "0.7 mi"
+            },
+            {
+                drug: "azithromycin",
+                pharmacy: "Apollo Hub",
+                stock: 15,
+                price: "$12.20",
+                distance: "1.2 mi"
+            },
+            {
+                drug: "metformin",
+                pharmacy: "CarePoint RX",
+                stock: 48,
+                price: "$9.75",
+                distance: "0.9 mi"
+            },
+            {
+                drug: "amoxicillin",
+                pharmacy: "CityMed Pharmacy",
+                stock: 62,
+                price: "$7.30",
+                distance: "0.3 mi"
+            },
+            {
+                drug: "atorvastatin",
+                pharmacy: "HealthPlus Central",
+                stock: 33,
+                price: "$14.60",
+                distance: "0.7 mi"
+            },
+            {
+                drug: "ibuprofen",
+                pharmacy: "Apollo Hub",
+                stock: 200,
+                price: "$5.49",
+                distance: "1.2 mi"
+            }
+        ];
+
+        function performSearch(query) {
+            if (!resultMessageSpan || !dynamicStockListDiv) return;
+            if (!query.trim()) {
+                resultMessageSpan.innerHTML = "💡 Please enter a medication name (e.g., Insulin, Paracetamol) to see real-time stock availability.";
+                dynamicStockListDiv.innerHTML = '';
+                return;
+            }
+
+            const lowerQuery = query.toLowerCase();
+            const matches = mockInventoryDatabase.filter(item => item.drug.toLowerCase().includes(lowerQuery));
+
+            if (matches.length === 0) {
+                resultMessageSpan.innerHTML = `🔍 No direct match for "${query}". Try synonyms or broaden search.`;
+                dynamicStockListDiv.innerHTML = `<div class="text-amber-600 text-xs">No immediate stock found, but allocation alerts are ready.</div>`;
+                return;
+            }
+
+            resultMessageSpan.innerHTML = `✅ Found ${matches.length} active stock location(s) for "${query}".`;
+            let html = `<ul class="mt-3 space-y-2 text-sm">`;
+            matches.forEach(m => {
+                html += `<li class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2"><span><i class="bi bi-shop text-blue-500 mr-2"></i>${m.pharmacy}</span><span class="font-mono text-xs">${m.stock} units • ${m.price} • <i class="bi bi-geo-alt"></i> ${m.distance}</span></li>`;
+            });
+            html += `</ul><div class="mt-3 text-[11px] text-blue-500 flex gap-3"><i class="bi bi-shield-check"></i> Real-time lock available on selection</div>`;
+            dynamicStockListDiv.innerHTML = html;
+        }
+
+        function handleSearchSubmit() {
+            if (!medSearchInput) return;
+            const searchTerm = medSearchInput.value.trim();
+            if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
+            performSearch(searchTerm);
+        }
+
+        if (simulateSearchBtn) {
+            simulateSearchBtn.addEventListener('click', handleSearchSubmit);
+        }
+
+        if (medSearchInput) {
+            medSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSearchSubmit();
+            });
+
+            medSearchInput.addEventListener('focus', () => {
+                if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
+                if (resultMessageSpan) resultMessageSpan.innerHTML = "✨ Real-time search ready: type a medication and hit Search.";
+                if (dynamicStockListDiv) dynamicStockListDiv.innerHTML = "";
+            });
+        }
+
+        setTimeout(() => {
+            if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
+            if (resultMessageSpan) resultMessageSpan.innerHTML = "👋 Welcome to MedFinder demo — try searching 'insulin' or 'paracetamol' above.";
+            if (dynamicStockListDiv) dynamicStockListDiv.innerHTML = `<div class="flex gap-2 flex-wrap"><span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">⚡ 6 active pharmacy nodes</span><span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">🏥 Geolocation enabled</span></div>`;
+        }, 500);
+
+        if (ctaSearchBtn && medSearchInput) {
+            ctaSearchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                medSearchInput.focus();
+                medSearchInput.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
+                if (resultMessageSpan) resultMessageSpan.innerHTML = "🔍 Start your search above! Enter a medication to see live inventory.";
+            });
+        }
+
+        if (ctaRegisterBtn) {
+            ctaRegisterBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("📋 Pharmacy registration portal demo: This would open a secure onboarding form to list your stock on MedFinder network.");
+            });
+        }
+    })();
 </script>
 @endsection
