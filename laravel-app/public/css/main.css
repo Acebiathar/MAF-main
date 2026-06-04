@@ -16,6 +16,7 @@
 
 /* ===== GENERAL BODY & LAYOUT ===== */
 body {
+    
     font-family: 'Inter', sans-serif;
     background: var(--gradient);
 }
@@ -399,4 +400,117 @@ body {
         display: flex !important;
         justify-content: space-between;
     }
+}
+
+/* ===== DASHBOARD SIDEBAR STYLES ===== */
+.dashboard-sidebar {
+    background-color: #0f172a; /* Deep clean slate/navy */
+    padding: 2rem 1.5rem;
+}
+
+.dashboard-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: 12px; /* Fixes corner sharp-vs-round issue */
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+}
+
+/* Distinctive active state without looking overly bulky */
+.dashboard-sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.dashboard-nav-main {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Uniform horizontal starting point for icons and text */
+}
+/* ===========================================
+   DASHBOARD ARCHITECTURE & LAYOUT WORKSPACE
+   =========================================== */
+
+/* Override body background specifically when viewing the system dashboard */
+body:has(.dashboard-workspace) {
+    background: #f8fafc !important; /* Solid clean slate tint, kills the landing page gradient */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Master Grid Structure */
+.dashboard-workspace {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Fixed sidebar width, elastic main canvas */
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar Real Alignment Fixes */
+.dashboard-sidebar {
+    background-color: #0f172a; /* Kept your deep clean slate/navy */
+    padding: 2rem 1.25rem;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Main Content Wrapper Container */
+.dashboard-content-container {
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2.5rem;
+    box-sizing: border-box;
+}
+
+/* ===== ENHANCED INTERACTIVE ELEMENTS ===== */
+
+/* Hover state transitions */
+.dashboard-sidebar .nav-link {
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.dashboard-sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+    color: #f8fafc;
+    transform: translateX(2px); /* Subtle interactive nudge on hover */
+}
+
+/* Active Highlight state overrides */
+.dashboard-sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.09) !important;
+    color: #ffffff !important;
+    box-shadow: inset 4px 0 0 0 #0b5ed7; /* Crisp primary line indicator along left edge */
+    border-radius: 8px;
+}
+
+/* Keep internal small text clean under active states */
+.dashboard-sidebar .nav-link.active small {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dashboard-sidebar .nav-link small {
+    color: #64748b;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+/* Standardized Content Containers on the right side */
+.dashboard-table-card, 
+.dashboard-notice,
+.dashboard-stat {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important; /* Perfect consistent border-radii */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
 }

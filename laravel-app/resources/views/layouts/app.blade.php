@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>@yield('title', 'Medicine Availability Finder')</title>
 
-  <!-- Stylesheets -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -140,32 +139,37 @@
   </style>
 </head>
 
-<body class="bg-light">
+<body class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*')) ? '' : 'bg-light' }}">
 
-  @include('partials.header')
+  @if(!Request::is('requests*') && !Request::is('dashboard*') && !Request::is('search*'))
+    @include('partials.header')
+  @endif
 
-  <main class="py-4">
+  <main class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*')) ? '' : 'py-4' }}">
+    
     @if(session('alerts'))
-    @foreach (session('alerts') as $alert)
-    <div class="container">
-      <div class="alert alert-{{ $alert['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
-        {{ $alert['message'] ?? 'No message content' }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    </div>
-    @endforeach
+      @foreach (session('alerts') as $alert)
+        <div class="container">
+          <div class="alert alert-{{ $alert['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+            {{ $alert['message'] ?? 'No message content' }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        </div>
+      @endforeach
     @endif
 
     @hasSection('fullwidth')
-    @yield('fullwidth')
+      @yield('fullwidth')
     @else
-    <div class="container">
-      @yield('content')
-    </div>
+      <div class="container">
+        @yield('content')
+      </div>
     @endif
   </main>
 
-  @include('partials.footer')
+  @if(!Request::is('requests*') && !Request::is('dashboard*') && !Request::is('search*'))
+    @include('partials.footer')
+  @endif
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -181,7 +185,7 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+     document.addEventListener('DOMContentLoaded', () => {
       const authButtons = document.querySelectorAll('.auth-buttons .btn');
       authButtons.forEach(button => {
         button.addEventListener('mouseenter', () => button.classList.add('btn-hover'));

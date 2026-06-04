@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('fullwidth')
 @php
   $dashboardSearchPlaceholder = trim($__env->yieldContent('dashboard_search_placeholder')) ?: 'Search medicines';
   $notificationBadge = trim($__env->yieldContent('dashboard_notification_badge')) ?: '0';
@@ -15,12 +15,18 @@
     background:
       radial-gradient(circle at top left, rgba(13, 110, 253, 0.16), transparent 35%),
       linear-gradient(180deg, #f6f9ff 0%, #eef3fb 100%);
+    display: flex;
+    margin: 0;
+    padding: 0;
   }
 
   .dashboard-frame {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
     min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
   }
 
   .dashboard-sidebar {
@@ -30,6 +36,9 @@
     position: sticky;
     top: 0;
     height: 100vh;
+    margin: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-y: auto;
   }
 
   .dashboard-brand {
@@ -88,7 +97,20 @@
   }
 
   .dashboard-content {
-    padding: 1.5rem;
+    padding: 1.5rem 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dashboard-content > .row {
+    width: calc(100vw - 280px);
+    margin-left: -1.5rem;
+  }
+
+  .dashboard-content > .row [class*='col-'] {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .dashboard-topbar,
@@ -113,8 +135,10 @@
   }
 
   .dashboard-topbar {
-    padding: 1rem 1.15rem;
+    padding: 1rem 1.5rem;
     margin-bottom: 1.5rem;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .dashboard-search {
@@ -181,10 +205,12 @@
   }
 
   .dashboard-hero {
-    padding: 1.75rem;
+    padding: 1.75rem 1.5rem;
     background: linear-gradient(135deg, #123f77 0%, #0d6efd 55%, #7fc8ff 100%);
     color: #fff;
     margin-bottom: 1.5rem;
+    margin-left: 0;
+    margin-right: 0;
     overflow: hidden;
     position: relative;
   }
@@ -281,7 +307,31 @@
 
   @media (max-width: 767.98px) {
     .dashboard-content {
-      padding: 1rem;
+      padding: 1rem 0;
+    }
+
+    .dashboard-content > .row {
+      width: 100vw;
+      margin-left: -1rem;
+    }
+
+    .dashboard-content > .row [class*='col-'] {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .dashboard-topbar {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .dashboard-hero {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
 
     .dashboard-hero,
@@ -304,20 +354,14 @@
           <i class="bi bi-grid-1x2-fill"></i>
         </div>
         <div class="dashboard-brand-copy">
-          <div class="fw-bold">Medfinder Workspace</div>
-          <small>Role-based operations center</small>
+          <div class="fw-bold">Medfinder Ug</div>
         </div>
       </div>
 
       <div class="dashboard-nav nav flex-column mb-4">
         @yield('dashboard_sidebar')
       </div>
-
-      <div class="dashboard-sidebar-note small rounded-4 p-2 border border-light border-opacity-10">
-        <div class="fw-semibold text-white mb-1">Today</div>
-        <div>Keep updates current, respond quickly, and use the quick actions panel to move faster.</div>
-      </div>
-    </aside>
+ </aside>
 
     <div class="dashboard-content">
       <div class="dashboard-topbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 justify-content-between">

@@ -160,28 +160,50 @@ Route::get('/privacy', function () {
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
 
+
 Route::match(['get', 'post'], '/login', function (Request $request) {
-    if ($request->isMethod('get') && ($user = currentUser())) {
-        return redirectToDashboard($user);
+    // 1. GET Request: If user is already authenticated, send them to their dashboard
+    if ($request->isMethod('get')) {
+        $userId = session('user_id');
+        $user = $userId ? DB::table('users')->where('id', $userId)->first() : null;
+
+        if ($user) {
+            $role = strtolower($user->role);
+            if ($role === 'admin') return redirect('/admin');
+            if ($role === 'pharmacist') return redirect('/pharmacist');
+            return redirect('/requests');
+        }
+        return renderView('auth.login');
     }
 
+    // 2. POST Request: Form Submission Processing
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
+        
         $user = DB::table('users')->where('email', $email)->first();
 
         if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
-            flash('success', "Hi, " . $user->name . "! Welcome back.");
-            return redirectToDashboard($user);
+            
+            session()->flash('alerts', [
+                'category' => 'success',
+                'message' => "Hi, " . $user->name . "! Welcome back.",
+            ]);
+
+            $role = strtolower($user->role);
+            if ($role === 'admin') return redirect('/admin');
+            if ($role === 'pharmacist') return redirect('/pharmacist');
+            return redirect('/requests');
         }
 
-        flash('danger', 'Invalid credentials.');
+        session()->flash('alerts', [
+            'category' => 'danger',
+            'message' => 'Invalid credentials.',
+        ]);
         return redirect('/login');
     }
-    return renderView('auth.login');
-})->name('login');
-
+})->name('login'); 
 Route::match(['get', 'post'], '/register', function (Request $request) {
     if ($request->isMethod('get') && ($user = currentUser())) {
         return redirectToDashboard($user);
@@ -363,15 +385,29 @@ Route::post('/reserve/{item}', function (int $item) {
 
 Route::get('/requests', function () {
     $user = currentUser();
-    if (!$user || $user->role !== 'patient') return redirect('/login');
+    
+    // 1. Guard: If not logged in, force them to log in
+    if (!$user) {
+        return redirect('/login');
+    }
 
+    // 2. Guard: If they ARE logged in, but they are NOT a patient,
+    // send them to their correct dashboard instead of /login (this prevents the infinite loop!)
+    if (strtolower($user->role) !== 'patient') {
+        if (strtolower($user->role) === 'admin') return redirect('/admin');
+        if (strtolower($user->role) === 'pharmacist') return redirect('/pharmacist');
+    }
+
+    // 3. Main Logic: If they pass the guards above, they are a valid patient.
+    // Fetch their reservations and show the page.
     $reservations = DB::table('reservations as r')
         ->join('pharmacies as p', 'r.pharmacy_id', '=', 'p.id')
         ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
-        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.location as pharmacy_location')
+        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.address as pharmacy_address')
         ->where('r.user_id', $user->id)
         ->orderByDesc('r.created_at')
         ->get();
+        
     return renderView('patient_requests', compact('reservations'));
 });
 
