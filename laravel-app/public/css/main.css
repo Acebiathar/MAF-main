@@ -15,9 +15,17 @@
 }
 
 /* ===== GENERAL BODY & LAYOUT ===== */
+html, body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background: var(--gradient);
+    overflow-x: hidden;
 }
 
 .landing-page {
@@ -25,6 +33,24 @@ body {
     background: #f6f9fe;
     color: #1b2e3c;
     min-height: 100vh;
+    width: 100%;
+}
+
+.hero-carousel,
+.hero-carousel .carousel-inner {
+    width: 100%;
+}
+
+.hero-carousel .carousel-item {
+    min-height: 100vh;
+}
+
+.carousel-caption {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 4rem 2rem;
 }
 
 .hero {
