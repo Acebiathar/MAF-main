@@ -427,6 +427,41 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="carousel-item" data-bs-interval="5000">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-success bg-opacity-10 text-success mb-3 px-2.5 py-1.5 rounded fw-semibold">Network Partner Node</span>
+                                        <h4 class="fw-bold h5 mb-2">Green Ridge Clinic</h4>
+                                        <p class="text-muted small mb-4">Community care hub with rapid stock matching and patient referral support.</p>
+                                    </div>
+                                    <img src="{{ asset('images/pharmacy3.jpg') }}" alt="Green Ridge Clinic" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-info bg-opacity-10 text-info mb-3 px-2.5 py-1.5 rounded fw-semibold">Regional Pharmacy</span>
+                                        <h4 class="fw-bold h5 mb-2">Solar Care Pharmacy</h4>
+                                        <p class="text-muted small mb-4">Verified pharmaceutical outlet built for secure and fast medication handoff.</p>
+                                    </div>
+                                    <img src="{{ asset('images/pharmacy.jpg') }}" alt="Solar Care Pharmacy" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;">
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-none d-md-block">
+                                <div class="ad-card d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-warning bg-opacity-10 text-warning mb-3 px-2.5 py-1.5 rounded fw-semibold">Logistics Node</span>
+                                        <h4 class="fw-bold h5 mb-2">Medicortex Hub</h4>
+                                        <p class="text-muted small mb-4">Integrated stock and delivery coordination for high-demand pharmaceutical items.</p>
+                                    </div>
+                                    <img src="{{ asset('images/drugs.jpg') }}" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;" alt="Medicortex Hub">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
