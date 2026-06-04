@@ -32,7 +32,7 @@
 
     /* Hero Section Visual Fixes */
     .hero-carousel .carousel-item {
-        min-height: 80vh;
+        min-height: 85vh;
         background-size: cover;
         background-position: center;
         position: relative;
@@ -85,22 +85,22 @@
 
     /* Medicine Interactive Tag Badges */
     .tag-item {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.12);
         color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         border-radius: 50px;
-        padding: 0.5rem 1.25rem;
-        font-size: 0.875rem;
+        padding: 0.4rem 1rem;
+        font-size: 0.825rem;
         font-weight: 500;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         transition: var(--transition);
         backdrop-filter: blur(8px);
     }
 
     .tag-item:hover {
-        background: rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.22);
         transform: scale(1.02);
     }
 
@@ -128,7 +128,7 @@
 
     .ad-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 20px -5px rgba(0,0,0,0.05);
+        box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
     }
 
     .howit-card {
@@ -185,10 +185,19 @@
         width: 100%;
         max-width: 650px;
     }
+
+    .stat-box {
+        background: white;
+        border: 1px solid var(--slate-200);
+        border-radius: 1.25rem;
+        padding: 1.75rem;
+        text-align: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    }
 </style>
 @endsection
 
-@section('content')
+@section('fullwidth')
 <div class="landing-page">
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="text-center">
@@ -202,53 +211,52 @@
             <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1600');">
                 <div class="carousel-caption">
                     <div class="container">
-                        <div class="row">
+                        <div class="row align-items-center">
                             <div class="col-lg-7">
                                 <span class="badge bg-primary px-3 py-2 rounded-pill text-uppercase mb-3 tracking-wider fw-semibold" style="font-size: 0.75rem;">Verified Stocks Only</span>
                                 <h1 class="display-4 fw-bold text-white mb-3">Find Prescriptions Near You, Instantly.</h1>
                                 <p class="lead text-white-50 mb-4">Unified platform mapping local medical stock configurations directly to real-time consumer and emergency needs.</p>
-                                
+
                                 <div class="search-container position-relative overflow-hidden p-4 p-md-5" style="background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); max-width: 700px;">
-    
-    <div class="position-absolute" style="width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 180, 170, 0.25) 0%, rgba(0,0,0,0) 70%); top: -50px; right: -50px; pointer-events: none;"></div>
-    
-    <div class="position-relative z-3">
-        <div class="d-flex align-items-center gap-2 mb-4">
-            <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-3" style="width: 36px; height: 36px; border: 1px solid rgba(0, 180, 170, 0.25);">
-                <i class="bi bi-search text-info" style="font-size: 1rem;"></i>
-            </div>
-            <div>
-                <h3 class="text-white fw-bold h5 mb-0" style="letter-spacing: -0.02em;">Search For Your Medicine</h3>
-                <p class="text-white-50 mb-0" style="font-size: 0.775rem;">Type your medicine here. Seperate items with a comma.</p>
-            </div>
-        </div>
-        
-        <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
-            <div class="input-group bg-white rounded-4 shadow-lg p-2 border border-white border-2" style="transition: var(--transition);">
-                
-                <span class="input-group-text border-0 bg-transparent ps-3 pe-2 text-slate-600">
-                    <i class="bi bi-capsule-capsule" style="font-size: 1.1rem; color: #64748b;"></i>
-                </span>
-                
-                <input type="text" 
-                       name="search" 
-                       id="itemInput" 
-                       value="{{ request('search') }}" 
-                       class="form-control border-0 bg-transparent text-dark px-2 py-3" 
-                       placeholder="Enter prescription criteria (e.g., Panadol, Amoxicillin)..." 
-                       style="outline: none; box-shadow: none; font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
-                
-                <button type="submit" 
-                        class="btn btn-dark rounded-4 px-4 fw-bold text-uppercase tracking-wider transition d-flex align-items-center gap-2" 
-                        style="font-size: 0.8rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
-                    <span>Search</span>
-                    <i class="bi bi-arrow-right-short" style="font-size: 1.2rem;"></i>
-                </button>
-                
-            </div>
-        </form>
-    </div>
-</div>
+                                    <div class="position-absolute" style="width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 180, 170, 0.25) 0%, rgba(0,0,0,0) 70%); top: -50px; right: -50px; pointer-events: none;"></div>
+
+                                    <div class="position-relative z-3">
+                                        <div class="d-flex align-items-center gap-2 mb-4">
+                                            <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-3" style="width: 36px; height: 36px; border: 1px solid rgba(0, 180, 170, 0.25);">
+                                                <i class="bi bi-search text-info" style="font-size: 1rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-white fw-bold h5 mb-0" style="letter-spacing: -0.02em;">Search For Your Medicine</h3>
+                                                <p class="text-white-50 mb-0" style="font-size: 0.775rem;">Type your medicine here. Press Enter to append criteria items.</p>
+                                            </div>
+                                        </div>
+
+                                        <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-3"></div>
+
+                                        <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
+                                            <div class="input-group bg-white rounded-4 shadow-lg p-2 border border-white border-2" style="transition: var(--transition);">
+                                                <span class="input-group-text border-0 bg-transparent ps-3 pe-2 text-slate-600">
+                                                    <i class="bi bi-capsule" style="font-size: 1.1rem; color: #64748b;"></i>
+                                                </span>
+
+                                                <input type="text"
+                                                    name="search"
+                                                    id="itemInput"
+                                                    value="{{ request('search') }}"
+                                                    class="form-control border-0 bg-transparent text-dark px-2 py-3"
+                                                    placeholder="Enter prescription criteria (e.g., Panadol, Amoxicillin)..."
+                                                    style="outline: none; box-shadow: none; font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
+
+                                                <button type="submit" id="searchBtn"
+                                                    class="btn btn-dark rounded-4 px-4 fw-bold text-uppercase tracking-wider transition d-flex align-items-center gap-2"
+                                                    style="font-size: 0.8rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
+                                                    <span>Search</span>
+                                                    <i class="bi bi-arrow-right-short" style="font-size: 1.2rem;"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -256,24 +264,42 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+
+    <section class="container" style="margin-top: -40px; position: relative; z-index: 10;">
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-4">
+                <div class="stat-box">
+                    <h3 class="display-6 fw-bold text-dark mb-1" id="medCount">0</h3>
+                    <p class="text-muted small fw-medium mb-0">Active Medical Catalogs</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="stat-box">
+                    <h3 class="display-6 fw-bold text-primary mb-1" id="pharCount">0</h3>
+                    <p class="text-muted small fw-medium mb-0">Verified Pharmacy Nodes</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="stat-box">
+                    <h3 class="display-6 fw-bold text-success mb-1" id="stockCount">0</h3>
+                    <p class="text-muted small fw-medium mb-0">Tracked Physical Stock Units</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     {{-- Fallback validation alert notice check structure --}}
-@if(request()->has('search') && isset($results) && $results->isEmpty())
-<div class="container mt-5">
-    <div class="alert alert-warning text-center shadow-sm border-0 rounded-3">
-        <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
-        No approved pharmacies currently have "{{ request('search') }}" in stock. Please try a different medicine.
+    @if(request()->has('search') && isset($results) && $results->isEmpty())
+    <div class="container mt-5">
+        <div class="alert alert-warning text-center shadow-sm border-0 rounded-3">
+            <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+            No approved pharmacies currently have "{{ request('search') }}" in stock. Please try a different medicine.
+        </div>
     </div>
-</div>
-@endif
+    @endif
 
-{{-- Results Table --}}
-@if(isset($results) && $results->isNotEmpty())
-<div class="container py-5">
-...
-@endif
-    {{-- Clean structure looping through prioritized pharmacies and nested items inside your table layout --}}
+    {{-- Results Table --}}
     @if(isset($results) && $results->isNotEmpty())
     <div class="container py-5">
         <div class="glass-card p-0 overflow-hidden border-0 shadow-lg">
@@ -294,55 +320,55 @@
                     </thead>
                     <tbody>
                         @foreach ($results as $pharmacy)
-                            @foreach ($pharmacy->medicines as $medicine)
-                            <tr class="transition">
-                                <td class="ps-4 py-3.5">
-                                    <span class="d-block fw-bold text-dark h6 mb-0 text-capitalize">{{ $medicine->name }}</span>
-                                    <small class="text-muted text-xs">ID: {{ 1000 + $medicine->id }}</small>
-                                </td>
-                                <td class="py-3.5">
-                                    <div class="fw-bold text-primary mb-0.5">
-                                        <i class="bi bi-patch-check-fill me-1 text-info"></i>{{ $pharmacy->name }}
-                                        <span class="badge bg-primary-subtle text-primary rounded-pill text-xs ms-1" style="font-size: 0.7rem;">
-                                            {{ $pharmacy->available_items_count }} Matches
-                                        </span>
-                                    </div>
-                                    <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ $pharmacy->location ?? $pharmacy->pharmacy_location }}</small>
-                                </td>
-                                <td class="py-3.5 font-medium text-dark fw-bold">
-                                    {{ number_format($medicine->pivot->price, 0) }} <span class="text-xs text-muted" style="font-size:0.75rem;">UGX</span>
-                                </td>
-                                <td class="py-3.5">
-                                    @if($medicine->pivot->quantity == 0)
-                                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
-                                    @elseif($medicine->pivot->quantity <= 5)
-                                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited Stock ({{ $medicine->pivot->quantity }} units)</span>
+                        @foreach ($pharmacy->medicines as $medicine)
+                        <tr class="transition">
+                            <td class="ps-4 py-3.5">
+                                <span class="d-block fw-bold text-dark h6 mb-0 text-capitalize">{{ $medicine->name }}</span>
+                                <small class="text-muted text-xs">ID: {{ 1000 + $medicine->id }}</small>
+                            </td>
+                            <td class="py-3.5">
+                                <div class="fw-bold text-primary mb-0.5">
+                                    <i class="bi bi-patch-check-fill me-1 text-info"></i>{{ $pharmacy->name }}
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill text-xs ms-1" style="font-size: 0.7rem;">
+                                        {{ $pharmacy->available_items_count ?? 1 }} Matches
+                                    </span>
+                                </div>
+                                <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ $pharmacy->location ?? $pharmacy->pharmacy_location }}</small>
+                            </td>
+                            <td class="py-3.5 font-medium text-dark fw-bold">
+                                {{ number_format($medicine->pivot->price ?? 0, 0) }} <span class="text-xs text-muted" style="font-size:0.75rem;">UGX</span>
+                            </td>
+                            <td class="py-3.5">
+                                @if(($medicine->pivot->quantity ?? 0) == 0)
+                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
+                                @elseif(($medicine->pivot->quantity ?? 0) <= 5)
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited Stock ({{ $medicine->pivot->quantity }} units)</span>
                                     @else
-                                        <span class="badge-stock"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }} units)</span>
+                                    <span class="badge-stock"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }} units)</span>
                                     @endif
-                                </td>
-                               <td class="text-end pe-4 py-3.5">
-    @if(isset($currentUser) && $currentUser->role === 'patient')
-        <form action="{{ url('/reserve/' . ($medicine->pivot->id ?? $medicine->id)) }}" method="POST" class="m-0">
-            @csrf
-            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm fw-bold transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.8rem; letter-spacing: -0.01em;">
-                <i class="bi bi-shield-lock-fill"></i>
-                <span>Reserve Allocation</span>
-            </button>
-        </form>
-    @elseif(isset($currentUser))
-        <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill fw-medium" style="font-size: 0.775rem;">
-            <i class="bi bi-person-x me-1"></i> Patient Account Required
-        </span>
-    @else
-        <a href="{{ route('login') }}" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold text-uppercase tracking-wider transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.75rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05);">
-            <span>Login to Secure</span>
-            <i class="bi bi-arrow-right-short" style="font-size: 1rem;"></i>
-        </a>
-    @endif
-</td>
-                            </tr>
-                            @endforeach
+                            </td>
+                            <td class="text-end pe-4 py-3.5">
+                                @if(isset($currentUser) && $currentUser->role === 'patient')
+                                <form action="{{ url('/reserve/' . ($medicine->pivot->id ?? $medicine->id)) }}" method="POST" class="m-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm fw-bold transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.8rem; letter-spacing: -0.01em;">
+                                        <i class="bi bi-shield-lock-fill"></i>
+                                        <span>Reserve Allocation</span>
+                                    </button>
+                                </form>
+                                @elseif(isset($currentUser))
+                                <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill fw-medium" style="font-size: 0.775rem;">
+                                    <i class="bi bi-person-x me-1"></i> Patient Account Required
+                                </span>
+                                @else
+                                <a href="{{ route('login') }}" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold text-uppercase tracking-wider transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.75rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05);">
+                                    <span>Login to Secure</span>
+                                    <i class="bi bi-arrow-right-short" style="font-size: 1rem;"></i>
+                                </a>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
                         @endforeach
                     </tbody>
                 </table>
@@ -406,34 +432,36 @@
         </div>
     </section>
 
-    <section class="container py-5 my-4">
-        <div class="text-center mb-5">
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">System Pipeline</span>
-            <h2 class="fw-bold mt-2 h3">How MedFinder Simplifies Discovery</h2>
-            <p class="text-muted max-w-md mx-auto">Real-time matching matrices converting programmatic medication stock records into verified fulfillment pipelines.</p>
+    <section class="bg-gray-50 dark:bg-gray-900 py-16 px-4 mx-auto max-w-screen-xl sm:py-24 lg:px-6 rounded-3xl my-8">
+        <div class="max-w-screen-md mb-8 lg:mb-16 mx-auto text-center">
+            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 uppercase tracking-wider">System Pipeline</span>
+            <h2 class="mt-4 mb-4 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-4xl">How MedFinder Simplifies Discovery</h2>
+            <p class="text-gray-500 sm:text-xl dark:text-gray-400">Real-time matching matrices converting programmatic medication stock records into verified fulfillment pipelines.</p>
         </div>
-        
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-4">
-                <div class="howit-card">
-                    <div class="step-icon"><i class="bi bi-search"></i></div>
-                    <h4 class="fw-bold h5 mb-2">1. Query Real-Time Networks</h4>
-                    <p class="text-muted small mb-0">Input medicine names to parse active stock registers across 180+ localized and verified partner pharmacies instantly.</p>
+
+        <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
+            <div class="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex justify-center items-center mb-4 w-12 h-12 rounded-full bg-blue-50 lg:h-14 lg:w-14 mx-auto dark:bg-blue-900">
+                    <i class="bi bi-search text-blue-600 dark:text-blue-300 text-xl"></i>
                 </div>
+                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">1. Query Real-Time Networks</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Input medicine names to parse active stock registers across 180+ localized and verified partner pharmacies instantly.</p>
             </div>
-            <div class="col-md-4">
-                <div class="howit-card">
-                    <div class="step-icon"><i class="bi bi-shield-check"></i></div>
-                    <h4 class="fw-bold h5 mb-2">2. Secure Stock Assurances</h4>
-                    <p class="text-muted small mb-0">Trigger reservation locks directly onto verified pharmacy counters to shield inventory items from physical depletion parameters.</p>
+
+            <div class="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex justify-center items-center mb-4 w-12 h-12 rounded-full bg-blue-50 lg:h-14 lg:w-14 mx-auto dark:bg-blue-900">
+                    <i class="bi bi-shield-check text-blue-600 dark:text-blue-300 text-xl"></i>
                 </div>
+                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">2. Secure Stock Assurances</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Trigger reservation locks directly onto verified pharmacy counters to shield inventory items from physical depletion parameters.</p>
             </div>
-            <div class="col-md-4">
-                <div class="howit-card">
-                    <div class="step-icon"><i class="bi bi-box-seam"></i></div>
-                    <h4 class="fw-bold h5 mb-2">3. Direct Handoff Fulfillment</h4>
-                    <p class="text-muted small mb-0">Deploy swift courier routing integrations or pick up items securely in-person backed by synchronized system logging identifiers.</p>
+
+            <div class="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex justify-center items-center mb-4 w-12 h-12 rounded-full bg-blue-50 lg:h-14 lg:w-14 mx-auto dark:bg-blue-900">
+                    <i class="bi bi-box-seam text-blue-600 dark:text-blue-300 text-xl"></i>
                 </div>
+                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">3. Direct Handoff Fulfillment</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Deploy swift courier routing integrations or pick up items securely in-person backed by synchronized system logging identifiers.</p>
             </div>
         </div>
     </section>
@@ -445,21 +473,34 @@
             <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 4rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                @if(isset($testimonials) && count($testimonials) > 0)
                 @foreach($testimonials as $testimonial)
-                    <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                        <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">
-                            "{{ $testimonial['quote'] }}"
-                        </p>
+                <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                    <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">
+                        "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
+                    </p>
 
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <img src="{{ $testimonial['avatar'] }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: var(--slate-100);">
-                            <div>
-                                <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">{{ $testimonial['name'] }}</h4>
-                                <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">{{ $testimonial['role'] }}</span>
-                            </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: var(--slate-100);">
+                        <div>
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">{{ $testimonial['name'] }}</h4>
+                            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">{{ $testimonial['role'] ?? 'Patient' }}</span>
                         </div>
                     </div>
+                </div>
                 @endforeach
+                @else
+                <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left;">
+                    <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center; fw-bold">NK</div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Nsubuga Karim</h4>
+                            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">Verified Patient</span>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </section>
@@ -501,14 +542,11 @@
 
     function updateSearchBtn() {
         const list = document.getElementById('editableItemList');
-        const btn = document.getElementById('searchBtn');
         const form = document.getElementById('searchForm');
-        if (!list || !btn || !form) return;
+        if (!list || !form) return;
 
-        btn.style.display = list.children.length > 0 ? 'block' : 'none';
-        
+        // Clear out old hidden appended fields safely before remounting array states
         form.querySelectorAll('input[name="item_names[]"]').forEach((el) => el.remove());
-        
         list.querySelectorAll('input[type="hidden"]').forEach((inp) => form.appendChild(inp.cloneNode(true)));
     }
 
@@ -551,12 +589,13 @@
     }
 
     function animateCounterEl(el, target) {
+        if (!el) return;
         let current = 0;
         const step = Math.ceil(target / 45);
         const interval = setInterval(() => {
             current += step;
             if (current >= target) {
-                el.innerText = target.toLocaleString();
+                el.innerText = target.toLocaleString() + "+";
                 clearInterval(interval);
             } else {
                 el.innerText = current.toLocaleString();
@@ -577,16 +616,33 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const input = document.getElementById('itemInput');
+        const form = document.getElementById('searchForm');
 
-        if (document.getElementById('medCount')) animateCounterEl(document.getElementById('medCount'), 2480);
-        if (document.getElementById('pharCount')) animateCounterEl(document.getElementById('pharCount'), 186);
-        if (document.getElementById('stockCount')) animateCounterEl(document.getElementById('stockCount'), 58200);
+        // Animate counter parameters safely
+        animateCounterEl(document.getElementById('medCount'), 2480);
+        animateCounterEl(document.getElementById('pharCount'), 186);
+        animateCounterEl(document.getElementById('stockCount'), 58200);
 
         if (input) {
             input.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     addItem();
+                }
+            });
+        }
+
+        // Intercept form submission to add trailing untagged input value if user forgot to hit enter
+        if (form && input) {
+            form.addEventListener('submit', function(e) {
+                const remainder = input.value.trim();
+                if (remainder) {
+                    const mainList = document.getElementById('editableItemList');
+                    if (mainList) {
+                        mainList.appendChild(createTag(remainder));
+                        input.value = '';
+                        updateSearchBtn();
+                    }
                 }
             });
         }
