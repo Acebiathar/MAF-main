@@ -68,7 +68,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5434'),
-            'database' => 'maf',
+            'database' => 'medfinder',
             'username' => env('DB_USERNAME', 'postgres'),
             'password' => env('DB_PASSWORD', 'lamulah07'),
             'charset' => 'utf8',

@@ -147,71 +147,9 @@
         </div>
       </div>
     </div>
-
-    <!-- Requests Table -->
-    <div class="dashboard-table-card p-3 p-lg-4">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-        <div>
-          <div class="text-uppercase small text-muted fw-semibold">Requests Table</div>
-          <h4 class="fw-bold mb-0">My Medicine Requests</h4>
-        </div>
-        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">{{ $reservationCount }} tracked requests</span>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead class="table-light">
-            <tr class="small text-uppercase text-muted">
-              <th>Medicine</th>
-              <th>Pharmacy and Location</th>
-              <th>Status</th>
-              <th>Note Sent</th>
-              <th>Date Placed</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse ($reservations as $r)
-            <tr>
-              <td>
-                <div class="fw-bold text-primary">{{ $r->medicine_name }}</div>
-              </td>
-              <td>
-                <div class="fw-semibold text-dark">{{ $r->pharmacy_name }}</div>
-                <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ $r->pharmacy_address }}</div>
-              </td>
-              <td>
-                @if ($r->status === 'confirmed')
-                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
-                  <i class="bi bi-check-circle-fill me-1"></i> Ready for Pick-up
-                </span>
-                @elseif ($r->status === 'declined')
-                <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
-                  <i class="bi bi-x-circle-fill me-1"></i> Unavailable
-                </span>
-                @else
-                <span class="badge bg-warning-subtle text-dark px-3 py-2 rounded-pill">
-                  <i class="bi bi-clock-history me-1"></i> Pending Review
-                </span>
-                @endif
-              </td>
-              <td class="small text-muted">{{ $r->note ?? '-' }}</td>
-              <td class="small">{{ date('D, M d Y', strtotime($r->created_at)) }}</td>
-            </tr>
-            @empty
-            <tr>
-              <td colspan="5" class="text-center py-5">
-                <div class="text-muted mb-3">You have not placed any medicine requests yet.</div>
-                <a href="/" class="btn btn-outline-primary rounded-pill px-4">Search for Medicine</a>
-              </td>
-            </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
-  <!-- MY REQUESTS SECTION (TABLE ONLY) -->
+  <!-- MY REQUESTS SECTION (CLEAN SINGLE INSTANCE) -->
   <div id="section-requests" class="section-content" style="display: none;">
     <div class="dashboard-table-card p-3 p-lg-4">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
@@ -324,9 +262,6 @@
   </div>
 @endsection
 
-
-
-
 @section('dashboard_notifications')
 @endsection
 
@@ -405,7 +340,7 @@
 
 <script>
   function showSection(section) {
-    // Hide all sections
+    // Hide all sections completely
     document.querySelectorAll('.section-content').forEach(el => {
       el.style.display = 'none';
     });
@@ -421,7 +356,10 @@
       link.classList.remove('active');
     });
     
-    event.target.closest('.nav-link').classList.add('active');
+    if (event && event.target) {
+      const activeLink = event.target.closest('.nav-link');
+      if (activeLink) activeLink.classList.add('active');
+    }
   }
 
   // Initialize on page load
@@ -429,13 +367,10 @@
     // Show home section by default
     showSection('home');
     
-    // Set Patient Home as active
+    // Set Patient Home as active explicitly
     const homeLink = document.querySelector('.dashboard-sidebar .nav-link:first-child');
     if (homeLink) {
       homeLink.classList.add('active');
     }
   });
 </script>
-
-
-

@@ -97,23 +97,22 @@
   }
 
   .dashboard-content {
-    padding: 1.5rem 0;
+    padding: 1.5rem 2rem;
     margin: 0;
     display: flex;
     flex-direction: column;
   }
 
   .dashboard-content > .row {
-    width: calc(100vw - 280px);
-    margin-left: -1.5rem;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
   }
 
   .dashboard-content > .row [class*='col-'] {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
-  .dashboard-topbar,
   .dashboard-panel,
   .dashboard-stat,
   .dashboard-action-card,
@@ -123,22 +122,20 @@
     border: 1px solid rgba(16, 35, 60, 0.08);
     backdrop-filter: blur(10px);
     box-shadow: 0 14px 34px rgba(19, 44, 76, 0.08);
-  }
-
-  .dashboard-topbar,
-  .dashboard-panel,
-  .dashboard-stat,
-  .dashboard-action-card,
-  .dashboard-table-card,
-  .dashboard-notice {
     border-radius: 24px;
   }
 
+  /* Critical Layer Fix: Forces the Topbar layout row container onto a higher visual plane */
   .dashboard-topbar {
+    background: rgba(255, 255, 255, 0.84);
+    border: 1px solid rgba(16, 35, 60, 0.08);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 14px 34px rgba(19, 44, 76, 0.08);
+    border-radius: 24px;
     padding: 1rem 1.5rem;
     margin-bottom: 1.5rem;
-    margin-left: 0;
-    margin-right: 0;
+    position: relative;
+    z-index: 2000 !important; 
   }
 
   .dashboard-search {
@@ -148,14 +145,14 @@
   .dashboard-search .bi-search {
     position: absolute;
     top: 50%;
-    left: 1rem;
+    left: 1.25rem;
     transform: translateY(-50%);
     color: #6c7c93;
   }
 
   .dashboard-search input {
     border-radius: 999px;
-    padding-left: 2.7rem;
+    padding-left: 2.8rem;
     border: 1px solid rgba(16, 35, 60, 0.08);
     background: #f7faff;
   }
@@ -167,30 +164,52 @@
     border: 0;
     background: #f2f7ff;
     position: relative;
+    color: #10233c;
+    transition: background 0.2s;
+  }
+
+  .dashboard-bell:hover {
+    background: #e4efff;
   }
 
   .dashboard-bell-badge {
     position: absolute;
-    top: -6px;
+    top: -4px;
     right: -4px;
-    min-width: 22px;
-    height: 22px;
+    min-width: 20px;
+    height: 20px;
     border-radius: 999px;
     background: #dc3545;
     color: #fff;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     display: grid;
     place-items: center;
-    padding: 0 0.35rem;
+    padding: 0 0.25rem;
   }
 
-  .dashboard-profile {
+  .dropdown {
+    position: relative;
+  }
+
+  .dashboard-profile-btn {
     background: #f7faff;
     border-radius: 20px;
     padding: 0.5rem 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    text-decoration: none !important;
+  }
+
+  .dashboard-profile-btn:hover {
+    background: #edf3fe;
+    border-color: rgba(16, 35, 60, 0.05);
+  }
+
+  .dropdown-toggle::after {
+    display: none !important;
   }
 
   .dashboard-avatar {
@@ -205,14 +224,14 @@
   }
 
   .dashboard-hero {
-    padding: 1.75rem 1.5rem;
+    padding: 2.25rem 2rem;
     background: linear-gradient(135deg, #123f77 0%, #0d6efd 55%, #7fc8ff 100%);
     color: #fff;
     margin-bottom: 1.5rem;
-    margin-left: 0;
-    margin-right: 0;
+    border-radius: 24px;
     overflow: hidden;
     position: relative;
+    z-index: 10;
   }
 
   .dashboard-hero::after {
@@ -234,7 +253,7 @@
   .dashboard-action-card,
   .dashboard-notice,
   .dashboard-panel {
-    padding: 1.25rem;
+    padding: 1.5rem;
   }
 
   .dashboard-stat-icon,
@@ -262,6 +281,10 @@
   .dashboard-action-card a,
   .dashboard-action-card button {
     border-radius: 999px;
+  }
+
+  .dashboard-table-card {
+    padding: 1.5rem;
   }
 
   .dashboard-table-card .table {
@@ -303,37 +326,13 @@
       position: static;
       height: auto;
     }
+    
+    .dashboard-content {
+      padding: 1.5rem 1rem;
+    }
   }
 
   @media (max-width: 767.98px) {
-    .dashboard-content {
-      padding: 1rem 0;
-    }
-
-    .dashboard-content > .row {
-      width: 100vw;
-      margin-left: -1rem;
-    }
-
-    .dashboard-content > .row [class*='col-'] {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    .dashboard-topbar {
-      margin-left: 0;
-      margin-right: 0;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    .dashboard-hero {
-      margin-left: 0;
-      margin-right: 0;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
     .dashboard-hero,
     .dashboard-topbar,
     .dashboard-stat,
@@ -361,9 +360,10 @@
       <div class="dashboard-nav nav flex-column mb-4">
         @yield('dashboard_sidebar')
       </div>
- </aside>
+    </aside>
 
     <div class="dashboard-content">
+      
       <div class="dashboard-topbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 justify-content-between">
         <form action="/" method="GET" class="dashboard-search flex-grow-1">
           <i class="bi bi-search"></i>
@@ -374,35 +374,89 @@
             placeholder="{{ $dashboardSearchPlaceholder }}">
         </form>
 
-        <div class="d-flex align-items-center gap-3">
-          <button class="dashboard-bell" type="button" aria-label="Notifications">
-            <i class="bi bi-bell-fill"></i>
-            <span class="dashboard-bell-badge">{{ $notificationBadge }}</span>
-          </button>
-
-          <div class="dashboard-profile">
-            <div class="dashboard-avatar">{{ $initials ?: 'MF' }}</div>
-            <div>
-              <div class="fw-semibold text-dark">{{ $profileName }}</div>
-              <div class="small text-muted">{{ $profileRole }}</div>
-            </div>
+        <div class="d-flex align-items-center gap-3 justify-content-between justify-content-sm-end w-100 w-lg-auto">
+          
+          <div class="dropdown">
+            <button class="dashboard-bell dropdown-toggle" type="button" id="bellDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+              <i class="bi bi-bell-fill"></i>
+              @if($notificationBadge > 0)
+                <span class="dashboard-bell-badge" id="live-bell-count">{{ $notificationBadge }}</span>
+              @endif
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-0 rounded-3" aria-labelledby="bellDropdown" style="width: 310px; max-height: 380px; overflow-y: auto;">
+              <li class="p-3 border-bottom bg-light rounded-top d-flex justify-content-between align-items-center">
+                <span class="fw-bold small text-dark">Recent Notifications</span>
+                @if($notificationBadge > 0)
+                  <a href="#" id="clear-notifications-btn" class="text-primary extra-small text-decoration-none fw-semibold" style="font-size: 0.75rem;">Mark all read</a>
+                @endif
+              </li>
+              <div id="dropdown-notification-list">
+                @forelse(optional($currentUser)->unreadNotifications ? $currentUser->unreadNotifications->take(5) : [] as $notification)
+                  <li>
+                    <a class="dropdown-item p-3 border-bottom d-flex align-items-start text-wrap" href="{{ $notification->data['action_url'] ?? '#' }}">
+                      <div class="me-2">
+                        <span class="badge @if($profileRole == 'Admin') bg-danger-subtle text-danger @else bg-primary-subtle text-primary @endif rounded-circle p-2">
+                          <i class="bi bi-info-circle-fill"></i>
+                        </span>
+                      </div>
+                      <div>
+                        <p class="mb-0 small fw-medium text-dark" style="line-height: 1.3;">{{ $notification->data['message'] }}</p>
+                        <small class="text-muted extra-small" style="font-size: 0.7rem;">{{ $notification->created_at->diffForHumans() }}</small>
+                      </div>
+                    </a>
+                  </li>
+                @empty
+                  <li class="p-4 text-center text-muted small">No pending alerts</li>
+                @endforelse
+              </div>
+            </ul>
           </div>
+
+          <div class="dropdown">
+            <a href="#" class="dashboard-profile-btn dropdown-toggle text-decoration-none" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="dashboard-avatar">{{ $initials ?: 'MF' }}</div>
+              
+              <div class="d-none d-sm-block text-start">
+                <div class="fw-semibold text-dark small lh-1 mb-1">{{ $profileName }}</div>
+                <div class="text-muted extra-small" style="font-size: 0.75rem;">{{ $profileRole }}</div>
+              </div>
+            </a>
+    
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2 rounded-3" aria-labelledby="profileDropdown" style="min-width: 220px; position: absolute; z-index: 3000 !important;">
+              <li class="p-2 border-bottom mb-2 bg-light rounded-2">
+                <div class="fw-bold text-dark small">{{ $profileName }}</div>
+                <small class="text-primary fw-semibold" style="font-size: 0.72rem;">{{ $profileRole }} Control Panel</small>
+              </li>
+              
+             <li>
+  <a class="dropdown-item d-flex align-items-center py-2 px-3 rounded-2" href="{{ route('profile.settings') }}">
+    <i class="bi bi-gear text-muted me-2.5 fs-5"></i> Account Settings
+  </a>
+</li>
+              
+              <li><hr class="dropdown-divider my-2"></li>
+              
+              <li>
+                <a class="dropdown-item d-flex align-items-center py-2 px-3 text-danger rounded-2" href="/logout">
+                  <i class="bi bi-box-arrow-right me-2.5 fs-5"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+          
         </div>
       </div>
 
-      <div class="dashboard-panel dashboard-hero">
-        <div class="d-flex flex-column flex-xl-row gap-3 justify-content-between align-items-xl-center">
-          <div>
-            <div class="text-uppercase small fw-semibold opacity-75 mb-2">Welcome Section</div>
-            <h1 class="h2 fw-bold mb-2">@yield('dashboard_title')</h1>
-            <p class="mb-0">@yield('dashboard_subtitle')</p>
+      <div class="dashboard-hero text-white mb-4">
+        <small class="text-white-50 text-uppercase fw-bold tracking-wider fs-7">Welcome Section</small>
+        <h1 class="fw-bold mt-1 mb-2">@yield('dashboard_title')</h1>
+        <p class="mb-0 text-white-50">@yield('dashboard_subtitle')</p>
+        
+        @hasSection('dashboard_welcome_meta')
+          <div class="mt-3">
+            @yield('dashboard_welcome_meta')
           </div>
-          @hasSection('dashboard_welcome_meta')
-            <div class="text-xl-end">
-              @yield('dashboard_welcome_meta')
-            </div>
-          @endif
-        </div>
+        @endif
       </div>
 
       <div class="row g-3 mb-4">
@@ -421,6 +475,7 @@
           @yield('dashboard_notifications')
         </div>
       </div>
+      
     </div>
   </div>
 </div>

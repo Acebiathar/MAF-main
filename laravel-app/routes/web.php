@@ -286,6 +286,60 @@ Route::get('/logout', function () {
     flash('info', 'Logged out.');
     return redirect('/');
 });
+// --- USER ACCOUNT & PROFILE SETTINGS ---
+
+Route::match(['get', 'post'], '/account', function (Request $request) {
+    // 1. Authenticate user using your custom global session helper
+    $user = currentUser();
+    if (!$user) {
+        flash('danger', 'Please log in to view your profile.');
+        return redirect('/login');
+    }
+
+    // 2. Form Submission: Update Profile Information
+    if ($request->isMethod('post')) {
+        $name = trim((string) $request->input('name', ''));
+        $email = strtolower(trim($request->input('email', '')));
+        $password = $request->input('password', '');
+
+        if ($name === '' || $email === '') {
+            flash('danger', 'Name and email fields are required.');
+            return redirect('/account');
+        }
+
+        // Prepare the update array
+        $updateData = [
+            'name' => $name,
+            'email' => $email,
+            'updated_at' => now(),
+        ];
+
+        // Hash and include password if they provided a new one
+        if (!empty($password)) {
+            if (strlen($password) < 8) {
+                flash('danger', 'New password must be at least 8 characters long.');
+                return redirect('/account');
+            }
+            $updateData['password'] = Hash::make($password);
+        }
+
+        // Perform table save operations safely
+        DB::table('users')->where('id', $user->id)->update($updateData);
+
+        flash('success', 'Profile settings updated successfully!');
+        return redirect('/account');
+    }
+
+    // 3. Page Render: Compile layout setup variables manually
+    // This feeds your layout variables ($profileName, $profileRole, etc.) to match your dashboard
+    return renderView('account', [
+        'user'          => $user,
+        'profileName'   => $user->name,
+        'profileRole'   => ucfirst($user->role),
+        'initials'      => strtoupper(substr($user->name, 0, 2)),
+        'notificationBadge' => 0 // Fallback placeholder to keep your bell layout clean
+    ]);
+})->name('account');
 
 // --- PHARMACIST DASHBOARD & INVENTORY ---
 
