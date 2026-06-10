@@ -5,6 +5,7 @@
 @section('content')
 
 <!-- 1. Hero Section -->
+
 <section class="hero-section py-5 mb-5">
     <div class="container">
         <div class="row align-items-center gy-4">
@@ -16,40 +17,131 @@
                 <p class="lead text-secondary mb-4">
                     MedFinder helps people across Uganda locate available medicines at nearby pharmacies, compare options, and reserve what they need in minutes.
                 </p>
+
                 <div class="d-flex flex-column flex-sm-row gap-3">
-                    <a href="{{ route('home') }}" class="btn btn-primary btn-lg px-5 py-3">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#medSearchModal" class="btn btn-primary btn-lg px-5 py-3">
                         Start Searching
-                    </a>
-                    <a href="#mission" class="btn btn-outline-primary btn-lg px-5 py-3">
-                        Learn More
-                    </a>
+                    </button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#medSearchModal" class="btn btn-outline-primary btn-lg px-5 py-3">
+                        Get Started
+                    </button>
                 </div>
             </div>
 
             <div class="col-lg-6 animate-on-scroll">
                 <div class="hero-card position-relative overflow-hidden rounded-4 shadow-sm">
                     <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded-4 hero-img" alt="MedFinder hero image">
-                    <div class="hero-card-overlay p-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div>
-                                <h6 class="text-white mb-0">200+ pharmacies</h6>
-                                <small class="text-white-50">Connected in your area</small>
-                            </div>
-                            <i class="bi bi-check-circle-fill fs-2 text-white"></i>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <h6 class="text-white mb-0">24/7 access</h6>
-                                <small class="text-white-50">Search anytime</small>
-                            </div>
-                            <div class="badge bg-white text-primary py-2 px-3 rounded-pill">Fast results</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+
+<div class="modal fade" id="medSearchModal" tabindex="-1" aria-labelledby="medSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-med-modal border-0 p-4 position-relative">
+
+            <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            <div class="modal-body text-center p-0 mt-2">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    <i class="bi bi-heart-pulse-fill text-primary fs-4"></i>
+                    <span class="fw-bold text-dark fs-5" style="font-family: 'Poppins', sans-serif; letter-spacing: -0.5px;">MedFinder</span>
+                </div>
+
+                <h3 class="fw-bold text-navy mb-4" id="medSearchModalLabel">What medication do you need?</h3>
+
+                <form action="{{ route('index') }}" method="GET">
+                    <div class="position-relative mb-4">
+                        <span class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control custom-modal-input ps-5" placeholder="What med are you looking for?" required>
+                    </div>
+
+                    <button type="submit" class="btn custom-modal-btn w-100 fw-semibold mb-4 d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-geo-alt-fill"></i> Find Your Meds
+                    </button>
+                </form>
+
+                <div class="d-flex align-items-center justify-content-center gap-2 pt-2">
+                    <span class="text-dark fw-semibold text-decoration-underline" style="font-size: 0.95rem;">Excellent</span>
+                    <div class="d-flex gap-1 rating-stars">
+                        <span class="star-box">★</span>
+                        <span class="star-box">★</span>
+                        <span class="star-box">★</span>
+                        <span class="star-box">★</span>
+                        <span class="star-box semi-star">★</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-navy {
+        color: #0b2f5c;
+    }
+
+    .custom-med-modal {
+        border-radius: 20px !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+        background-color: #ffffff;
+        max-width: 440px;
+        margin: 0 auto;
+    }
+
+    .custom-modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        opacity: 0.6;
+        z-index: 10;
+    }
+
+    .custom-modal-input {
+        border: 2px solid #1a1a1a !important;
+        border-radius: 14px !important;
+        padding: 14px 16px !important;
+        font-size: 1rem;
+    }
+
+    .custom-modal-input:focus {
+        box-shadow: none !important;
+        border-color: #0b2f5c !important;
+    }
+
+    .custom-modal-btn {
+        background-color: #e2f7f5 !important;
+        color: #4a7a77 !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 14px !important;
+        font-size: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .custom-modal-btn:hover {
+        background-color: #d1f2ef !important;
+        color: #355c59 !important;
+    }
+
+    .rating-stars .star-box {
+        background-color: #00b67a;
+        color: white;
+        padding: 2px 5px;
+        font-size: 0.75rem;
+        border-radius: 3px;
+    }
+
+    .rating-stars .semi-star {
+        position: relative;
+        background: linear-gradient(90deg, #00b67a 70%, #cccccc 70%);
+    }
+</style>
 
 <!-- 2. Features / Values Section -->
 <section class="bg-light py-5 rounded-4">

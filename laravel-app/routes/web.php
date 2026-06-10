@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
-use App\Http\Controllers\HomeController;
 
 // --- GLOBAL HELPERS ---
 if (!function_exists('renderView')) {
@@ -36,11 +35,12 @@ if (!function_exists('flash')) {
 if (!function_exists('redirectToDashboard')) {
     function redirectToDashboard(object $user)
     {
-        if ($user->role === 'admin') {
+        $role = strtolower($user->role);
+        if ($role === 'admin') {
             return redirect('/admin');
         }
 
-        if ($user->role === 'pharmacist') {
+        if ($role === 'pharmacist') {
             return redirect('/pharmacist');
         }
 
@@ -50,7 +50,7 @@ if (!function_exists('redirectToDashboard')) {
 
 // --- PUBLIC PAGES (Home, Search, About) ---
 
-// Integrated Multi-Item Prioritized Stock Match Search Engine (Unified Root Route)
+// 1. Core Landing / Search Route (Assigned to 'index')
 Route::get('/', function (Request $request) {
     // Read the single search query string instead of the array
     $searchQuery = $request->input('search', '');
@@ -61,7 +61,7 @@ Route::get('/', function (Request $request) {
         $requestedNames = explode(',', $searchQuery);
 
         // Normalize strings to strip accidental spaces and lower case variations smoothly
-        $cleanNames = array_filter(array_map(function($name) {
+        $cleanNames = array_filter(array_map(function ($name) {
             return trim(strtolower($name));
         }, $requestedNames));
 
@@ -74,7 +74,7 @@ Route::get('/', function (Request $request) {
                         ->from('pharmacy_medicine as pm')
                         ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
                         ->whereColumn('pm.pharmacy_id', 'p.id')
-                        ->where(function($q) use ($cleanNames) {
+                        ->where(function ($q) use ($cleanNames) {
                             foreach ($cleanNames as $name) {
                                 $q->orWhere(DB::raw('LOWER(m.name)'), 'LIKE', '%' . $name . '%');
                             }
@@ -88,7 +88,7 @@ Route::get('/', function (Request $request) {
                         ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
                         ->whereColumn('pm.pharmacy_id', 'p.id')
                         ->where('pm.quantity', '>', 0)
-                        ->where(function($q) use ($cleanNames) {
+                        ->where(function ($q) use ($cleanNames) {
                             foreach ($cleanNames as $name) {
                                 $q->orWhere(DB::raw('LOWER(m.name)'), 'LIKE', '%' . $name . '%');
                             }
@@ -104,7 +104,7 @@ Route::get('/', function (Request $request) {
                 $allMedicines = DB::table('pharmacy_medicine as pm')
                     ->join('medicines as m', 'pm.medicine_id', '=', 'm.id')
                     ->whereIn('pm.pharmacy_id', $pharmacyIds)
-                    ->where(function($q) use ($cleanNames) {
+                    ->where(function ($q) use ($cleanNames) {
                         foreach ($cleanNames as $name) {
                             $q->orWhere(DB::raw('LOWER(m.name)'), 'LIKE', '%' . $name . '%');
                         }
@@ -136,8 +136,9 @@ Route::get('/', function (Request $request) {
         'results'     => $results,
         'currentUser' => currentUser()
     ]);
-});
+})->name('index');
 
+// 2. Explicit Redirect Alias Route for 'home' to guarantee template helpers resolve instantly
 Route::get('/home', function () {
     return redirect('/');
 })->name('home');
@@ -147,7 +148,7 @@ Route::get('/about', function () {
 })->name('about');
 
 Route::get('/how', function () {
-    return view('how'); 
+    return view('how');
 })->name('how');
 
 Route::get('/contact', function () {
@@ -160,41 +161,32 @@ Route::get('/privacy', function () {
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
 
-
 Route::match(['get', 'post'], '/login', function (Request $request) {
-    // 1. GET Request: If user is already authenticated, send them to their dashboard
     if ($request->isMethod('get')) {
         $userId = session('user_id');
         $user = $userId ? DB::table('users')->where('id', $userId)->first() : null;
 
         if ($user) {
-            $role = strtolower($user->role);
-            if ($role === 'admin') return redirect('/admin');
-            if ($role === 'pharmacist') return redirect('/pharmacist');
-            return redirect('/requests');
+            return redirectToDashboard($user);
         }
         return renderView('auth.login');
     }
 
-    // 2. POST Request: Form Submission Processing
     if ($request->isMethod('post')) {
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
-        
+
         $user = DB::table('users')->where('email', $email)->first();
 
         if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
-            
+
             session()->flash('alerts', [
                 'category' => 'success',
                 'message' => "Hi, " . $user->name . "! Welcome back.",
             ]);
 
-            $role = strtolower($user->role);
-            if ($role === 'admin') return redirect('/admin');
-            if ($role === 'pharmacist') return redirect('/pharmacist');
-            return redirect('/requests');
+            return redirectToDashboard($user);
         }
 
         session()->flash('alerts', [
@@ -203,7 +195,8 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
         ]);
         return redirect('/login');
     }
-})->name('login'); 
+})->name('login');
+
 Route::match(['get', 'post'], '/register', function (Request $request) {
     if ($request->isMethod('get') && ($user = currentUser())) {
         return redirectToDashboard($user);
@@ -263,6 +256,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
                 DB::table('pharmacies')->insert([
                     'name' => $pharmacyName,
                     'location' => $location,
+                    'address' => $location,
                     'phone' => $phoneNumber,
                     'license_number' => $licenseNumber,
                     'status' => 'pending',
@@ -285,7 +279,7 @@ Route::get('/logout', function () {
     session()->forget('user_id');
     flash('info', 'Logged out.');
     return redirect('/');
-});
+})->name('logout');
 
 // --- PHARMACIST DASHBOARD & INVENTORY ---
 
@@ -385,29 +379,23 @@ Route::post('/reserve/{item}', function (int $item) {
 
 Route::get('/requests', function () {
     $user = currentUser();
-    
-    // 1. Guard: If not logged in, force them to log in
+
     if (!$user) {
         return redirect('/login');
     }
 
-    // 2. Guard: If they ARE logged in, but they are NOT a patient,
-    // send them to their correct dashboard instead of /login (this prevents the infinite loop!)
     if (strtolower($user->role) !== 'patient') {
-        if (strtolower($user->role) === 'admin') return redirect('/admin');
-        if (strtolower($user->role) === 'pharmacist') return redirect('/pharmacist');
+        return redirectToDashboard($user);
     }
 
-    // 3. Main Logic: If they pass the guards above, they are a valid patient.
-    // Fetch their reservations and show the page.
     $reservations = DB::table('reservations as r')
         ->join('pharmacies as p', 'r.pharmacy_id', '=', 'p.id')
         ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
-        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.address as pharmacy_address')
+        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', DB::raw('COALESCE(p.address, p.location) as pharmacy_address'))
         ->where('r.user_id', $user->id)
         ->orderByDesc('r.created_at')
         ->get();
-        
+
     return renderView('patient_requests', compact('reservations'));
 });
 
@@ -429,15 +417,51 @@ Route::get('/pharmacist/requests', function () {
 
 Route::post('/pharmacist/requests/{reservation}/{action}', function (int $reservation, string $action) {
     $user = currentUser();
+    if (!$user || $user->role !== 'pharmacist') return redirect('/login');
+
     $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
+    if (!$pharmacy) return redirect('/');
+
     $status = $action === 'confirm' ? 'confirmed' : 'declined';
 
-    DB::table('reservations')
-        ->where('id', $reservation)
-        ->where('pharmacy_id', $pharmacy->id)
-        ->update(['status' => $status]);
+    DB::transaction(function () use ($reservation, $pharmacy, $status, $action) {
+        $resRow = DB::table('reservations')
+            ->where('id', $reservation)
+            ->where('pharmacy_id', $pharmacy->id)
+            ->first();
 
-    flash('success', 'Reservation updated.');
+        if (!$resRow) return;
+
+        if ($action === 'confirm' && $resRow->status !== 'confirmed') {
+            $quantityToDeduct = 1;
+
+            DB::table('pharmacy_medicine')
+                ->where('pharmacy_id', $pharmacy->id)
+                ->where('medicine_id', $resRow->medicine_id)
+                ->where('quantity', '>=', $quantityToDeduct)
+                ->decrement('quantity', $quantityToDeduct);
+
+            $updatedStock = DB::table('pharmacy_medicine')
+                ->where('pharmacy_id', $pharmacy->id)
+                ->where('medicine_id', $resRow->medicine_id)
+                ->first();
+
+            if ($updatedStock && $updatedStock->quantity <= 0) {
+                DB::table('pharmacy_medicine')
+                    ->where('id', $updatedStock->id)
+                    ->update(['stock_status' => 'out_of_stock']);
+            }
+        }
+
+        DB::table('reservations')
+            ->where('id', $reservation)
+            ->update([
+                'status' => $status,
+                'updated_at' => now()
+            ]);
+    });
+
+    flash('success', 'Reservation status updated and stock metrics synced.');
     return redirect('/pharmacist/requests');
 });
 

@@ -1,67 +1,69 @@
 @extends('layouts.app')
 
+@section('title', 'Contact | MedFinder')
+
 @section('content')
 @php
-    $whatsAppNumber = '256773496048';
-    $displayPhone = '+256 773 496 048';
-    $emailAddress = 'support@maf.com';
-    $socialLinks = [
-        [
-            'label' => 'Facebook',
-            'handle' => '@mafuganda',
-            'icon' => 'bi-facebook',
-            'url' => 'https://facebook.com/mafuganda',
-        ],
-        [
-            'label' => 'Instagram',
-            'handle' => '@mafuganda',
-            'icon' => 'bi-instagram',
-            'url' => 'https://instagram.com/mafuganda',
-        ],
-        [
-            'label' => 'LinkedIn',
-            'handle' => 'MAF Uganda',
-            'icon' => 'bi-linkedin',
-            'url' => 'https://www.linkedin.com/company/maf-uganda',
-        ],
-        [
-            'label' => 'WhatsApp',
-            'handle' => $displayPhone,
-            'icon' => 'bi-whatsapp',
-            'url' => 'https://wa.me/' . $whatsAppNumber,
-        ],
-    ];
+$whatsAppNumber = '256773496048';
+$displayPhone = '+256 773 496 048';
+$emailAddress = 'support@maf.com';
+$socialLinks = [
+[
+'label' => 'Facebook',
+'handle' => '@mafuganda',
+'icon' => 'bi-facebook',
+'url' => 'https://facebook.com/mafuganda',
+],
+[
+'label' => 'Instagram',
+'handle' => '@mafuganda',
+'icon' => 'bi-instagram',
+'url' => 'https://instagram.com/mafuganda',
+],
+[
+'label' => 'LinkedIn',
+'handle' => 'MAF Uganda',
+'icon' => 'bi-linkedin',
+'url' => 'https://www.linkedin.com/company/maf-uganda',
+],
+[
+'label' => 'WhatsApp',
+'handle' => $displayPhone,
+'icon' => 'bi-whatsapp',
+'url' => 'https://wa.me/' . $whatsAppNumber,
+],
+];
 
-    $contactCards = [
-        [
-            'title' => 'Email Support',
-            'icon' => 'bi-envelope',
-            'value' => $emailAddress,
-            'link' => 'mailto:' . $emailAddress,
-            'copy' => 'Reach out for general questions and support.',
-        ],
-        [
-            'title' => 'Call Us',
-            'icon' => 'bi-telephone',
-            'value' => $displayPhone,
-            'link' => 'tel:+256773496048',
-            'copy' => 'Talk to us directly for urgent assistance.',
-        ],
-        [
-            'title' => 'WhatsApp',
-            'icon' => 'bi-whatsapp',
-            'value' => 'Start a chat',
-            'link' => 'https://wa.me/' . $whatsAppNumber,
-            'copy' => 'Fastest way to send suggestions and questions.',
-        ],
-        [
-            'title' => 'Location',
-            'icon' => 'bi-geo-alt',
-            'value' => 'Kampala, Uganda',
-            'link' => null,
-            'copy' => 'Serving patients and pharmacies across Uganda.',
-        ],
-    ];
+$contactCards = [
+[
+'title' => 'Email Support',
+'icon' => 'bi-envelope',
+'value' => $emailAddress,
+'link' => 'mailto:' . $emailAddress,
+'copy' => 'Reach out for general questions and support.',
+],
+[
+'title' => 'Call Us',
+'icon' => 'bi-telephone',
+'value' => $displayPhone,
+'link' => 'tel:+256773496048',
+'copy' => 'Talk to us directly for urgent assistance.',
+],
+[
+'title' => 'WhatsApp',
+'icon' => 'bi-whatsapp',
+'value' => 'Start a chat',
+'link' => 'https://wa.me/' . $whatsAppNumber,
+'copy' => 'Fastest way to send suggestions and questions.',
+],
+[
+'title' => 'Location',
+'icon' => 'bi-geo-alt',
+'value' => 'Kampala, Uganda',
+'link' => null,
+'copy' => 'Serving patients and pharmacies across Uganda.',
+],
+];
 @endphp
 
 <!-- Page Header -->

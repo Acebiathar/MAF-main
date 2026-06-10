@@ -3,10 +3,10 @@
 @section('title', 'Home | Medfinder')
 
 @section('styles')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="preload" as="image" href="https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1200">
-<script src="https://cdn.tailwindcss.com"></script>
+
 <style>
     :root {
         --primary: #0b5ed7;
@@ -24,15 +24,59 @@
     body {
         font-family: 'Inter', sans-serif;
         background-color: #f8fafc;
-    }
-
-    .landing-page {
         min-height: 100vh;
     }
 
-    /* Hero Section Visual Fixes */
+    /* ========================================================================= */
+    /* FORCE THE NAVIGATION BAR TO BE FIXED SOLID WHITE LIKE THE ABOUT PAGE      */
+    /* ========================================================================= */
+    nav,
+    .landing-page nav,
+    body nav {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        z-index: 50 !important;
+        background-color: #ffffff !important;
+        border-bottom: 1px solid var(--slate-200) !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+
+    nav div,
+    .landing-page nav div {
+        background-color: transparent !important;
+    }
+
+    nav a,
+    nav span,
+    nav text,
+    nav ul li a,
+    .landing-page nav a,
+    .landing-page nav span {
+        color: #1e293b !important;
+    }
+
+    nav a span,
+    nav ul li a[aria-current="page"] {
+        color: #0b5ed7 !important;
+    }
+
+    nav ul li a:hover,
+    .landing-page nav ul li a:hover {
+        color: #0a58ca !important;
+    }
+
+    nav button,
+    nav button i {
+        color: #1e293b !important;
+    }
+
+    /* ========================================================================= */
+    /* HERO CAROUSEL DESIGN REFINEMENTS                                          */
+    /* ========================================================================= */
     .hero-carousel .carousel-item {
-        min-height: 85vh;
+        min-height: 80vh;
         background-size: cover;
         background-position: center;
         position: relative;
@@ -40,11 +84,18 @@
         align-items: center;
     }
 
+    @media (max-width: 768px) {
+        .hero-carousel .carousel-item {
+            min-height: auto;
+            padding: 4rem 0;
+        }
+    }
+
     .hero-carousel .carousel-item::after {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.3) 100%);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.75) 50%, rgba(15, 23, 42, 0.4) 100%);
         z-index: 1;
     }
 
@@ -55,80 +106,43 @@
         right: 0;
         top: 0;
         bottom: 0;
-        padding: 4rem 2rem;
+        padding: 2rem 0;
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        align-items: center;
     }
 
-    /* Modern Glass Card Engine */
-    .glass-card {
-        background: #ffffff;
-        border: 1px solid var(--slate-200);
+    .search-card-wrapper {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 1.5rem;
-        padding: 2.25rem;
-        height: 100%;
-        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
-        transition: var(--transition);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        max-width: 720px;
+        width: 100%;
     }
 
-    .glass-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08);
+    .search-input-field:focus {
+        outline: none !important;
+        box-shadow: none !important;
     }
 
-    .dark-bg {
-        background: linear-gradient(145deg, #1e2f3e 0%, #0f172a 100%);
-        border: none;
-        color: white;
-    }
-
-    /* Medicine Interactive Tag Badges */
     .tag-item {
-        background: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 0.4rem 0.8rem;
         border-radius: 50px;
-        padding: 0.4rem 1rem;
-        font-size: 0.825rem;
+        font-size: 0.85rem;
         font-weight: 500;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 0.5rem;
         transition: var(--transition);
-        backdrop-filter: blur(8px);
     }
 
     .tag-item:hover {
-        background: rgba(255, 255, 255, 0.22);
-        transform: scale(1.02);
-    }
-
-    /* Live Badge Indicators */
-    .badge-stock {
-        background: #d1fae5;
-        color: #065f46;
-        padding: 0.4rem 1rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.825rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .ad-card {
-        background: white;
-        border: 1px solid var(--slate-200);
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-        height: 100%;
-        transition: var(--transition);
-    }
-
-    .ad-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
+        background: rgba(255, 255, 255, 0.25);
     }
 
     .spinner-overlay {
@@ -139,188 +153,265 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: opacity 0.4s ease, visibility 0.4s;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    .toast-notify {
-        width: min(380px, calc(100vw - 2rem));
-        background: #ffffff;
-        border-left: 4px solid var(--primary);
-        border-radius: 1rem;
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-        padding: 1.25rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .search-container {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 1.5rem;
-        padding: 2rem;
-        width: 100%;
-        max-width: 650px;
-    }
-
+    /* Stat Box Adjustments */
     .stat-box {
-        background: white;
+        background: #ffffff;
+        padding: 2rem 1.5rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+        border: 1px solid var(--slate-200);
+        text-align: center;
+        transition: var(--transition);
+        height: 100%;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.1);
+    }
+
+    /* Live Availability Results Structure */
+    .glass-card {
+        background: #ffffff;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+        border: 1px solid var(--slate-200);
+    }
+
+    .badge-stock {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #047857;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.825rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Partner Ads Design */
+    .ad-card {
+        background: #ffffff;
         border: 1px solid var(--slate-200);
         border-radius: 1.25rem;
         padding: 1.75rem;
-        text-align: center;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        height: 100%;
+        transition: var(--transition);
     }
 
-    * {
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-
-    .enhanced-card {
-        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        backdrop-filter: blur(0px);
-    }
-
-    .enhanced-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
-    }
-
-
-
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #e2e8f0;
-        border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #3b82f6;
-        border-radius: 10px;
-    }
-
-    .feature-card {
-        background: ffffff;
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    }
-
-    .feature-card:hover {
+    .ad-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 20px -8px rgba(15, 23, 42, 0.12);
-        border-color: rgba(59, 130, 246, 0.3);
+        box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.1);
     }
 
-    .feature-card h3 {
-        font-size: 1.05rem !important;
-        line-height: 1.4;
+    .object-cover {
+        object-fit: cover;
+    }
+
+    /* Info Cards Engine */
+    .crypto-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid var(--slate-200);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .crypto-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.12);
+    }
+
+    .icon-wrapper {
+        width: 3.5rem;
+        height: 3.5rem;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .icon-wrapper i {
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
         font-weight: 700;
-        letter-spacing: -0.01em;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
     }
 
-    .feature-card p {
+    .card-description {
         color: #64748b;
-        font-size: 0.825rem !important;
-        line-height: 1.5;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
     }
 
-    .feature-card .feature-detail-btn {
-        border-radius: 0.5rem;
-        padding: 0.35rem 0.75rem;
-        border: 1px solid rgba(59, 130, 246, 0.1);
-        background: rgba(59, 130, 246, 0.05);
+    .learn-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
         color: #2563eb;
-        font-size: 0.775rem !important;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
     }
 
-    .feature-card .feature-detail-btn:hover {
-        background: rgba(59, 130, 246, 0.12);
-        border-color: rgba(59, 130, 246, 0.25);
+    .learn-link:hover {
+        gap: 0.5rem;
+        color: #1d4ed8;
     }
 
-    @media (min-width: 1024px) {
-        #featuresGrid {
-            display: grid !important;
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-            flex-wrap: wrap !important;
-            overflow-x: visible !important;
-            padding-bottom: 0 !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-            gap: 1.5rem !important;
+    .gradient-text {
+        background: linear-gradient(135deg, #0b5ed7, #00b4aa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1.5rem;
+        margin-top: 3rem;
+    }
+
+    @media (min-width: 768px) {
+        .cards-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+    }
+
+    .section-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 2rem;
+        padding: 4rem 2rem;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--slate-200);
+    }
+
+    .trust-badges {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 3.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--slate-200);
+    }
+
+    .badge-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--slate-600);
+        font-weight: 500;
+    }
+
+    .badge-item i {
+        font-size: 1.1rem;
+        color: #10b981;
+    }
+
+    /* Toast Notifications System */
+    #toastRoot {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 350px;
+        width: 100%;
+    }
+
+    .toast-notify {
+        background: #ffffff;
+        border-radius: 1rem;
+        padding: 1rem;
+        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
+        border-left: 4px solid var(--primary);
+        animation: slideIn 0.3s ease forwards;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(120%);
+            opacity: 0;
         }
 
-        #featuresGrid .feature-card {
-            min-width: 0 !important;
-            max-width: none !important;
-            flex: none !important;
-            margin-left: 0 !important;
+        to {
+            transform: translateX(0);
+            opacity: 1;
         }
-    }
-
-    /* Force black color for feature card headings (override dark mode classes) */
-    #featuresGrid .feature-card h3 {
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        background: none !important;
-        background-clip: unset !important;
-        -webkit-background-clip: unset !important;
-    }
-
-    /* Force black color for CTA title in 'Find Your Prescriptions Instantly' */
-    .cta-animate h2 {
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        background: none !important;
-        background-clip: unset !important;
-        -webkit-background-clip: unset !important;
     }
 </style>
 @endsection
 
 @section('fullwidth')
 <div class="landing-page">
+    {{-- Toast Entry Container --}}
+    <div id="toastRoot"></div>
+
+    {{-- Spinner Screen Loading Element --}}
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="text-center">
-            <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem; stroke-width: 3;"></div>
-            <p class="mt-3 fw-bold text-slate-700 tracking-wide">Securing Live Pharmacy Networks...</p>
+            <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem; border-width: 3px;"></div>
+            <p class="mt-3 fw-bold text-dark tracking-wide">Securing Live Pharmacy Networks...</p>
         </div>
     </div>
 
+    {{-- Hero Frame Section --}}
     <div id="heroCarousel" class="carousel slide hero-carousel">
         <div class="carousel-inner">
             <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1600');">
                 <div class="carousel-caption">
                     <div class="container">
                         <div class="row align-items-center">
-                            <div class="col-lg-7">
+                            <div class="col-lg-8">
                                 <span class="badge bg-primary px-3 py-2 rounded-pill text-uppercase mb-3 tracking-wider fw-semibold" style="font-size: 0.75rem;">Verified Stocks Only</span>
-                                <h1 class="display-4 fw-bold text-white mb-3">Find Prescriptions Near You, Instantly.</h1>
-                                <p class="lead text-white-50 mb-4">Unified platform mapping local medical stock configurations directly to real-time consumer and emergency needs.</p>
+                                <h1 class="display-4 fw-bold text-white mb-3" style="letter-spacing: -0.02em; line-height: 1.2;">Find Prescriptions Near You, Instantly.</h1>
+                                <p class="lead text-white-50 mb-4" style="max-width: 600px;">Unified platform mapping local medical stock configurations directly to real-time consumer and emergency needs across Uganda.</p>
 
-                                <div class="search-container position-relative overflow-hidden p-4 p-md-5" style="background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); max-width: 700px;">
+                                <div class="search-card-wrapper position-relative overflow-hidden p-4 p-md-4">
                                     <div class="position-absolute" style="width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 180, 170, 0.25) 0%, rgba(0,0,0,0) 70%); top: -50px; right: -50px; pointer-events: none;"></div>
 
                                     <div class="position-relative z-3">
-                                        <div class="d-flex align-items-center gap-2 mb-4">
-                                            <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-3" style="width: 36px; height: 36px; border: 1px solid rgba(0, 180, 170, 0.25);">
-                                                <i class="bi bi-search text-info" style="font-size: 1rem;"></i>
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-3" style="width: 44px; height: 44px; border: 1px solid rgba(0, 180, 170, 0.25);">
+                                                <i class="bi bi-search text-info fs-5"></i>
                                             </div>
                                             <div>
-                                                <h3 class="text-white fw-bold h5 mb-0" style="letter-spacing: -0.02em;">Search For Your Medicine</h3>
-                                                <p class="text-white-50 mb-0" style="font-size: 0.775rem;">Type your medicine here. Press Enter to append criteria items.</p>
+                                                <h3 class="text-white fw-bold h5 mb-0" style="letter-spacing: -0.01em;">Search For Your Medicine</h3>
+                                                <p class="text-white-50 mb-0" style="font-size: 0.8rem;">Type medication criteria name and press Enter to accumulate items into criteria tag matrices.</p>
                                             </div>
                                         </div>
 
                                         <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-3"></div>
 
                                         <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
-                                            <div class="input-group bg-white rounded-4 shadow-lg p-2 border border-white border-2" style="transition: var(--transition);">
-                                                <span class="input-group-text border-0 bg-transparent ps-3 pe-2 text-slate-600">
+                                            <div class="input-group bg-white rounded-4 p-2 border border-white border-2 shadow">
+                                                <span class="input-group-text border-0 bg-transparent ps-3 pe-2">
                                                     <i class="bi bi-capsule" style="font-size: 1.1rem; color: #64748b;"></i>
                                                 </span>
 
@@ -328,13 +419,13 @@
                                                     name="search"
                                                     id="itemInput"
                                                     value="{{ request('search') }}"
-                                                    class="form-control border-0 bg-transparent text-dark px-2 py-3"
+                                                    class="form-control border-0 bg-transparent text-dark px-2 py-3 search-input-field"
                                                     placeholder="Enter prescription criteria (e.g., Panadol, Amoxicillin)..."
-                                                    style="outline: none; box-shadow: none; font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
+                                                    style="font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
 
                                                 <button type="submit" id="searchBtn"
-                                                    class="btn btn-dark rounded-4 px-4 fw-bold text-uppercase tracking-wider transition d-flex align-items-center gap-2"
-                                                    style="font-size: 0.8rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
+                                                    class="btn btn-primary rounded-4 px-4 fw-bold text-uppercase tracking-wider d-flex align-items-center gap-2"
+                                                    style="font-size: 0.8rem; background: linear-gradient(135deg, var(--primary) 0%, #0a58ca 100%); border: none;">
                                                     <span>Search</span>
                                                     <i class="bi bi-arrow-right-short" style="font-size: 1.2rem;"></i>
                                                 </button>
@@ -351,44 +442,49 @@
         </div>
     </div>
 
-    <section class="container" style="margin-top: -40px; position: relative; z-index: 10;">
+    {{-- Counters Framework Metrics Section --}}
+    <section class="container" style="margin-top: -30px; position: relative; z-index: 10;">
         <div class="row g-4 justify-content-center">
             <div class="col-6 col-md-4">
                 <div class="stat-box">
                     <h3 class="display-6 fw-bold text-dark mb-1" id="medCount">0</h3>
-                    <p class="text-muted small fw-medium mb-0">Active Medical Catalogs</p>
+                    <p class="text-muted small fw-semibold mb-0">Active Medical Catalogs</p>
                 </div>
             </div>
             <div class="col-6 col-md-4">
                 <div class="stat-box">
                     <h3 class="display-6 fw-bold text-primary mb-1" id="pharCount">0</h3>
-                    <p class="text-muted small fw-medium mb-0">Verified Pharmacy Nodes</p>
+                    <p class="text-muted small fw-semibold mb-0">Verified Pharmacy Nodes</p>
                 </div>
             </div>
             <div class="col-12 col-md-4">
                 <div class="stat-box">
                     <h3 class="display-6 fw-bold text-success mb-1" id="stockCount">0</h3>
-                    <p class="text-muted small fw-medium mb-0">Tracked Physical Stock Units</p>
+                    <p class="text-muted small fw-semibold mb-0">Tracked Physical Stock Units</p>
                 </div>
             </div>
         </div>
     </section>
 
+    {{-- Error Notice Missing Match Output --}}
     @if(request()->has('search') && isset($results) && $results->isEmpty())
     <div class="container mt-5">
-        <div class="alert alert-warning text-center shadow-sm border-0 rounded-3">
-            <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
-            No approved pharmacies currently have "{{ request('search') }}" in stock. Please try a different medicine.
+        <div class="alert alert-warning text-center shadow-sm border-0 rounded-4 p-4">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5 text-warning align-middle"></i>
+            <span class="fw-medium">No approved pharmacies currently have "{{ request('search') }}" listed in stock logs. Please verify characters or execute alternative lookup strings.</span>
         </div>
     </div>
     @endif
 
+    {{-- Live Query Result Listing Output View Grid --}}
     @if(isset($results) && $results->isNotEmpty())
     <div class="container py-5">
-        <div class="glass-card p-0 overflow-hidden border-0 shadow-lg">
-            <div class="p-4 bg-white border-bottom border-light d-flex align-items-center justify-content-between">
+        <div class="glass-card overflow-hidden">
+            <div class="p-4 bg-white border-bottom border-light d-flex flex-column flex-sm-row gap-3 align-items-sm-center justify-content-between">
                 <h3 class="fw-bold h5 mb-0 text-dark"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i> Live Availability Records</h3>
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fw-medium">Prioritized by Stock Matches</span>
+                <div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-medium" style="font-size: 0.8rem;">Prioritized by Stock Matches</span>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0 table-hover">
@@ -423,9 +519,9 @@
                             </td>
                             <td class="py-3.5">
                                 @if(($medicine->pivot->quantity ?? 0) == 0)
-                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
                                 @elseif(($medicine->pivot->quantity ?? 0) <= 5)
-                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-full fw-semibold" style="font-size: 0.825rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited Stock ({{ $medicine->pivot->quantity }} units)</span>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.825rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited Stock ({{ $medicine->pivot->quantity }} units)</span>
                                     @else
                                     <span class="badge-stock"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }} units)</span>
                                     @endif
@@ -460,6 +556,7 @@
     </div>
     @endif
 
+    {{-- Facilities Promoted Sliders Frame Row --}}
     <section class="py-5 bg-white mt-5">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -480,30 +577,30 @@
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <div class="ad-card d-flex flex-column justify-content-between">
-                                    <div>
+                                    <div class="mb-3">
                                         <span class="badge bg-danger bg-opacity-10 text-danger mb-3 px-2.5 py-1.5 rounded fw-semibold">Hospital Referral Hub</span>
                                         <h4 class="fw-bold h5 mb-2">Mulago National Referral</h4>
-                                        <p class="text-muted small mb-4">Specialized care and 24/7 emergency infrastructure networks across central regions.</p>
+                                        <p class="text-muted small mb-0">Specialized care and 24/7 emergency infrastructure networks across central regions.</p>
                                     </div>
                                     <img src="{{ asset('images/pharmacy3.jpg') }}" alt="Mulago Layout" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="ad-card d-flex flex-column justify-content-between">
-                                    <div>
+                                    <div class="mb-3">
                                         <span class="badge bg-danger bg-opacity-10 text-danger mb-3 px-2.5 py-1.5 rounded fw-semibold">Clinical Infrastructure</span>
                                         <h4 class="fw-bold h5 mb-2">Case Medical Centre</h4>
-                                        <p class="text-muted small mb-4">Quality professional healthcare configurations optimized for family networks.</p>
+                                        <p class="text-muted small mb-0">Quality professional healthcare configurations optimized for family networks.</p>
                                     </div>
                                     <img src="{{ asset('images/pharmacy.jpg') }}" alt="Case Layout" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;">
                                 </div>
                             </div>
                             <div class="col-md-4 d-none d-md-block">
                                 <div class="ad-card border-primary border d-flex flex-column justify-content-between">
-                                    <div>
+                                    <div class="mb-3">
                                         <span class="badge bg-primary mb-3 px-2.5 py-1.5 rounded fw-semibold">Promoted Drug Allocation</span>
                                         <h4 class="fw-bold h5 mb-2">Panadol Extra</h4>
-                                        <p class="text-muted small mb-4">Fast-acting advanced chemical composition relief tracking widespread local demands.</p>
+                                        <p class="text-muted small mb-0">Fast-acting advanced chemical composition relief tracking widespread local demands.</p>
                                     </div>
                                     <img src="{{ asset('images/drugs.jpg') }}" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;" alt="Panadol Extra Allocation">
                                 </div>
@@ -515,30 +612,30 @@
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <div class="ad-card d-flex flex-column justify-content-between">
-                                    <div>
+                                    <div class="mb-3">
                                         <span class="badge bg-success bg-opacity-10 text-success mb-3 px-2.5 py-1.5 rounded fw-semibold">Network Partner Node</span>
                                         <h4 class="fw-bold h5 mb-2">Green Ridge Clinic</h4>
-                                        <p class="text-muted small mb-4">Community care hub with rapid stock matching and patient referral support.</p>
+                                        <p class="text-muted small mb-0">Community care hub with rapid stock matching and patient referral support.</p>
                                     </div>
                                     <img src="{{ asset('images/pharmacy3.jpg') }}" alt="Green Ridge Clinic" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="ad-card d-flex flex-column justify-content-between">
-                                    <div>
+                                    <div class="mb-3">
                                         <span class="badge bg-info bg-opacity-10 text-info mb-3 px-2.5 py-1.5 rounded fw-semibold">Regional Pharmacy</span>
                                         <h4 class="fw-bold h5 mb-2">Solar Care Pharmacy</h4>
-                                        <p class="text-muted small mb-4">Verified pharmaceutical outlet built for secure and fast medication handoff.</p>
+                                        <p class="text-muted small mb-0">Verified pharmaceutical outlet built for secure and fast medication handoff.</p>
                                     </div>
                                     <img src="{{ asset('images/pharmacy.jpg') }}" alt="Solar Care Pharmacy" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;">
                                 </div>
                             </div>
                             <div class="col-md-4 d-none d-md-block">
                                 <div class="ad-card d-flex flex-column justify-content-between">
-                                    <div>
+                                    <div class="mb-3">
                                         <span class="badge bg-warning bg-opacity-10 text-warning mb-3 px-2.5 py-1.5 rounded fw-semibold">Logistics Node</span>
                                         <h4 class="fw-bold h5 mb-2">Medicortex Hub</h4>
-                                        <p class="text-muted small mb-4">Integrated stock and delivery coordination for high-demand pharmaceutical items.</p>
+                                        <p class="text-muted small mb-0">Integrated stock and delivery coordination for high-demand pharmaceutical items.</p>
                                     </div>
                                     <img src="{{ asset('images/drugs.jpg') }}" class="img-fluid rounded object-cover" style="height: 160px; width: 100%;" alt="Medicortex Hub">
                                 </div>
@@ -550,238 +647,178 @@
         </div>
     </section>
 
-    <!-- MAIN SECTION: original medical stock discovery (enhanced) -->
-    <section class="bg-white/90 dark:bg-gray-900/95 backdrop-blur-sm py-12 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6 rounded-3xl my-6 shadow-2xl border border-white/40 transition-all duration-300">
-        <div class="mx-auto max-w-screen-xl">
-            <div class="max-w-screen-md mb-8 lg:mb-16">
-                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 uppercase tracking-wider mb-4 inline-flex items-center gap-1.5">
-                    <i class="bi bi-cpu text-sm"></i> System Capabilities
+    {{-- Features Information Platform Guide Block --}}
+    <div class="container py-5">
+        <div class="section-container">
+            <div class="text-center" style="max-width: 700px; margin: 0 auto 3rem;">
+                <span style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: rgba(13, 148, 136, 0.1); padding: 6px 16px; border-radius: 50px; color: #0d9488; font-size: 0.8rem; font-weight: 600; text-uppercase: tracking-wider;">
+                    <i class="bi bi-capsule-hd-fill"></i> Medicine Availability Finder
                 </span>
-                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent dark:from-white dark:to-blue-300">Intelligent Medical Stock Discovery</h2>
-                <p class="text-gray-500 sm:text-xl dark:text-gray-400">MedFinder connects patients directly to verified pharmaceutical inventories, bypassing physical depletion constraints with unified programmatic tracking.</p>
+                <h2 style="font-size: 2.25rem; font-weight: 800; color: #0f172a; margin-top: 1rem; line-height: 1.3;">
+                    The most trusted <span class="gradient-text">prescription tracking</span> platform
+                </h2>
+                <p style="color: #64748b; font-size: 1.05rem; margin-top: 0.75rem;">
+                    Discover how MedFinder eliminates unnecessary physical journeys to locate vital healthcare supplies across communities.
+                </p>
             </div>
 
-            <!-- Feature Grid: each card gets interactive hover & modals -->
-            <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0" id="featuresGrid">
-                <!-- Card 1: Real-Time Verification -->
-                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-patch-check-fill text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+            <div class="cards-grid">
+                <div class="crypto-card">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-search-heart"></i>
                     </div>
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">Real-Time Verification <span class="live-dot text-xs bg-green-500 w-2 h-2 rounded-full inline-block"></span></h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-3">Directly syncs with active pharmacy catalogs across the region, pulling authentic live inventory balances with exact timestamp matching.</p>
-                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Real-Time Verification">
-                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
-                    </button>
+                    <h3 class="card-title">Real-time lookup</h3>
+                    <p class="card-description">
+                        Search individual formulas or system item lists. Our algorithm normalizes entry data and checks against active database registers instantly.
+                    </p>
+                    <a href="#" class="learn-link feature-detail-btn" data-feature="Dynamic Search Matrix">
+                        <span>Learn how stock queries operate</span>
+                        <i class="bi bi-arrow-right-short"></i>
+                    </a>
                 </div>
 
-                <!-- Card 2: Secure Allocation Locks -->
-                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-shield-lock-fill text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                <div class="crypto-card">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-building-check"></i>
                     </div>
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Secure Allocation Locks</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-3">Patients can trigger instantaneous reservation holds directly on pharmacy counters, protecting critical prescriptions from localized depletion.</p>
-                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Secure Allocation Locks">
-                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
-                    </button>
+                    <h3 class="card-title">Verified pharmacies</h3>
+                    <p class="card-description">
+                        Every partner pharmacy remains locked in a pending administrative state until credentials and operating certificates are officially approved.
+                    </p>
+                    <a href="#" class="learn-link feature-detail-btn" data-feature="Real-Time Verification">
+                        <span>Learn about licensing reviews</span>
+                        <i class="bi bi-arrow-right-short"></i>
+                    </a>
                 </div>
 
-                <!-- Card 3: Dynamic Search Matrix -->
-                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-capsule text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
+                <div class="crypto-card">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-bookmark-check-fill"></i>
                     </div>
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Dynamic Search Matrix</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-3">Type and append multiple medical nomenclature strings into custom parameter tag clouds to filter matches across multiple facilities simultaneously.</p>
-                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Dynamic Search Matrix">
-                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
-                    </button>
-                </div>
-
-                <!-- Card 4: Geolocated Nodes -->
-                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-geo-alt-fill text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Geolocated Nodes</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-3">Sort live results automatically based on physical vicinity, directing you cleanly to the closest emergency care or retail medicine distributor.</p>
-                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Geolocated Nodes">
-                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
-                    </button>
-                </div>
-
-                <!-- Card 5: Transparent Price Ledger -->
-                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-currency-exchange text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Transparent Price Ledger</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-3">Compare standardized unit retail costs across verified partner nodes immediately to avoid unexpected variance when procuring rare formulations.</p>
-                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Transparent Price Ledger">
-                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
-                    </button>
-                </div>
-
-                <!-- Card 6: Resilient Infrastructure -->
-                <div class="feature-card enhanced-card bg-white dark:bg-gray-800/70 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                    <div class="flex justify-start items-center mb-5 w-12 h-12 rounded-xl bg-blue-100 lg:h-14 lg:w-14 dark:bg-blue-900/70 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-activity text-blue-600 text-2xl lg:text-2xl mx-auto dark:text-blue-300"></i>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Resilient Infrastructure</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-3">Engineered with high-availability systems to maintain secure digital handoffs, logging handovers seamlessly between patient accounts and pharmacy nodes.</p>
-                    <button class="feature-detail-btn text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-1 mt-2 hover:gap-2 transition-all" data-feature="Resilient Infrastructure">
-                        Learn more <i class="bi bi-arrow-right-short text-lg"></i>
-                    </button>
+                    <h3 class="card-title">Secure ticket holds</h3>
+                    <p class="card-description">
+                        Reserve matching assets securely. Confirmed tickets execute transactional counters, preventing dual-allocation and stock hoarding.
+                    </p>
+                    <a href="#" class="learn-link feature-detail-btn" data-feature="Secure Allocation Locks">
+                        <span>How reservations safeguard supply</span>
+                        <i class="bi bi-arrow-right-short"></i>
+                    </a>
                 </div>
             </div>
 
-            <!-- Extra dynamic area: Live Search Simulation -->
-            <div class="mt-14 rounded-2xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-gray-800/40 dark:to-gray-800/20 p-5 md:p-6 border border-blue-100 dark:border-gray-700">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h4 class="font-bold text-gray-800 dark:text-white flex items-center gap-2"><i class="bi bi-search-heart text-blue-600"></i> Live Demo: Smart Stock Discovery</h4>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Try searching for a medication — simulate real-time pharmacy inventory lookup</p>
-                    </div>
-                    <div class="flex flex-wrap gap-3 w-full md:w-auto">
-                        <div class="relative flex-1 md:min-w-[240px]">
-                            <input type="text" id="medSearchInput" placeholder="e.g., Insulin, Paracetamol, Azithromycin..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 outline-none transition">
-                            <i class="bi bi-search absolute right-3 top-3 text-gray-400"></i>
-                        </div>
-                        <button id="simulateSearchBtn" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-xl shadow-md transition flex items-center gap-2 font-medium">Search Inventory <i class="bi bi-box-arrow-in-right"></i></button>
-                    </div>
+            <div class="trust-badges">
+                <div class="badge-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span>All Regions of Uganda</span>
                 </div>
-                <div id="searchResultsArea" class="mt-5 hidden transition-all duration-300">
-                    <div class="bg-white dark:bg-gray-800/90 rounded-xl p-4 shadow-inner border-l-4 border-blue-400">
-                        <p id="resultMessage" class="text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2"><i class="bi bi-check-circle-fill text-green-500"></i> <span>Ready to display stock matches.</span></p>
-                        <div id="dynamicStockList" class="mt-2 text-xs text-gray-500 dark:text-gray-400"></div>
-                    </div>
+                <div class="badge-item">
+                    <i class="bi bi-building"></i>
+                    <span>Licensed Stores Linked</span>
+                </div>
+                <div class="badge-item">
+                    <i class="bi bi-lightning-fill"></i>
+                    <span>Live Inventory Metrics</span>
+                </div>
+                <div class="badge-item">
+                    <i class="bi bi-telephone-outbound-fill"></i>
+                    <span>24/7 Support Hotline</span>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- ========================================================= -->
-    <!-- NEW CTA SECTION: Find Your Prescriptions Instantly (enhanced CSS) -->
-    <!-- ========================================================= -->
-    <section class="bg-white dark:bg-gray-900 my-12 sm:my-16 rounded-3xl shadow-xl overflow-hidden transition-all duration-500 cta-animate">
-        <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-20 lg:px-6 border-t border-gray-100 dark:border-gray-800 relative">
-            <!-- decorative background accent -->
-            <div class="absolute top-0 right-0 w-72 h-72 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-3xl -z-0"></div>
-            <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-3xl -z-0"></div>
+    {{-- Interactive Calls Frame Action Hub Section --}}
+    <div class="container py-4">
+        <div class="p-5 bg-white border border-light shadow-sm rounded-4 position-relative overflow-hidden text-center">
+            <div class="position-absolute top-0 end-0 w-25 h-100 bg-primary opacity-5 rounded-circle blur-3xl" style="transform: translate(30%, -30%);"></div>
+            <div class="position-absolute bottom-0 start-0 w-25 h-100 bg-info opacity-5 rounded-circle blur-3xl" style="transform: translate(-30%, 30%);"></div>
 
-            <div class="mx-auto max-w-screen-md text-center relative z-10">
-                <div class="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 text-xs font-semibold px-3 py-1.5 rounded-full mb-5 backdrop-blur-sm">
-                    <i class="bi bi-heart-pulse-fill text-red-500"></i> <span>Instant access • Uganda nationwide</span>
+            <div class="position-relative z-3" style="max-width: 650px; margin: 0 auto;">
+                <div class="d-inline-flex align-items-center gap-1.5 bg-primary bg-opacity-10 text-primary text-xs fw-bold px-3 py-2 rounded-pill mb-4">
+                    <i class="bi bi-heart-pulse-fill text-danger"></i> <span>Instant Access • Uganda Nationwide</span>
                 </div>
-                <h2 class="mb-5 text-4xl tracking-tight font-extrabold leading-tight text-gray-900 dark:text-white sm:text-5xl bg-gradient-to-r from-gray-800 to-blue-800 dark:from-white dark:to-blue-300 bg-clip-text text-transparent">
-                    Find Your Prescriptions Instantly
-                </h2>
-                <p class="mb-8 font-normal text-gray-500 dark:text-gray-400 md:text-lg max-w-xl mx-auto">
-                    Access real-time pharmaceutical inventories across Uganda. Locate, verify, and secure your essential medicine today.
+                <h2 class="mb-3 fw-extrabold text-dark tracking-tight h1">Find Your Prescriptions Instantly</h2>
+                <p class="mb-4 text-muted">
+                    Access verified pharmaceutical inventories across Uganda. Locate, confirm, and secure your essential medication without delay today.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a href="#" id="demoSearchCta" class="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-7 py-3.5 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 btn-cta-primary dark:bg-blue-600 dark:hover:bg-blue-700">
-                        <i class="bi bi-search-heart text-lg"></i> Search Live Inventory
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
+                    <a href="#" id="demoSearchCta" class="btn btn-primary px-4 py-3 rounded-3 fw-bold d-inline-flex align-items-center gap-2 w-100 w-sm-auto justify-content-center shadow-sm">
+                        <i class="bi bi-search-heart fs-5"></i> Search Live Inventory
                     </a>
-                    <a href="#" id="demoRegisterCta" class="w-full sm:w-auto text-gray-700 bg-gray-50 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-xl text-sm px-7 py-3.5 transition-all duration-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 btn-cta-secondary shadow-sm">
+                    <a href="#" id="demoRegisterCta" class="btn btn-outline-secondary px-4 py-3 rounded-3 fw-bold d-inline-flex align-items-center gap-2 w-100 w-sm-auto justify-content-center bg-light text-dark border-light shadow-sm">
                         <i class="bi bi-building-add"></i> Register Your Pharmacy
                     </a>
                 </div>
-                <!-- small trust badge added -->
-                <div class="mt-8 flex justify-center gap-5 text-xs text-gray-400 dark:text-gray-500">
-                    <span class="flex items-center gap-1"><i class="bi bi-check-circle-fill text-green-500 text-xs"></i> Verified nodes</span>
-                    <span class="flex items-center gap-1"><i class="bi bi-clock-history"></i> 24/7 live sync</span>
-                    <span class="flex items-center gap-1"><i class="bi bi-shield-check"></i> HIPAA-ready</span>
+                <div class="mt-4 d-flex justify-content-center flex-wrap gap-4 text-muted" style="font-size: 0.8rem;">
+                    <span class="d-flex align-items-center gap-1"><i class="bi bi-check-circle-fill text-success"></i> Verified Nodes</span>
+                    <span class="d-flex align-items-center gap-1"><i class="bi bi-clock-history"></i> 24/7 Live Sync</span>
+                    <span class="d-flex align-items-center gap-1"><i class="bi bi-shield-check"></i> Standard Security Secure</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- User Feedbacks Testimonies Container Grid --}}
+    <section class="py-5 mt-4" style="background-color: #f1f5f9; border-top: 1px solid var(--slate-200);">
+        <div class="container text-center">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
+            <h2 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">What Our Users Say</h2>
+            <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 3rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
+
+            <div class="row g-4 justify-content-center text-start">
+                @if(isset($testimonials) && count($testimonials) > 0)
+                @foreach($testimonials as $testimonial)
+                <div class="col-md-6 col-lg-4">
+                    <div class="h-100 bg-white p-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between transition" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                        <p class="text-secondary italic mb-4" style="font-size: 0.95rem; line-height: 1.6;">
+                            "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
+                        </p>
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
+                            <div>
+                                <h4 class="h6 fw-bold text-dark mb-0">{{ $testimonial['name'] }}</h4>
+                                <span class="text-primary fw-medium" style="font-size: 0.85rem;">{{ $testimonial['role'] ?? 'Patient' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+                @else
+                <div class="col-md-6 col-lg-4">
+                    <div class="h-100 bg-white p-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between">
+                        <p class="text-secondary italic mb-4" style="font-size: 0.95rem; line-height: 1.6; font-style: italic;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="fw-bold" style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center;">NK</div>
+                            <div>
+                                <h4 class="h6 fw-bold text-dark mb-0">Nsubuga Karim</h4>
+                                <span class="text-primary fw-medium" style="font-size: 0.85rem;">Verified Patient</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </section>
-
 </div>
 
-<!-- Modal overlay for feature details -->
-<div id="featureModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4">
-    <div class="bg-white dark:bg-gray-850 rounded-2xl max-w-lg w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 border border-gray-200 dark:border-gray-700">
-        <div class="flex justify-between items-start mb-3">
-            <h3 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white">Feature</h3>
-            <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl leading-5">&times;</button>
+{{-- Interactive Details Features Modal Target Box Component --}}
+<div id="featureModal" class="modal fade" desert-overlay-target tabindex="-1" style="display: none; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); transition: opacity 0.2s ease;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 500px; width: 100%;">
+        <div class="modal-content border-0 shadow-lg rounded-4 p-4" style="background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h3 id="modalTitle" class="h4 fw-bold text-dark mb-0">Feature Details</h3>
+                <button id="closeModalBtn" type="button" class="btn-close border-0 bg-transparent shadow-none fs-4 p-0 line-none text-muted" aria-label="Close" style="cursor: pointer;">&times;</button>
+            </div>
+            <p id="modalDescription" class="text-secondary mb-4" style="font-size: 0.95rem; line-height: 1.6;">Detailed capability insights stream setup info text.</p>
+            <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 text-sm d-flex align-items-start gap-2" style="font-size: 0.85rem;">
+                <i class="bi bi-info-circle-fill flex-shrink-0 mt-0.5"></i>
+                <span>MedFinder syncs allocations in real-time, matching database locks directly to active vendor registers.</span>
+            </div>
+            <button id="closeModalBtnSecondary" type="button" class="btn btn-light mt-4 w-100 rounded-3 py-2 fw-semibold text-dark border">Close</button>
         </div>
-        <p id="modalDescription" class="text-gray-600 dark:text-gray-300 mb-4">Detailed insights about this capability.</p>
-        <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl text-sm text-blue-800 dark:text-blue-200 flex items-start gap-2">
-            <i class="bi bi-info-circle-fill mt-0.5"></i>
-            <span>MedFinder uses real-time indexing, protecting stock integrity with secure handshakes.</span>
-        </div>
-        <button class="mt-5 w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-xl transition">Close</button>
     </div>
 </div>
-
-
-
-
-<!-- Modal overlay for feature details -->
-<!-- Testimonials Section -->
-<section style="background-color: #f1f5f9; padding: 3.5rem 1.5rem; border-top: 1px solid var(--slate-200);">
-    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
-        <h2 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">What Our Users Say</h2>
-        <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 3rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
-            @if(isset($testimonials) && count($testimonials) > 0)
-            @foreach($testimonials as $testimonial)
-            <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">
-                    "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
-                </p>
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: var(--slate-100);">
-                    <div>
-                        <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">{{ $testimonial['name'] }}</h4>
-                        <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">{{ $testimonial['role'] ?? 'Patient' }}</span>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-            @else
-            <div style="background: #ffffff; padding: 2.25rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--slate-200); text-align: left;">
-                <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-style: italic; margin-bottom: 2rem;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div class="fw-bold" style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center;">NK</div>
-                    <div>
-                        <h4 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Nsubuga Karim</h4>
-                        <span style="font-size: 0.85rem; color: var(--primary); font-weight: 500;">Verified Patient</span>
-                    </div>
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
-</section>
-
-<section class="bg-white dark:bg-gray-900 my-12 sm:my-16">
-    <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-20 lg:px-6 border-t border-gray-100 dark:border-gray-800">
-        <div class="mx-auto max-w-screen-md text-center">
-            <h2 class="mb-4 text-3xl tracking-tight font-extrabold leading-tight text-gray-900 dark:text-white sm:text-4xl">
-                Find Your Prescriptions Instantly
-            </h2>
-            <p class="mb-8 font-normal text-gray-500 dark:text-gray-400 md:text-lg max-w-xl mx-auto">
-                Access real-time pharmaceutical inventories across Uganda. Locate, verify, and secure your essential medicine today.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <a href="/search" class="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-6 py-3 transition-colors dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 shadow-sm">
-                    Search Live Inventory
-                </a>
-                <a href="/pharmacy/register" class="w-full sm:w-auto text-gray-700 bg-gray-50 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-xl text-sm px-6 py-3 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700">
-                    Register Your Pharmacy
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div id="toastRoot" class="position-fixed bottom-0 start-0 p-3" style="z-index: 11000"></div>
-</div> <!-- Fixed missing landing page structural close wrapper -->
 @endsection
 
 @section('scripts')
@@ -829,7 +866,7 @@
         wrap.className = 'tag-item';
         wrap.innerHTML = `
             <span>${escapeHtml(value)}</span>
-            <button class="btn btn-sm p-0 border-0 bg-transparent text-white" type="button" aria-label="Remove element">
+            <button class="btn btn-sm p-0 border-0 bg-transparent text-white d-inline-flex" type="button" aria-label="Remove element">
                 <i class="bi bi-x-circle-fill ms-1" style="font-size: 0.9rem; opacity:0.8;"></i>
             </button>
             <input type="hidden" name="item_names[]" value="${escapeHtml(value)}">
@@ -850,7 +887,7 @@
 
         const value = input.value.trim();
         if (!value) {
-            showToast('Please specify an authentic medical system nomenclature string.', 'error');
+            showToast('Please specify an authentic medical nomenclature input.', 'error');
             input.focus();
             return;
         }
@@ -858,7 +895,7 @@
         mainList.appendChild(createTag(value));
         input.value = '';
         updateSearchBtn();
-        showToast(`Added prescription target: "${value}"`, 'success');
+        showToast(`Added tag criteria: "${value}"`, 'success');
         input.focus();
     }
 
@@ -922,190 +959,77 @@
         updateSearchBtn();
     });
 
+    // Modal Control Flow Configuration
     (function() {
         const modal = document.getElementById('featureModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDescription = document.getElementById('modalDescription');
         const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeModalBtnSecondary = document.getElementById('closeModalBtnSecondary');
 
         const featureDetailsMap = {
-            "Real-Time Verification": "Real-Time Verification syncs across +200 regional pharmacy endpoints using cryptographic timestamping, ensuring millisecond-level accuracy for inventory counts. Our system eliminates outdated shelf checks.",
-            "Secure Allocation Locks": "Secure Allocation Locks allow patients to place a binding digital hold on critical medications for up to 48 hours. Pharmacies receive instant notifications, reducing stockouts and false reservations.",
-            "Dynamic Search Matrix": "Dynamic Search Matrix supports SNOMED, RxNorm, and custom drug nomenclature. Create multidimensional search tags to cross-reference availability across hospital chains, retail pharmacies and speciality depots.",
-            "Geolocated Nodes": "Geolocated Nodes rank results using real-time geofencing, walking/driving ETA, and integrates with Google Maps / OpenStreetMap to give turn-by-turn directions to the nearest verified distributor.",
-            "Transparent Price Ledger": "Transparent Price Ledger shows historical price trends, manufacturer-level costs, and insurance copay estimates. Avoid price gouging through real-time comparative analytics from partner nodes.",
-            "Resilient Infrastructure": "Resilient Infrastructure leverages multi-region failover, end-to-end encryption, and auditable handover logs. Service level agreements guarantee 99.95% uptime for critical prescription handoffs."
+            "Real-Time Verification": "Real-Time Verification syncs across regional Ugandan pharmacy endpoints using trusted system logs, ensuring extreme accuracy for live inventory tracking counts. Our platform cuts down verification loops cleanly.",
+            "Secure Allocation Locks": "Secure Allocation Locks allow patients to hold critical matches safely. Pharmacies receive notification counters right away, avoiding dual allocation issues and optimizing stock distributions.",
+            "Dynamic Search Matrix": "Dynamic Search Matrix handles complex medical strings. Form list fields auto-accumulate criteria items perfectly to parse targeted stock nodes simultaneously across cities.",
         };
 
         const detailBtns = document.querySelectorAll('.feature-detail-btn');
 
         function openModal(featureName) {
+            if (!modal) return;
             modalTitle.innerText = featureName;
             modalDescription.innerText = featureDetailsMap[featureName] || "Advanced capability designed to streamline medical stock discovery with verified pharmacy integration.";
-            modal.classList.remove('opacity-0', 'invisible');
-            modal.classList.add('opacity-100', 'visible');
+
+            modal.style.display = 'flex';
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                modal.classList.add('show');
+            }, 10);
             document.body.style.overflow = 'hidden';
-            const modalContent = modal.querySelector('.bg-white');
-            if (modalContent) modalContent.classList.remove('scale-95');
-            void modalContent.offsetWidth;
-            modalContent.classList.add('scale-100');
         }
 
         function closeModal() {
-            modal.classList.add('opacity-0', 'invisible');
-            modal.classList.remove('opacity-100', 'visible');
+            if (!modal) return;
+            modal.style.opacity = '0';
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 200);
             document.body.style.overflow = '';
-            const modalContent = modal.querySelector('.bg-white');
-            if (modalContent) modalContent.classList.remove('scale-100');
         }
 
         detailBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 const feature = btn.getAttribute('data-feature');
                 if (feature) openModal(feature);
             });
         });
 
-        closeModalBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
+        closeModalBtn?.addEventListener('click', closeModal);
+        closeModalBtnSecondary?.addEventListener('click', closeModal);
+        modal?.addEventListener('click', (e) => {
             if (e.target === modal) closeModal();
         });
     })();
 
-    (function() {
-        const medSearchInput = document.getElementById('medSearchInput');
-        const simulateSearchBtn = document.getElementById('simulateSearchBtn');
-        const searchResultsArea = document.getElementById('searchResultsArea');
-        const resultMessageSpan = document.querySelector('#resultMessage span');
-        const dynamicStockListDiv = document.getElementById('dynamicStockList');
-        const ctaSearchBtn = document.getElementById('demoSearchCta');
-        const ctaRegisterBtn = document.getElementById('demoRegisterCta');
-
-        const mockInventoryDatabase = [{
-                drug: "insulin",
-                pharmacy: "CityMed Pharmacy",
-                stock: 24,
-                price: "$28.50",
-                distance: "0.3 mi"
-            },
-            {
-                drug: "paracetamol",
-                pharmacy: "HealthPlus Central",
-                stock: 112,
-                price: "$4.99",
-                distance: "0.7 mi"
-            },
-            {
-                drug: "azithromycin",
-                pharmacy: "Apollo Hub",
-                stock: 15,
-                price: "$12.20",
-                distance: "1.2 mi"
-            },
-            {
-                drug: "metformin",
-                pharmacy: "CarePoint RX",
-                stock: 48,
-                price: "$9.75",
-                distance: "0.9 mi"
-            },
-            {
-                drug: "amoxicillin",
-                pharmacy: "CityMed Pharmacy",
-                stock: 62,
-                price: "$7.30",
-                distance: "0.3 mi"
-            },
-            {
-                drug: "atorvastatin",
-                pharmacy: "HealthPlus Central",
-                stock: 33,
-                price: "$14.60",
-                distance: "0.7 mi"
-            },
-            {
-                drug: "ibuprofen",
-                pharmacy: "Apollo Hub",
-                stock: 200,
-                price: "$5.49",
-                distance: "1.2 mi"
-            }
-        ];
-
-        function performSearch(query) {
-            if (!resultMessageSpan || !dynamicStockListDiv) return;
-            if (!query.trim()) {
-                resultMessageSpan.innerHTML = "💡 Please enter a medication name (e.g., Insulin, Paracetamol) to see real-time stock availability.";
-                dynamicStockListDiv.innerHTML = '';
-                return;
-            }
-
-            const lowerQuery = query.toLowerCase();
-            const matches = mockInventoryDatabase.filter(item => item.drug.toLowerCase().includes(lowerQuery));
-
-            if (matches.length === 0) {
-                resultMessageSpan.innerHTML = `🔍 No direct match for "${query}". Try synonyms or broaden search.`;
-                dynamicStockListDiv.innerHTML = `<div class="text-amber-600 text-xs">No immediate stock found, but allocation alerts are ready.</div>`;
-                return;
-            }
-
-            resultMessageSpan.innerHTML = `✅ Found ${matches.length} active stock location(s) for "${query}".`;
-            let html = `<ul class="mt-3 space-y-2 text-sm">`;
-            matches.forEach(m => {
-                html += `<li class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2"><span><i class="bi bi-shop text-blue-500 mr-2"></i>${m.pharmacy}</span><span class="font-mono text-xs">${m.stock} units • ${m.price} • <i class="bi bi-geo-alt"></i> ${m.distance}</span></li>`;
+    // CTA Anchor Handler Focus Jumper System
+    document.getElementById('demoSearchCta')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const mainSearchInput = document.getElementById('itemInput');
+        if (mainSearchInput) {
+            mainSearchInput.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
             });
-            html += `</ul><div class="mt-3 text-[11px] text-blue-500 flex gap-3"><i class="bi bi-shield-check"></i> Real-time lock available on selection</div>`;
-            dynamicStockListDiv.innerHTML = html;
+            mainSearchInput.focus();
         }
+    });
 
-        function handleSearchSubmit() {
-            if (!medSearchInput) return;
-            const searchTerm = medSearchInput.value.trim();
-            if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
-            performSearch(searchTerm);
-        }
-
-        if (simulateSearchBtn) {
-            simulateSearchBtn.addEventListener('click', handleSearchSubmit);
-        }
-
-        if (medSearchInput) {
-            medSearchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleSearchSubmit();
-            });
-
-            medSearchInput.addEventListener('focus', () => {
-                if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
-                if (resultMessageSpan) resultMessageSpan.innerHTML = "✨ Real-time search ready: type a medication and hit Search.";
-                if (dynamicStockListDiv) dynamicStockListDiv.innerHTML = "";
-            });
-        }
-
-        setTimeout(() => {
-            if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
-            if (resultMessageSpan) resultMessageSpan.innerHTML = "👋 Welcome to MedFinder demo — try searching 'insulin' or 'paracetamol' above.";
-            if (dynamicStockListDiv) dynamicStockListDiv.innerHTML = `<div class="flex gap-2 flex-wrap"><span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">⚡ 6 active pharmacy nodes</span><span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">🏥 Geolocation enabled</span></div>`;
-        }, 500);
-
-        if (ctaSearchBtn && medSearchInput) {
-            ctaSearchBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                medSearchInput.focus();
-                medSearchInput.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-                if (searchResultsArea?.classList.contains('hidden')) searchResultsArea.classList.remove('hidden');
-                if (resultMessageSpan) resultMessageSpan.innerHTML = "🔍 Start your search above! Enter a medication to see live inventory.";
-            });
-        }
-
-        if (ctaRegisterBtn) {
-            ctaRegisterBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert("📋 Pharmacy registration portal demo: This would open a secure onboarding form to list your stock on MedFinder network.");
-            });
-        }
-    })();
+    document.getElementById('demoRegisterCta')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        showToast("Pharmacy registration panel template: This safely triggers onboarding operations.", "info");
+    });
 </script>
 @endsection

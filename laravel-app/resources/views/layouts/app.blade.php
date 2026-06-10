@@ -15,6 +15,15 @@
   @yield('styles')
 
   <style>
+    /* Basic navbar styles to ensure visibility on all pages */
+    .site-navbar {
+      position: sticky;
+      top: 0;
+      background-color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      z-index: 1050;
+    }
+
     .footer-gradient {
       background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f3460 100%);
       position: relative;
@@ -141,35 +150,31 @@
 
 <body class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*')) ? '' : 'bg-light' }}">
 
-  @if(!Request::is('requests*') && !Request::is('dashboard*') && !Request::is('search*'))
-    @include('partials.header')
-  @endif
+  @include('partials.header')
 
   <main class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*')) ? '' : 'py-4' }}">
-    
+
     @if(session('alerts'))
-      @foreach (session('alerts') as $alert)
-        <div class="container">
-          <div class="alert alert-{{ $alert['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
-            {{ $alert['message'] ?? 'No message content' }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        </div>
-      @endforeach
+    @foreach (session('alerts') as $alert)
+    <div class="container">
+      <div class="alert alert-{{ $alert['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+        {{ $alert['message'] ?? 'No message content' }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    </div>
+    @endforeach
     @endif
 
     @hasSection('fullwidth')
-      @yield('fullwidth')
+    @yield('fullwidth')
     @else
-      <div class="container">
-        @yield('content')
-      </div>
+    <div class="container">
+      @yield('content')
+    </div>
     @endif
   </main>
 
-  @if(!Request::is('requests*') && !Request::is('dashboard*') && !Request::is('search*'))
-    @include('partials.footer')
-  @endif
+  @include('partials.footer')
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -185,7 +190,7 @@
       });
     }
 
-     document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       const authButtons = document.querySelectorAll('.auth-buttons .btn');
       authButtons.forEach(button => {
         button.addEventListener('mouseenter', () => button.classList.add('btn-hover'));
@@ -203,6 +208,30 @@
         document.querySelector('.btn-register')?.classList.add('active');
       }
     });
+  </script>
+  <!-- Debug: log navbar clicks and guard against accidental '#' navigation -->
+  <script>
+    (function(){
+      if (!window.console) return;
+      document.addEventListener('click', function(e){
+        const a = e.target.closest && e.target.closest('a');
+        if (!a) return;
+        console.log('[NAV DEBUG] link click:', a.href, 'text:', a.textContent.trim());
+        // Prevent inert anchors from navigating and log them for debugging
+        if (a.getAttribute('href') === '#') {
+          e.preventDefault();
+          console.warn('[NAV DEBUG] prevented inert "#" navigation for', a);
+        }
+      }, true);
+
+      window.addEventListener('popstate', function(e){
+        console.log('[NAV DEBUG] popstate event', e);
+      });
+
+      window.addEventListener('beforeunload', function(){
+        console.log('[NAV DEBUG] beforeunload fired');
+      });
+    })();
   </script>
   @yield('scripts')
 </body>
