@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
 // --- GLOBAL HELPERS ---
 if (!function_exists('renderView')) {
@@ -137,7 +138,14 @@ Route::get('/', function (Request $request) {
         'currentUser' => currentUser()
     ]);
 });
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/settings/account', [ProfileController::class, 'editSettings'])->name('profile.settings');
+    Route::put('/settings/account/update', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
+    Route::get('/admin/profile', [ProfileController::class, 'adminProfile'])->name('admin.profile');
+    Route::get('/pharmacy/profile', [ProfileController::class, 'pharmacyProfile'])->name('pharmacy.profile');
+    Route::get('/patient/profile', [ProfileController::class, 'patientProfile'])->name('patient.profile');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
 Route::get('/home', function () {
     return redirect('/');
 })->name('home');

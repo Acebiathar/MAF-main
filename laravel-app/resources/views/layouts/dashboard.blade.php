@@ -125,7 +125,6 @@
     border-radius: 24px;
   }
 
-  /* Critical Layer Fix: Forces the Topbar layout row container onto a higher visual plane */
   .dashboard-topbar {
     background: rgba(255, 255, 255, 0.84);
     border: 1px solid rgba(16, 35, 60, 0.08);
@@ -135,7 +134,7 @@
     padding: 1rem 1.5rem;
     margin-bottom: 1.5rem;
     position: relative;
-    z-index: 2000 !important; 
+    z-index: 1050; 
   }
 
   .dashboard-search {
@@ -413,7 +412,7 @@
           </div>
 
           <div class="dropdown">
-            <a href="#" class="dashboard-profile-btn dropdown-toggle text-decoration-none" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="dashboard-profile-btn dropdown-toggle text-decoration-none" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
               <div class="dashboard-avatar">{{ $initials ?: 'MF' }}</div>
               
               <div class="d-none d-sm-block text-start">
@@ -422,29 +421,31 @@
               </div>
             </a>
     
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2 rounded-3" aria-labelledby="profileDropdown" style="min-width: 220px; position: absolute; z-index: 3000 !important;">
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2 rounded-3" aria-labelledby="profileDropdown" style="min-width: 220px;">
               <li class="p-2 border-bottom mb-2 bg-light rounded-2">
                 <div class="fw-bold text-dark small">{{ $profileName }}</div>
                 <small class="text-primary fw-semibold" style="font-size: 0.72rem;">{{ $profileRole }} Control Panel</small>
               </li>
               
-             <li>
-  <a class="dropdown-item d-flex align-items-center py-2 px-3 rounded-2" href="{{ route('profile.settings') }}">
-    <i class="bi bi-gear text-muted me-2.5 fs-5"></i> Account Settings
-  </a>
-</li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center py-2 px-3 rounded-2" href="{{ route('profile.settings') }}">
+                  <i class="bi bi-gear text-muted me-2 fs-5"></i> Account Settings
+                </a>
+              </li>
               
               <li><hr class="dropdown-divider my-2"></li>
               
               <li>
-                <a class="dropdown-item d-flex align-items-center py-2 px-3 text-danger rounded-2" href="/logout">
-                  <i class="bi bi-box-arrow-right me-2.5 fs-5"></i> Logout
-                </a>
+  <a class="dropdown-item d-flex align-items-center py-2 px-3 text-danger rounded-2" 
+     href="/logout">
+    <i class="bi bi-box-arrow-right me-2 fs-5"></i> 
+    <span>Logout</span>
+  </a>
+</li>
               </li>
             </ul>
           </div>
-          
-        </div>
+          </div>
       </div>
 
       <div class="dashboard-hero text-white mb-4">
