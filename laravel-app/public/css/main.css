@@ -21,7 +21,30 @@ html, body {
     margin: 0;
     padding: 0;
 }
+/* 🛠️ FIX 1: Make sure the section container allows full fluid width */
+#section-home, .section-content {
+    width: 100% !important;
+    max-width: 100% !important; /* Ensure no hard max-width is cutting it off */
+    display: block !important;
+}
 
+/* 🛠️ FIX 2: Ensure Bootstrap rows can expand fully */
+#section-home .row {
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+.section-content {
+    animation: fadeIn 0.3s ease-in-out;
+    
+    /* ADD THIS TO CREATE PERFECT BREATHING ROOM FROM THE SIDEBAR */
+    padding-left: 1.5rem !important;  /* Creates space on the left edge */
+    padding-right: 1.5rem !important; /* Balanced space on the right edge */
+    padding-top: 1rem !important;     /* Tops it away from the search bar container */
+    
+    width: 100% !important;
+    box-sizing: border-box;
+}
 body {
     
     font-family: 'Inter', sans-serif;
@@ -490,12 +513,34 @@ body:has(.dashboard-workspace) {
     border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Main Content Wrapper Container */
-.dashboard-content-container {
-    height: 100vh;
-    overflow-y: auto;
-    padding: 2.5rem;
-    box-sizing: border-box;
+/*  1. Establish a clear, uniform baseline gutter for the entire workspace content */
+.dashboard-content {
+    padding: 1.5rem; 
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Normalize row spacing so column contents line up exactly with standalone blocks */
+.dashboard-content > .row {
+    width: auto; 
+    margin-left: -0.5rem;  /* Tightens the grid row gap */
+    margin-right: -0.5rem;
+}
+
+/* 3. Tighten the individual column gutters to keep the edge flush */
+.dashboard-content > .row [class*='col-'] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+/* 4. Remove any manual, hardcoded side margins from panel items */
+.dashboard-topbar,
+.dashboard-panel,
+.dashboard-table-card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100%; /* Force standalone panels to span perfectly across the content container */
 }
 
 /* ===== ENHANCED INTERACTIVE ELEMENTS ===== */
@@ -537,6 +582,7 @@ body:has(.dashboard-workspace) {
 .dashboard-stat {
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 16px !important; /* Perfect consistent border-radii */
+    border-radius: 20px !important; /* Perfect consistent border-radii */
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+    width:150% !important; /* Force full width to align with the content container */
 }
