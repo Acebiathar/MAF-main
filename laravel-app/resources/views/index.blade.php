@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="preload" as="image" href="https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1200">
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
 <style>
     :root {
         --primary: #0b5ed7;
@@ -27,9 +29,6 @@
         min-height: 100vh;
     }
 
-    /* ========================================================================= */
-    /* FORCE THE NAVIGATION BAR TO BE FIXED SOLID WHITE LIKE THE ABOUT PAGE      */
-    /* ========================================================================= */
     nav,
     .landing-page nav,
     body nav {
@@ -72,9 +71,6 @@
         color: #1e293b !important;
     }
 
-    /* ========================================================================= */
-    /* HERO CAROUSEL DESIGN REFINEMENTS                                          */
-    /* ========================================================================= */
     .hero-carousel .carousel-item {
         min-height: 80vh;
         background-size: cover;
@@ -86,8 +82,10 @@
 
     @media (max-width: 768px) {
         .hero-carousel .carousel-item {
-            min-height: auto;
-            padding: 4rem 0;
+            min-height: 60vh;
+            padding: 2rem 0;
+            background-position: center top;
+            background-size: cover;
         }
     }
 
@@ -109,6 +107,12 @@
         padding: 2rem 0;
         display: flex;
         align-items: center;
+    }
+
+    @media (max-width: 576px) {
+        .carousel-caption {
+            padding: 1rem 0;
+        }
     }
 
     .search-card-wrapper {
@@ -156,7 +160,6 @@
         transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    /* Stat Box Adjustments */
     .stat-box {
         background: #ffffff;
         padding: 2rem 1.5rem;
@@ -173,7 +176,6 @@
         box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.1);
     }
 
-    /* Live Availability Results Structure */
     .glass-card {
         background: #ffffff;
         border-radius: 1.5rem;
@@ -193,7 +195,6 @@
         gap: 0.25rem;
     }
 
-    /* Partner Ads Design */
     .ad-card {
         background: #ffffff;
         border: 1px solid var(--slate-200);
@@ -212,7 +213,6 @@
         object-fit: cover;
     }
 
-    /* Info Cards Engine */
     .crypto-card {
         background: white;
         border-radius: 1.5rem;
@@ -332,7 +332,6 @@
         color: #10b981;
     }
 
-    /* Toast Notifications System */
     #toastRoot {
         position: fixed;
         top: 24px;
@@ -354,6 +353,18 @@
         animation: slideIn 0.3s ease forwards;
     }
 
+    /* CUSTOM STYLING FOR INTERACTIVE MAP MAP ROWS */
+    .map-sidebar-row {
+        cursor: pointer;
+        transition: var(--transition);
+        border-left: 3px solid transparent;
+    }
+
+    .map-sidebar-row:hover {
+        background-color: var(--slate-100);
+        border-left-color: var(--primary);
+    }
+
     @keyframes slideIn {
         from {
             transform: translateX(120%);
@@ -370,10 +381,8 @@
 
 @section('fullwidth')
 <div class="landing-page">
-    {{-- Toast Entry Container --}}
     <div id="toastRoot"></div>
 
-    {{-- Spinner Screen Loading Element --}}
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="text-center">
             <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem; border-width: 3px;"></div>
@@ -381,7 +390,6 @@
         </div>
     </div>
 
-    {{-- Hero Frame Section --}}
     <div id="heroCarousel" class="carousel slide hero-carousel">
         <div class="carousel-inner">
             <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1600');">
@@ -442,7 +450,6 @@
         </div>
     </div>
 
-    {{-- Counters Framework Metrics Section --}}
     <section class="container" style="margin-top: -30px; position: relative; z-index: 10;">
         <div class="row g-4 justify-content-center">
             <div class="col-6 col-md-4">
@@ -466,7 +473,6 @@
         </div>
     </section>
 
-    {{-- Error Notice Missing Match Output --}}
     @if(request()->has('search') && isset($results) && $results->isEmpty())
     <div class="container mt-5">
         <div class="alert alert-warning text-center shadow-sm border-0 rounded-4 p-4">
@@ -476,87 +482,92 @@
     </div>
     @endif
 
-    {{-- Live Query Result Listing Output View Grid --}}
+    {{-- INTERACTIVE LIVE DASHBOARD: INTEGRATED MAP AND LIST SPLIT VIEW --}}
     @if(isset($results) && $results->isNotEmpty())
     <div class="container py-5">
         <div class="glass-card overflow-hidden">
             <div class="p-4 bg-white border-bottom border-light d-flex flex-column flex-sm-row gap-3 align-items-sm-center justify-content-between">
-                <h3 class="fw-bold h5 mb-0 text-dark"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i> Live Availability Records</h3>
+                <h3 class="fw-bold h5 mb-0 text-dark"><i class="bi bi-map-fill me-2 text-primary"></i> Live Availability Records Map</h3>
                 <div>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-medium" style="font-size: 0.8rem;">Prioritized by Stock Matches</span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-medium" style="font-size: 0.8rem;">Prioritized by Location Proximity</span>
                 </div>
             </div>
-            <div class="table-responsive">
-                <table class="table align-middle mb-0 table-hover">
-                    <thead class="table-light text-uppercase tracking-wider text-muted" style="font-size: 0.75rem;">
-                        <tr>
-                            <th class="ps-4 py-3">Medicine Name</th>
-                            <th class="py-3">Pharmacy Location</th>
-                            <th class="py-3">Price Status</th>
-                            <th class="py-3">Availability Status</th>
-                            <th class="text-end pe-4 py-3">Distribution Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+
+            <div class="row g-0">
+                <div class="col-lg-7 col-md-6 position-relative" style="min-height: 500px;">
+                    <div id="map" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10;"></div>
+                </div>
+
+                <div class="col-lg-5 col-md-6 bg-white border-start" style="max-height: 500px; overflow-y: auto;">
+                    <div class="list-group list-group-flush">
                         @foreach ($results as $pharmacy)
                         @foreach ($pharmacy->medicines as $medicine)
-                        <tr class="transition">
-                            <td class="ps-4 py-3.5">
-                                <span class="d-block fw-bold text-dark h6 mb-0 text-capitalize">{{ $medicine->name }}</span>
-                                <small class="text-muted text-xs">ID: {{ 1000 + $medicine->id }}</small>
-                            </td>
-                            <td class="py-3.5">
-                                <div class="fw-bold text-primary mb-0.5">
+                        <div class="list-group-item p-3 map-sidebar-row"
+                            data-lat="{{ $pharmacy->latitude ?? '0.3476' }}"
+                            data-lng="{{ $pharmacy->longitude ?? '32.5825' }}"
+                            data-pharmacy="{{ $pharmacy->name }}"
+                            data-medicine="{{ $medicine->name }}"
+                            data-price="{{ number_format($medicine->pivot->price ?? 0, 0) }} UGX"
+                            data-quantity="{{ $medicine->pivot->quantity ?? 0 }}">
+
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <div>
+                                    <span class="d-block fw-bold text-dark h6 mb-0 text-capitalize">{{ $medicine->name }}</span>
+                                    <small class="text-muted" style="font-size: 0.75rem;">ID: {{ 1000 + $medicine->id }}</small>
+                                </div>
+                                <span class="fw-bold text-dark text-nowrap">{{ number_format($medicine->pivot->price ?? 0, 0) }} <small class="text-muted" style="font-size:0.7rem;">UGX</small></span>
+                            </div>
+
+                            <div class="my-2">
+                                <div class="fw-bold text-primary mb-0.5" style="font-size: 0.9rem;">
                                     <i class="bi bi-patch-check-fill me-1 text-info"></i>{{ $pharmacy->name }}
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill text-xs ms-1" style="font-size: 0.7rem;">
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill text-xs ms-1" style="font-size: 0.65rem;">
                                         {{ $pharmacy->available_items_count ?? 1 }} Matches
                                     </span>
                                 </div>
-                                <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ $pharmacy->location ?? $pharmacy->pharmacy_location }}</small>
-                            </td>
-                            <td class="py-3.5 font-medium text-dark fw-bold">
-                                {{ number_format($medicine->pivot->price ?? 0, 0) }} <span class="text-xs text-muted" style="font-size:0.75rem;">UGX</span>
-                            </td>
-                            <td class="py-3.5">
-                                @if(($medicine->pivot->quantity ?? 0) == 0)
-                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.825rem;">Out of Stock</span>
-                                @elseif(($medicine->pivot->quantity ?? 0) <= 5)
-                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.825rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited Stock ({{ $medicine->pivot->quantity }} units)</span>
+                                <small class="text-muted d-block text-truncate"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ $pharmacy->location ?? $pharmacy->pharmacy_location }}</small>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-light">
+                                <div>
+                                    @if(($medicine->pivot->quantity ?? 0) == 0)
+                                    <span class="badge bg-danger bg-opacity-10 text-danger px-2.5 py-1.5 rounded-pill fw-semibold" style="font-size: 0.75rem;">Out of Stock</span>
+                                    @elseif(($medicine->pivot->quantity ?? 0) <= 5)
+                                        <span class="badge bg-warning bg-opacity-10 text-warning px-2.5 py-1.5 rounded-pill fw-semibold" style="font-size: 0.75rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited ({{ $medicine->pivot->quantity }})</span>
+                                        @else
+                                        <span class="badge-stock" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }})</span>
+                                        @endif
+                                </div>
+
+                                <div>
+                                    @if(isset($currentUser) && $currentUser->role === 'patient')
+                                    <form action="{{ url('/reserve/' . ($medicine->pivot->id ?? $medicine->id)) }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-xs btn-primary rounded-pill px-3 py-1 shadow-sm fw-bold transition" style="font-size: 0.75rem;">
+                                            <i class="bi bi-shield-lock-fill me-1"></i>Reserve
+                                        </button>
+                                    </form>
+                                    @elseif(isset($currentUser))
+                                    <span class="text-muted small" style="font-size: 0.7rem;"><i class="bi bi-person-x"></i> Provider Acc</span>
                                     @else
-                                    <span class="badge-stock"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }} units)</span>
+                                    <a href="{{ route('login') }}" class="btn btn-xs btn-dark rounded-pill px-3 py-1 fw-bold text-uppercase tracking-wider transition" style="font-size: 0.7rem;">
+                                        Login <i class="bi bi-arrow-right-short"></i>
+                                    </a>
                                     @endif
-                            </td>
-                            <td class="text-end pe-4 py-3.5">
-                                @if(isset($currentUser) && $currentUser->role === 'patient')
-                                <form action="{{ url('/reserve/' . ($medicine->pivot->id ?? $medicine->id)) }}" method="POST" class="m-0">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm fw-bold transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.8rem; letter-spacing: -0.01em;">
-                                        <i class="bi bi-shield-lock-fill"></i>
-                                        <span>Reserve Allocation</span>
-                                    </button>
-                                </form>
-                                @elseif(isset($currentUser))
-                                <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill fw-medium" style="font-size: 0.775rem;">
-                                    <i class="bi bi-person-x me-1"></i> Patient Account Required
-                                </span>
-                                @else
-                                <a href="{{ route('login') }}" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold text-uppercase tracking-wider transition d-inline-flex align-items-center gap-1.5" style="font-size: 0.75rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.05);">
-                                    <span>Login to Secure</span>
-                                    <i class="bi bi-arrow-right-short" style="font-size: 1rem;"></i>
-                                </a>
-                                @endif
-                            </td>
-                        </tr>
+                                </div>
+                            </div>
+
+                        </div>
                         @endforeach
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
     @endif
 
-    {{-- Facilities Promoted Sliders Frame Row --}}
     <section class="py-5 bg-white mt-5">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -647,7 +658,6 @@
         </div>
     </section>
 
-    {{-- Features Information Platform Guide Block --}}
     <div class="container py-5">
         <div class="section-container">
             <div class="text-center" style="max-width: 700px; margin: 0 auto 3rem;">
@@ -727,7 +737,7 @@
         </div>
     </div>
 
-    {{-- Interactive Calls Frame Action Hub Section --}}
+    {{-- BOTTOM CALL TO ACTION BLOCK WITH POPUP CAPABILITIES --}}
     <div class="container py-4">
         <div class="p-5 bg-white border border-light shadow-sm rounded-4 position-relative overflow-hidden text-center">
             <div class="position-absolute top-0 end-0 w-25 h-100 bg-primary opacity-5 rounded-circle blur-3xl" style="transform: translate(30%, -30%);"></div>
@@ -742,11 +752,11 @@
                     Access verified pharmaceutical inventories across Uganda. Locate, confirm, and secure your essential medication without delay today.
                 </p>
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
-                    <a href="#" id="demoSearchCta" class="btn btn-primary px-4 py-3 rounded-3 fw-bold d-inline-flex align-items-center gap-2 w-100 w-sm-auto justify-content-center shadow-sm">
-                        <i class="bi bi-search-heart fs-5"></i> Search Live Inventory
-                    </a>
-                    <a href="#" id="demoRegisterCta" class="btn btn-outline-secondary px-4 py-3 rounded-3 fw-bold d-inline-flex align-items-center gap-2 w-100 w-sm-auto justify-content-center bg-light text-dark border-light shadow-sm">
-                        <i class="bi bi-building-add"></i> Register Your Pharmacy
+                    <button type="button" id="bottomTriggerPromptModalBtn" class="btn btn-primary px-4 py-3 rounded-3 fw-bold d-inline-flex align-items-center gap-2 w-100 w-sm-auto justify-content-center shadow-sm">
+                        <i class="bi bi-search-heart fs-5"></i> Looking for meds?
+                    </button>
+                    <a href="{{ url('/about#hero') }}" class="btn btn-outline-secondary px-4 py-3 rounded-3 fw-bold d-inline-flex align-items-center gap-2 w-100 w-sm-auto justify-content-center bg-light text-dark border-light shadow-sm">
+                        <i class="bi bi-building-add"></i> View our story
                     </a>
                 </div>
                 <div class="mt-4 d-flex justify-content-center flex-wrap gap-4 text-muted" style="font-size: 0.8rem;">
@@ -758,51 +768,99 @@
         </div>
     </div>
 
-    {{-- User Feedbacks Testimonies Container Grid --}}
-    <section class="py-5 mt-4" style="background-color: #f1f5f9; border-top: 1px solid var(--slate-200);">
-        <div class="container text-center">
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
-            <h2 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">What Our Users Say</h2>
-            <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 3rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
+    {{-- FIXED: INTEGRATED INLINE SEARCH PROMPT MODAL FROM ABOUT TEMPLATE LAYER --}}
+    <div id="searchPromptModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1050; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease;">
+        <div class="bg-white rounded-4 p-4 position-relative shadow-lg border" style="width: 100%; max-width: 460px; margin: 20px;">
+            <button id="closePromptBtn" type="button" class="btn-close position-absolute top-0 end-0 m-3 shadow-none bg-transparent text-muted fs-5 border-0" aria-label="Close" style="cursor: pointer; font-family: Arial, sans-serif; line-height: 1;">&times;</button>
 
-            <div class="row g-4 justify-content-center text-start">
-                @if(isset($testimonials) && count($testimonials) > 0)
-                @foreach($testimonials as $testimonial)
-                <div class="col-md-6 col-lg-4">
-                    <div class="h-100 bg-white p-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between transition" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                        <p class="text-secondary italic mb-4" style="font-size: 0.95rem; line-height: 1.6;">
-                            "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
-                        </p>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
-                            <div>
-                                <h4 class="h6 fw-bold text-dark mb-0">{{ $testimonial['name'] }}</h4>
-                                <span class="text-primary fw-medium" style="font-size: 0.85rem;">{{ $testimonial['role'] ?? 'Patient' }}</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="text-center pt-2">
+                <div class="d-flex align-items-center justify-content-center gap-2 text-primary fw-bold mb-3">
+                    <i class="bi bi-heart-pulse-fill text-primary fs-4"></i>
+                    <span class="fs-5 tracking-tight text-dark" style="font-family: 'Inter', sans-serif;">MedFinder</span>
                 </div>
-                @endforeach
-                @else
-                <div class="col-md-6 col-lg-4">
-                    <div class="h-100 bg-white p-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between">
-                        <p class="text-secondary italic mb-4" style="font-size: 0.95rem; line-height: 1.6; font-style: italic;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="fw-bold" style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center;">NK</div>
-                            <div>
-                                <h4 class="h6 fw-bold text-dark mb-0">Nsubuga Karim</h4>
-                                <span class="text-primary fw-medium" style="font-size: 0.85rem;">Verified Patient</span>
-                            </div>
-                        </div>
-                    </div>
+                <h3 class="fw-extrabold text-dark h4 mb-4" style="font-family: 'Inter', sans-serif; color: #0f172a; letter-spacing: -0.02em;">What medication do you need?</h3>
+            </div>
+
+            <form action="{{ url('/') }}" method="GET" class="mb-3">
+                <div class="position-relative mb-3">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 1.1rem;"></i>
+                    <input type="text" id="modalItemInput" name="search" class="form-control py-3 ps-5 border rounded-3 bg-light text-dark shadow-none" placeholder="What med are you looking for?" style="font-size: 0.95rem; font-weight: 500;" required>
                 </div>
-                @endif
+                <button type="submit" class="btn btn-info w-100 py-3 rounded-3 text-dark fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" style="background-color: #e2f7f5; border: none; transition: all 0.2s;">
+                    <i class="bi bi-geo-alt-fill text-muted"></i> Find Your Meds
+                </button>
+            </form>
+
+            <div class="text-center mt-3 pt-2 border-top border-light">
+                <span class="text-dark small fw-semibold" style="text-decoration: underline;">Excellent</span>
+                <span class="text-success ms-1" style="letter-spacing: 1px;">
+                    <i class="bi bi-star-fill text-success bg-opacity-10"></i>
+                    <i class="bi bi-star-fill text-success"></i>
+                    <i class="bi bi-star-fill text-success"></i>
+                    <i class="bi bi-star-fill text-success"></i>
+                    <i class="bi bi-star-half text-success"></i>
+                </span>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="mt-4 d-flex justify-content-center flex-wrap gap-4 text-muted" style="font-size: 0.8rem;">
+        <span class="d-flex align-items-center gap-1"><i class="bi bi-check-circle-fill text-success"></i> Verified Nodes</span>
+        <span class="d-flex align-items-center gap-1"><i class="bi bi-clock-history"></i> 24/7 Live Sync</span>
+        <span class="d-flex align-items-center gap-1"><i class="bi bi-shield-check"></i> Standard Security Secure</span>
+    </div>
+</div>
+<div class="mt-4 d-flex justify-content-center flex-wrap gap-4 text-muted" style="font-size: 0.8rem;">
+    <span class="d-flex align-items-center gap-1"><i class="bi bi-check-circle-fill text-success"></i> Verified Nodes</span>
+    <span class="d-flex align-items-center gap-1"><i class="bi bi-clock-history"></i> 24/7 Live Sync</span>
+    <span class="d-flex align-items-center gap-1"><i class="bi bi-shield-check"></i> Standard Security Secure</span>
+</div>
+</div>
+</div>
 </div>
 
-{{-- Interactive Details Features Modal Target Box Component --}}
+<section class="py-5 mt-4" style="background-color: #f1f5f9; border-top: 1px solid var(--slate-200);">
+    <div class="container text-center">
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">User Feedback</span>
+        <h2 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">What Our Users Say</h2>
+        <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0 auto 3rem;">Discover how we are connecting patients directly with authentic local pharmacies securely.</p>
+
+        <div class="row g-4 justify-content-center text-start">
+            @if(isset($testimonials) && count($testimonials) > 0)
+            @foreach($testimonials as $testimonial)
+            <div class="col-md-6 col-lg-4">
+                <div class="h-100 bg-white p-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between transition" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                    <p class="text-secondary italic mb-4" style="font-size: 0.95rem; line-height: 1.6;">
+                        "{{ $testimonial['quote'] ?? $testimonial['body'] }}"
+                    </p>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="{{ $testimonial['avatar'] ?? 'https://ui-avatars.com/api/?name='.urlencode($testimonial['name']) }}" alt="{{ $testimonial['name'] }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
+                        <div>
+                            <h4 class="h6 fw-bold text-dark mb-0">{{ $testimonial['name'] }}</h4>
+                            <span class="text-primary fw-medium" style="font-size: 0.85rem;">{{ $testimonial['role'] ?? 'Patient' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            @else
+            <div class="col-md-6 col-lg-4">
+                <div class="h-100 bg-white p-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between">
+                    <p class="text-secondary italic mb-4" style="font-size: 0.95rem; line-height: 1.6; font-style: italic;">"Saved me hours driving through Kampala traffic trying to locate rare insulin variants. Perfect platform."</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="fw-bold" style="width: 44px; height: 44px; border-radius: 50%; background: #0b5ed7; color: white; display:flex; align-items:center; justify-content:center;">NK</div>
+                        <div>
+                            <h4 class="h6 fw-bold text-dark mb-0">Nsubuga Karim</h4>
+                            <span class="text-primary fw-medium" style="font-size: 0.85rem;">Verified Patient</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+</section>
+</div>
+
 <div id="featureModal" class="modal fade" desert-overlay-target tabindex="-1" style="display: none; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); transition: opacity 0.2s ease;">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 500px; width: 100%;">
         <div class="modal-content border-0 shadow-lg rounded-4 p-4" style="background: #ffffff;">
@@ -822,6 +880,8 @@
 @endsection
 
 @section('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <script>
     function showToast(message, type = 'info') {
         const container = document.getElementById('toastRoot');
@@ -957,6 +1017,79 @@
         }
 
         updateSearchBtn();
+
+        // =========================================================================
+        // LIVE MAP GEOLOCATION CONTROLLER ENGAGEMENT (SAFEBODA PARITY)
+        // =========================================================================
+        const mapContainer = document.getElementById('map');
+        if (mapContainer) {
+            // Default center point: Kampala, Uganda [0.3476, 32.5825]
+            const map = L.map('map').setView([0.3476, 32.5825], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            const markers = [];
+            const rows = document.querySelectorAll('.map-sidebar-row');
+
+            // Map out every pharmacy entry match found inside blade view collection looping structures
+            rows.forEach(row => {
+                const lat = parseFloat(row.getAttribute('data-lat'));
+                const lng = parseFloat(row.getAttribute('data-lng'));
+                const pharmacyName = row.getAttribute('data-pharmacy');
+                const medicineName = row.getAttribute('data-medicine');
+                const price = row.getAttribute('data-price');
+                const qty = parseInt(row.getAttribute('data-quantity'));
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    // Create Pin Marker Instance
+                    const marker = L.marker([lat, lng]).addTo(map);
+
+                    // Design matching pop-ups matching theme requirements
+                    marker.bindPopup(`
+                        <div style="font-family: 'Inter', sans-serif; padding: 2px;">
+                            <strong style="color: #0b5ed7; font-size: 0.95rem; d-block; margin-bottom: 4px;">${pharmacyName}</strong><br>
+                            <span style="font-weight: 600; color: #0f172a;">Medicine:</span> ${medicineName}<br>
+                            <span style="font-weight: 600; color: #0f172a;">Price:</span> ${price}<br>
+                            <span class="badge" style="background-color: ${qty > 0 ? '#d1e7dd' : '#f8d7da'}; color: ${qty > 0 ? '#0f5132' : '#842029'}; padding: 3px 6px; border-radius: 4px; display:inline-block; margin-top:5px; font-size:0.75rem;">
+                                ${qty > 0 ? 'Units Available: ' + qty : 'Out of Stock'}
+                            </span>
+                        </div>
+                    `);
+
+                    markers.push({
+                        marker: marker,
+                        lat: lat,
+                        lng: lng
+                    });
+
+                    // Click event listener: When sidebar items are clicked, track map over coordinates like SafeBoda!
+                    row.addEventListener('click', () => {
+                        map.setView([lat, lng], 15, {
+                            animate: true,
+                            duration: 1
+                        });
+                        marker.openPopup();
+
+                        // Scroll smoothly to map viewport on small interfaces
+                        if (window.innerWidth < 768) {
+                            mapContainer.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Adjust viewport boundaries dynamically if markers exist
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers.map(m => m.marker));
+                map.fitBounds(group.getBounds().pad(0.2));
+            }
+        }
     });
 
     // Modal Control Flow Configuration
@@ -1014,7 +1147,6 @@
         });
     })();
 
-    // CTA Anchor Handler Focus Jumper System
     document.getElementById('demoSearchCta')?.addEventListener('click', (e) => {
         e.preventDefault();
         const mainSearchInput = document.getElementById('itemInput');
@@ -1031,5 +1163,66 @@
         e.preventDefault();
         showToast("Pharmacy registration panel template: This safely triggers onboarding operations.", "info");
     });
+
+    // ISOLATED ROBUST POPUP SYSTEM FOR MEDFINDER INDEX
+    (function() {
+        function initSearchPopup() {
+            const searchPromptModal = document.getElementById('searchPromptModal');
+            const heroTriggerBtn = document.getElementById('triggerPromptModalBtn'); // Yellow top button
+            const bottomTriggerBtn = document.getElementById('bottomTriggerPromptModalBtn'); // Blue bottom button
+            const closePromptBtn = document.getElementById('closePromptBtn');
+            const modalInput = document.getElementById('modalItemInput');
+
+            if (!searchPromptModal) {
+                console.error("MedFinder Error: #searchPromptModal element was not found in the HTML.");
+                return;
+            }
+
+            function openSearchPrompt(e) {
+                if (e) e.preventDefault();
+                searchPromptModal.style.setProperty('display', 'flex', 'important');
+                setTimeout(() => {
+                    searchPromptModal.style.opacity = '1';
+                }, 20);
+                document.body.style.overflow = 'hidden';
+                modalInput?.focus();
+            }
+
+            function closeSearchPrompt(e) {
+                if (e) e.preventDefault();
+                searchPromptModal.style.opacity = '0';
+                setTimeout(() => {
+                    searchPromptModal.style.display = 'none';
+                }, 200);
+                document.body.style.overflow = '';
+            }
+
+            // Attach event listeners safely
+            if (heroTriggerBtn) {
+                heroTriggerBtn.addEventListener('click', openSearchPrompt);
+            }
+
+            if (bottomTriggerBtn) {
+                bottomTriggerBtn.addEventListener('click', openSearchPrompt);
+            } else {
+                console.warn("MedFinder Warning: #bottomTriggerPromptModalBtn not found in layout.");
+            }
+
+            closePromptBtn?.addEventListener('click', closeSearchPrompt);
+
+            searchPromptModal.addEventListener('click', function(e) {
+                if (e.target === searchPromptModal) {
+                    closeSearchPrompt();
+                }
+            });
+        }
+
+        // Run code as soon as DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSearchPopup);
+        } else {
+            initSearchPopup();
+        }
+    })();
 </script>
 @endsection

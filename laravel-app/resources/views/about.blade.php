@@ -72,6 +72,10 @@
         font-weight: 500;
     }
 
+    .stats-row {
+        margin-top: 1.5rem;
+    }
+
     .about-hero {
         padding-bottom: 4rem;
     }
@@ -129,7 +133,7 @@
 
             <div class="col-lg-6 animate-on-scroll">
                 <div class="hero-card position-relative overflow-hidden rounded-4 shadow-sm">
-                    <img src="{{ asset('images/image 1.png') }}" class="img-fluid rounded-4 hero-img" alt="MedFinder hero image">
+                    <img src="{{ asset('images/phone.png') }}" class="w-100 vh-50 rounded-4 hero-img" style="object-fit: cover;" alt="MedFinder hero image">
                 </div>
             </div>
         </div>
@@ -300,11 +304,6 @@ $teamMembers = [
             <div class="finder-card p-5 text-center text-white position-relative shadow">
 
                 <div class="hero-header mb-4">
-                    <div class="badge-icon d-inline-flex align-items-center gap-2 mb-3 bg-white bg-opacity-10 px-3 py-1 rounded-pill">
-                        <i class="bi bi-capsule text-info"></i>
-                        <i class="bi bi-phone text-info"></i>
-                        <span class="fw-bold fs-7 tracking-wide text-white">MedFinder +</span>
-                    </div>
                     <h2 class="fw-bold mb-2 display-6 font-poppins">Ready to find a pharmacy?</h2>
                     <p class="subhead text-white-50 mx-auto max-w-550 fs-6">
                         Start your search today and we'll find a pharmacy with your medication in stock.
@@ -312,19 +311,26 @@ $teamMembers = [
                 </div>
 
                 <div class="search-section mx-auto max-w-600">
-                    <form action="{{ route('index') }}" method="GET" class="mb-4">
-                        <div class="input-group-container text-start mb-3">
-                            <label for="medicationInput" class="input-label d-flex align-items-center gap-2 text-white-700 mb-2 small fw-semibold">
-                                <i class="bi bi-search text-gray"></i>
-                                <span>What med are you looking for?</span>
-                            </label>
+                    <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
+                        <div class="input-group bg-white rounded-4 p-2 border border-white border-2 shadow">
+                            <span class="input-group-text border-0 bg-transparent ps-3 pe-2">
+                                <i class="bi bi-capsule" style="font-size: 1.1rem; color: #64748b;"></i>
+                            </span>
 
-                            <div class="med-input-wrapper position-relative d-flex flex-column flex-sm-row gap-2 bg-white p-2 rounded-3 shadow-sm">
-                                <input type="text" name="search" id="medicationInput" class="form-control border-0 bg-transparent flex-grow-1 px-3" placeholder="e.g., Panadol, Amoxicillin, Insulin..." autocomplete="off" required>
-                                <button type="submit" class="btn search-btn d-flex align-items-center justify-content-center gap-2 px-4 py-2 fw-semibold" id="searchBtn">
-                                    <i class="bi bi-magic"></i> Find pharmacy
-                                </button>
-                            </div>
+                            <input type="text"
+                                name="search"
+                                id="itemInput"
+                                value="{{ request('search') }}"
+                                class="form-control border-0 bg-transparent text-dark px-2 py-3 search-input-field"
+                                placeholder="Enter prescription criteria (e.g., Panadol, Amoxicillin)..."
+                                style="font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
+
+                            <button type="submit" id="searchBtn"
+                                class="btn btn-primary rounded-4 px-4 fw-bold text-uppercase tracking-wider d-flex align-items-center gap-2"
+                                style="font-size: 0.8rem; background: linear-gradient(135deg, var(--primary) 0%, #0a58ca 100%); border: none;">
+                                <span>Search</span>
+                                <i class="bi bi-arrow-right-short" style="font-size: 1.2rem;"></i>
+                            </button>
                         </div>
                     </form>
 
@@ -335,7 +341,7 @@ $teamMembers = [
                         </div>
                         <div class="stat-item d-flex align-items-center gap-2">
                             <i class="bi bi-lightning-charge-fill text-warning"></i>
-                            <span class="stat-text">Fast turnaround</span>
+                            <span class="stat-text">Fast turn up</span>
                         </div>
                         <div class="stat-item d-flex align-items-center gap-2">
                             <i class="bi bi-telephone-x-fill text-danger"></i>
