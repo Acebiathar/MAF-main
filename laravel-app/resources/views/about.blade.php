@@ -2,20 +2,119 @@
 
 @section('title', 'About | MedFinder')
 
-@section('content')
+@section('fullwidth')
 
-<!-- 1. Hero Section -->
+<style>
+    /* Custom Finder Card Container Profile */
+    .finder-card {
+        background-color: #0d2847;
+        /* Rich deep navy backdrop */
+        border-radius: 20px;
+    }
 
-<section class="hero-section py-5 mb-5">
+    .font-poppins {
+        font-family: 'Poppins', sans-serif;
+        letter-spacing: -0.5px;
+    }
+
+    .max-w-550 {
+        max-width: 550px;
+    }
+
+    .max-w-600 {
+        max-width: 600px;
+    }
+
+    .fs-7 {
+        font-size: 0.875rem !important;
+    }
+
+    /* Input Custom Inner Frame Styling */
+    .med-input-wrapper {
+        background-color: #ffffff;
+        transition: box-shadow 0.2s ease-in-out;
+    }
+
+    .med-input-wrapper:focus-within {
+        box-shadow: 0 0 0 3px rgba(143, 174, 193, 0.4) !important;
+    }
+
+    .med-input-wrapper input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .med-input-wrapper input::placeholder {
+        color: #adb5bd;
+    }
+
+    /* Action Trigger Search Button Styling */
+    .search-btn {
+        background-color: #8faec1 !important;
+        /* Steel-blue / slate matching the wireframes */
+        color: #0d2847 !important;
+        border: none !important;
+        border-radius: 6px !important;
+        transition: background-color 0.2s ease;
+    }
+
+    .search-btn:hover {
+        background-color: #7d9cb0 !important;
+        color: #0d2847 !important;
+    }
+
+    /* Utility Helpers */
+    .text-white-700 {
+        color: #e5e7eb;
+    }
+
+    .font-medium {
+        font-weight: 500;
+    }
+
+    .about-hero {
+        padding-bottom: 4rem;
+    }
+
+    .mission-card {
+        background-color: #ffffff;
+        border-radius: 24px;
+        padding: 2rem;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        min-height: 100%;
+    }
+
+    .mission-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 55px rgba(15, 23, 42, 0.12);
+    }
+
+    .mission-icon {
+        width: 58px;
+        height: 58px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+        background-color: rgba(56, 103, 222, 0.1);
+        color: #3867DE;
+        font-size: 1.35rem;
+        margin-bottom: 1.25rem;
+    }
+</style>
+
+<section class="hero-section about-hero py-5 mb-5">
     <div class="container">
         <div class="row align-items-center gy-4">
             <div class="col-lg-6 animate-on-scroll">
                 <span class="badge bg-primary bg-opacity-10 text-primary mb-3 d-inline-flex align-items-center">
-                    <i class="bi bi-heart-pulse-fill me-2"></i> Trusted healthcare search
+                    <i class="bi bi-heart-pulse-fill me-2"></i> About MedFinder UG
                 </span>
                 <h1 class="display-5 fw-bold mb-4">Finding medicine nearby should be fast, simple, and reliable.</h1>
                 <p class="lead text-secondary mb-4">
-                    MedFinder helps people across Uganda locate available medicines at nearby pharmacies, compare options, and reserve what they need in minutes.
+                    MedFinder is a health-tech platform designed to eliminate the exhausting and risky guesswork of finding prescription medications in Uganda. Born to solve the emotional and financial strain caused by fragmented supply chains, MedFinder connects patients directly with real-time pharmacy inventories. By turning an unpredictable, door-to-door search into a transparent digital process, the platform empowers users to instantly locate, compare, and reserve their essential medicines—saving vital time and bringing peace of mind when it matters most.
                 </p>
 
                 <div class="d-flex flex-column flex-sm-row gap-3">
@@ -37,6 +136,41 @@
     </div>
 </section>
 
+<section class="container mt-5 mb-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title">Mission, Vision & Core Values</h2>
+        <div class="section-divider"></div>
+        <p class="text-secondary mx-auto" style="max-width: 600px;">Guiding principles that drive everything we do at MedFinder</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Mission -->
+        <div class="col-md-6 animate-fade-up delay-1">
+            <div class="mission-card">
+                <div class="mission-icon">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+                <h3 class="h4 fw-bold text-navy mb-3">Our Mission</h3>
+                <p class="text-secondary">
+                    To revolutionize healthcare accessibility in Uganda by leveraging intuitive digital solutions that connect patients with trusted pharmacies, ensuring swift, reliable, and stress-free access to life-saving medications.
+                </p>
+            </div>
+        </div>
+
+        <!-- Vision -->
+        <div class="col-md-6 animate-fade-up delay-2">
+            <div class="mission-card">
+                <div class="mission-icon">
+                    <i class="bi bi-eye"></i>
+                </div>
+                <h3 class="h4 fw-bold text-navy mb-3">Our Vision</h3>
+                <p class="text-secondary">
+                    To become East Africa's most trusted health-tech bridge, creating a seamless ecosystem where no patient ever leaves a clinic wondering if or where they will find their prescribed care.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <div class="modal fade" id="medSearchModal" tabindex="-1" aria-labelledby="medSearchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -75,13 +209,174 @@
                         <span class="star-box semi-star">★</span>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
 </div>
 
+<section class="bg-light py-5 rounded-4">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-3 animate-on-scroll">Why Choose MedFinder?</h3>
+        <p class="text-muted mb-5 animate-on-scroll">
+            Designed to improve healthcare access and reduce stress when searching for medicine.
+        </p>
+
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
+                    <i class="bi bi-search text-primary fs-2 icon-bounce"></i>
+                    <h5 class="mt-3">Easy Search</h5>
+                    <p class="text-muted">Quickly find medicines available near you without moving around.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
+                    <i class="bi bi-geo-alt text-primary fs-2 icon-bounce"></i>
+                    <h5 class="mt-3">Location Based</h5>
+                    <p class="text-muted">Discover nearby pharmacies based on your location.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
+                    <i class="bi bi-clock text-primary fs-2 icon-bounce"></i>
+                    <h5 class="mt-3">Save Time</h5>
+                    <p class="text-muted">No more walking pharmacy to pharmacy searching for drugs.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
+                    <i class="bi bi-shield-check text-primary fs-2 icon-bounce"></i>
+                    <h5 class="mt-3">Reliable Info</h5>
+                    <p class="text-muted">Get accurate and updated medicine availability.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@php
+$teamMembers = [
+['name' => 'Amina N.', 'role' => 'Founder', 'image' => 'images/team-1.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
+['name' => 'Brian K.', 'role' => 'Lead Developer', 'image' => 'images/team-2.png', 'bio' => 'Builds and improves the core platform experience.'],
+['name' => 'Clara S.', 'role' => 'Pharmacist Advisor', 'image' => 'images/team 3.jpeg', 'bio' => 'Supports medicine information and pharmacy workflows.'],
+['name' => 'David O.', 'role' => 'Project Coordinator', 'image' => 'images/team-1.jpeg', 'bio' => 'Keeps the team aligned and project delivery on track.'],
+['name' => 'Esther M.', 'role' => 'UI/UX Designer', 'image' => 'images/team-2.png', 'bio' => 'Designs simple and easy-to-use patient journeys.'],
+['name' => 'Frank P.', 'role' => 'Support Lead', 'image' => 'images/team 3.jpeg', 'bio' => 'Helps patients and pharmacies use the platform smoothly.'],
+];
+@endphp
+
+<section class="bg-light py-5 mb-5 rounded-4">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-3 animate-on-scroll">Meet Our Team</h3>
+        <p class="text-muted mb-5 animate-on-scroll">
+            The people behind MedFinder working to improve access to medicine in Uganda.
+        </p>
+
+        <div class="row g-4 justify-content-center">
+            @foreach ($teamMembers as $member)
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
+                    <img src="{{ asset($member['image']) }}" class="card-img-top team-img team-img-pos-{{ $loop->iteration }}" alt="{{ $member['name'] }}">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
+                        <p class="text-primary mb-2">{{ $member['role'] }}</p>
+                        <p class="text-muted small">{{ $member['bio'] }}</p>
+                        <div class="social-links mt-3">
+                            <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
+                            <a href="#" class="text-primary me-3"><i class="bi bi-envelope fs-5"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 animate-on-scroll">
+            <div class="finder-card p-5 text-center text-white position-relative shadow">
+
+                <div class="hero-header mb-4">
+                    <div class="badge-icon d-inline-flex align-items-center gap-2 mb-3 bg-white bg-opacity-10 px-3 py-1 rounded-pill">
+                        <i class="bi bi-capsule text-info"></i>
+                        <i class="bi bi-phone text-info"></i>
+                        <span class="fw-bold fs-7 tracking-wide text-white">MedFinder +</span>
+                    </div>
+                    <h2 class="fw-bold mb-2 display-6 font-poppins">Ready to find a pharmacy?</h2>
+                    <p class="subhead text-white-50 mx-auto max-w-550 fs-6">
+                        Start your search today and we'll find a pharmacy with your medication in stock.
+                    </p>
+                </div>
+
+                <div class="search-section mx-auto max-w-600">
+                    <form action="{{ route('index') }}" method="GET" class="mb-4">
+                        <div class="input-group-container text-start mb-3">
+                            <label for="medicationInput" class="input-label d-flex align-items-center gap-2 text-white-700 mb-2 small fw-semibold">
+                                <i class="bi bi-search text-gray"></i>
+                                <span>What med are you looking for?</span>
+                            </label>
+
+                            <div class="med-input-wrapper position-relative d-flex flex-column flex-sm-row gap-2 bg-white p-2 rounded-3 shadow-sm">
+                                <input type="text" name="search" id="medicationInput" class="form-control border-0 bg-transparent flex-grow-1 px-3" placeholder="e.g., Panadol, Amoxicillin, Insulin..." autocomplete="off" required>
+                                <button type="submit" class="btn search-btn d-flex align-items-center justify-content-center gap-2 px-4 py-2 fw-semibold" id="searchBtn">
+                                    <i class="bi bi-magic"></i> Find pharmacy
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="stats-row d-flex flex-wrap justify-content-center gap-4 mb-4 text-white fs-7 font-medium">
+                        <div class="stat-item d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span class="stat-text">99% success rate</span>
+                        </div>
+                        <div class="stat-item d-flex align-items-center gap-2">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i>
+                            <span class="stat-text">Fast turnaround</span>
+                        </div>
+                        <div class="stat-item d-flex align-items-center gap-2">
+                            <i class="bi bi-telephone-x-fill text-danger"></i>
+                            <span class="stat-text">Never call another pharmacy</span>
+                        </div>
+                    </div>
+
+                    <div id="resultPanel" class="result-area mb-3"></div>
+
+                    <div class="footnote text-white-50 small border-top border-white border-opacity-10 pt-3">
+                        <i class="bi bi-star-fill text-warning me-1"></i> Real-time stock check · Verified network pharmacies · No wait
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Scroll Animation Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    });
+</script>
+
 <style>
+    /* Component & Base Utility Classes */
     .text-navy {
         color: #0b2f5c;
     }
@@ -141,127 +436,8 @@
         position: relative;
         background: linear-gradient(90deg, #00b67a 70%, #cccccc 70%);
     }
-</style>
 
-<!-- 2. Features / Values Section -->
-<section class="bg-light py-5 rounded-4">
-    <div class="container text-center">
-        <h3 class="fw-bold mb-3 animate-on-scroll">Why Choose MedFinder?</h3>
-        <p class="text-muted mb-5 animate-on-scroll">
-            Designed to improve healthcare access and reduce stress when searching for medicine.
-        </p>
-
-        <div class="row">
-            <div class="col-md-3 mb-4">
-                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
-                    <i class="bi bi-search text-primary fs-2 icon-bounce"></i>
-                    <h5 class="mt-3">Easy Search</h5>
-                    <p class="text-muted">Quickly find medicines available near you without moving around.</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
-                    <i class="bi bi-geo-alt text-primary fs-2 icon-bounce"></i>
-                    <h5 class="mt-3">Location Based</h5>
-                    <p class="text-muted">Discover nearby pharmacies based on your location.</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
-                    <i class="bi bi-clock text-primary fs-2 icon-bounce"></i>
-                    <h5 class="mt-3">Save Time</h5>
-                    <p class="text-muted">No more walking pharmacy to pharmacy searching for drugs.</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="p-4 shadow-sm rounded bg-white h-100 feature-card animate-on-scroll">
-                    <i class="bi bi-shield-check text-primary fs-2 icon-bounce"></i>
-                    <h5 class="mt-3">Reliable Info</h5>
-                    <p class="text-muted">Get accurate and updated medicine availability.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 3. Mission Section -->
-<section id="mission" class="container py-5 text-center">
-    <div class="animate-on-scroll">
-        <h3 class="fw-bold">Our Mission</h3>
-        <p class="text-muted mx-auto" style="max-width: 700px;">
-            To improve healthcare access in Uganda by connecting patients with pharmacies through a simple, fast, and reliable digital platform.
-        </p>
-    </div>
-
-    <div class="mt-5 animate-on-scroll">
-        <a href="{{ route('home') }}" class="btn btn-primary btn-lg px-5 py-3 pulse-btn">
-            <i class="bi bi-search me-2"></i>Get Started Today
-        </a>
-    </div>
-</section>
-
-@php
-$teamMembers = [
-['name' => 'Amina N.', 'role' => 'Founder', 'image' => 'images/team-1.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
-['name' => 'Brian K.', 'role' => 'Lead Developer', 'image' => 'images/team-2.png', 'bio' => 'Builds and improves the core platform experience.'],
-['name' => 'Clara S.', 'role' => 'Pharmacist Advisor', 'image' => 'images/team 3.jpeg', 'bio' => 'Supports medicine information and pharmacy workflows.'],
-['name' => 'David O.', 'role' => 'Project Coordinator', 'image' => 'images/team-1.jpeg', 'bio' => 'Keeps the team aligned and project delivery on track.'],
-['name' => 'Esther M.', 'role' => 'UI/UX Designer', 'image' => 'images/team-2.png', 'bio' => 'Designs simple and easy-to-use patient journeys.'],
-['name' => 'Frank P.', 'role' => 'Support Lead', 'image' => 'images/team 3.jpeg', 'bio' => 'Helps patients and pharmacies use the platform smoothly.'],
-];
-@endphp
-
-<!-- 4. Team Section -->
-<section class="bg-light py-5 mb-5 rounded-4">
-    <div class="container text-center">
-        <h3 class="fw-bold mb-3 animate-on-scroll">Meet Our Team</h3>
-        <p class="text-muted mb-5 animate-on-scroll">
-            The people behind MedFinder working to improve access to medicine in Uganda.
-        </p>
-
-        <div class="row g-4 justify-content-center">
-            @foreach ($teamMembers as $member)
-            <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
-                    <img src="{{ asset($member['image']) }}" class="card-img-top team-img team-img-pos-{{ $loop->iteration }}" alt="{{ $member['name'] }}">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
-                        <p class="text-primary mb-2">{{ $member['role'] }}</p>
-                        <p class="text-muted small">{{ $member['bio'] }}</p>
-                        <div class="social-links mt-3">
-                            <a href="#" class="text-primary me-3"><i class="bi bi-linkedin fs-5"></i></a>
-                            <a href="#" class="text-primary me-3"><i class="bi bi-envelope fs-5"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-@endsection
-
-@section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Scroll Animation Observer
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
-
-        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
-    });
-</script>
-
-<style>
-    /* Cleaned up CSS */
+    /* Layout & Animation Styles */
     .animate-on-scroll {
         opacity: 0;
         transform: translateY(30px);
@@ -297,6 +473,20 @@ $teamMembers = [
     .hero-section {
         background: linear-gradient(135deg, #f4f8ff 0%, #e7efff 100%);
         border-radius: 32px;
+    }
+
+    .about-hero {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        align-items: center;
+    }
+
+    @media (max-width: 991.98px) {
+        .about-hero {
+            min-height: auto;
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
     }
 
     .hero-card-overlay {

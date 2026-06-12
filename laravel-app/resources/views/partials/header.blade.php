@@ -7,11 +7,13 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('how') }}">How it Works</a></li>
-                <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
-                <li class="nav-item center-nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ route('how') }}">How it Works</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+            </ul>
 
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item auth-buttons d-flex gap-2 align-items-center">
                     @if(currentUser())
                     <a href="{{ route('logout') }}" class="btn btn-outline-danger px-4 rounded-pill">Logout</a>
