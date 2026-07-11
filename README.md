@@ -57,7 +57,7 @@ Provide a step-by-step guide to get the environment ready. Use code blocks for t
 ---
 
 ### Step 1: Clone the Repository
-git clone https://github.com/your-username/medicine-availability-finder.git
+git clone https://github.com/Acebiathar/MAF-main.git
 
 Move into the project folder:
 
@@ -165,11 +165,11 @@ tests/
 
 ## Authors
 
-ABIATHAR SANDE  >>>  2024/DCS/DAY/1046/G
-NABUKENYA STELLAH  >>>  2024/DCS/DAY/0305
-NADDAMBA LAMULAH  >>>  2024/DCS/DAY/0963/G
-TUSINGWIRE RUTH  >>>  2024/DCS/DAY/0903
-TUSINGWIRE PATRICIA  >>>  2024/DCS/DAY/1875
+1. ABIATHAR SANDE  >>>  2024/DCS/DAY/1046/G
+2. NABUKENYA STELLAH  >>>  2024/DCS/DAY/0305
+3. NADDAMBA LAMULAH  >>>  2024/DCS/DAY/0963/G
+4. TUSINGWIRE RUTH  >>>  2024/DCS/DAY/0903
+5. TUSINGWIRE PATRICIA  >>>  2024/DCS/DAY/1875
 
 Uganda Institute of Information and Communications Technology (UICT)
 
