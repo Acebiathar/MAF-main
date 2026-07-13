@@ -10,7 +10,7 @@
 @section('title', 'Pharmacy Requests | Medfinder')
 @section('dashboard_search_placeholder', 'Search medicines or request context')
 @section('dashboard_notification_badge', (string) $pendingCount)
-@section('dashboard_title', 'Requests for ' . $pharmacy->name)
+@section('dashboard_title', 'Requests & Inventory Dashboard')
 @section('dashboard_subtitle', 'Review incoming reservations, respond fast to patient needs, and keep fulfillment moving smoothly.')
 @section('dashboard_welcome_meta')
   <a href="/pharmacist" class="btn btn-light text-primary rounded-pill px-4 fw-semibold">Back to Inventory</a>

@@ -7,79 +7,102 @@
   $declinedCount = $reservations->where('status', 'declined')->count();
 @endphp
 
-@section('title', 'Pharmacy Management | Medfinder')
-@section('dashboard_search_placeholder', 'Search medicines or request context')
+@section('title', 'My Reservations | Medfinder')
+@section('dashboard_search_placeholder', 'Search my reservations...')
+@section('dashboard_search_action', url('/requests'))
 @section('dashboard_notification_badge', (string) $pendingCount)
-@section('dashboard_title', 'Requests & Inventory for ' . $pharmacy->name)
-@section('dashboard_subtitle', 'Review incoming reservations, respond fast to patient needs, and keep fulfillment moving smoothly.')
+@section('dashboard_title', 'My Medicine Reservations')
+@section('dashboard_subtitle', 'Track your pending reservations and pickup status across local pharmacies.')
 
 @section('dashboard_welcome_meta')
-  <!-- Handled dynamically by JavaScript below to match the active tab -->
-  <button id="welcome-action-btn" class="btn btn-light text-primary rounded-pill px-4 fw-semibold" onclick="document.getElementById('home-tab').click()">View Inventory</button>
+  <a href="/" class="btn btn-light text-primary rounded-pill px-4 fw-semibold"><i class="bi bi-search me-2"></i>Find Medicine</a>
 @endsection
 
 @section('dashboard_sidebar')
-<div class="nav flex-column w-100 gap-2" id="dashboardTabList" role="tablist">
-  
-  <!-- INTERACTIVE BUTTON 1: Pharmacy Home -->
-  <button class="nav-link text-start w-100 border-0 active" 
-          id="home-tab" 
-          data-bs-toggle="tab" 
-          data-bs-target="#panel-home" 
-          type="button" 
-          role="tab" 
-          aria-controls="panel-home" 
-          aria-selected="true">
-    <span class="dashboard-nav-main">
-      <i class="bi bi-shop-window"></i>
-      <span>
-        <div class="fw-semibold">Pharmacy Home</div>
-        <small>Inventory and summary</small>
-      </span>
-    </span>
-  </button>
-
-  <!-- INTERACTIVE BUTTON 2: Request Queue -->
-  <button class="nav-link text-start w-100 border-0" 
-          id="requests-tab" 
-          data-bs-toggle="tab" 
-          data-bs-target="#panel-requests" 
-          type="button" 
-          role="tab" 
-          aria-controls="panel-requests" 
-          aria-selected="false">
-    <span class="dashboard-nav-main">
-      <i class="bi bi-inboxes"></i>
-      <span>
-        <div class="fw-semibold">Request Queue</div>
-        <small>Respond to patients</small>
-      </span>
-    </span>
-    <span class="badge bg-white text-dark ms-auto" id="sidebar-pending-badge">{{ $pendingCount }}</span>
-  </button>
-  
-  <!-- Marketplace Search (Kept as normal link) -->
+<div class="nav flex-column w-100 gap-2">
   <a href="/" class="nav-link">
     <span class="dashboard-nav-main">
       <i class="bi bi-search"></i>
       <span>
-        <div class="fw-semibold">Marketplace Search</div>
-        <small>Check patient-facing availability</small>
+        <div class="fw-semibold">Marketplace</div>
+        <small>Search medicines</small>
       </span>
     </span>
   </a>
+  <a href="/requests" class="nav-link active">
+    <span class="dashboard-nav-main">
+      <i class="bi bi-journals"></i>
+      <span>
+        <div class="fw-semibold">My Reservations</div>
+        <small>Track current status</small>
+      </span>
+    </span>
+    <span class="badge bg-primary text-white ms-auto">{{ $pendingCount }}</span>
+  </a>
+  <!-- Search History Card -->
+  <div class="dashboard-notice mb-4 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-uppercase small text-muted fw-semibold">Search History</span>
+      @if(count($recentSearches ?? []) > 0)
+        <button onclick="clearSearchHistory()" class="clear-history-btn btn btn-link p-0 text-secondary" style="font-size: 0.75rem;">Clear</button>
+      @endif
+    </div>
+
+    <ul id="sidebar-history-list" class="list-unstyled mb-0">
+      @forelse($recentSearches ?? [] as $search)
+        <li class="mb-2">
+          <a href="{{ url('/requests?search=' . rawurlencode($search->query)) }}" onclick="submitSearchHistory(event, {{ json_encode($search->query) }})" class="d-flex align-items-center text-secondary text-decoration-none small" style="gap: 0.5rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #5c728a;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="text-truncate">{{ $search->query }}</span>
+          </a>
+        </li>
+      @empty
+        <li class="small text-muted fst-italic">No recent searches</li>
+      @endforelse
+    </ul>
+  </div>
+
+<!-- AJAX Script to Clear History -->
+<script>
+function clearSearchHistory() {
+    fetch("{{ route('search.history.clear') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            document.getElementById('sidebar-history-list').innerHTML = '<li style="font-size: 12px; color: #5c728a; font-style: italic;">No recent searches</li>';
+            document.querySelector('.clear-history-btn').remove();
+        }
+    });
+}
+
+function submitSearchHistory(event, query) {
+    event.preventDefault();
+    const form = document.getElementById('dashboard-search-form');
+    const input = document.getElementById('dashboard-search-input');
+    if (!form || !input) {
+        return;
+    }
+    input.value = query;
+    form.submit();
+}
+</script>
 </div>
 @endsection
 
 @section('dashboard_stats')
-  <!-- Stats row remains at the top, shared by both screens -->
   <div class="col-12 col-md-6 col-xxl-3">
     <div class="dashboard-stat">
       <div class="d-flex justify-content-between align-items-start mb-3">
-        <div><div class="small text-muted text-uppercase">All Requests</div><div class="dashboard-stat-value">{{ $requestCount }}</div></div>
+        <div><div class="small text-muted text-uppercase">All Reservations</div><div class="dashboard-stat-value">{{ $requestCount }}</div></div>
         <div class="dashboard-stat-icon"><i class="bi bi-journals"></i></div>
       </div>
-      <div class="small text-muted">Total reservation activity.</div>
+      <div class="small text-muted">Total history.</div>
     </div>
   </div>
   <div class="col-12 col-md-6 col-xxl-3">
@@ -88,7 +111,7 @@
         <div><div class="small text-muted text-uppercase">Pending</div><div class="dashboard-stat-value">{{ $pendingCount }}</div></div>
         <div class="dashboard-stat-icon"><i class="bi bi-hourglass-split"></i></div>
       </div>
-      <div class="small text-muted">Still waiting for your decision.</div>
+      <div class="small text-muted">Awaiting pharmacy review.</div>
     </div>
   </div>
   <div class="col-12 col-md-6 col-xxl-3">
@@ -97,7 +120,7 @@
         <div><div class="small text-muted text-uppercase">Confirmed</div><div class="dashboard-stat-value">{{ $confirmedCount }}</div></div>
         <div class="dashboard-stat-icon"><i class="bi bi-check2-square"></i></div>
       </div>
-      <div class="small text-muted">Approved for pickup.</div>
+      <div class="small text-muted">Ready for pickup.</div>
     </div>
   </div>
   <div class="col-12 col-md-6 col-xxl-3">
@@ -106,175 +129,80 @@
         <div><div class="small text-muted text-uppercase">Declined</div><div class="dashboard-stat-value">{{ $declinedCount }}</div></div>
         <div class="dashboard-stat-icon"><i class="bi bi-slash-circle"></i></div>
       </div>
-      <div class="small text-muted">Closed without fulfillment.</div>
-    </div>
-  </div>
-@endsection
-
-@section('dashboard_actions')
-  <div class="col-12 col-md-6 col-xl-4">
-    <div class="dashboard-action-card">
-      <div class="d-flex align-items-center gap-3 mb-3">
-        <div class="dashboard-action-icon"><i class="bi bi-lightning-charge"></i></div>
-        <div>
-          <h5 class="fw-bold mb-1">Process Queue</h5>
-          <p class="small text-muted mb-0">Switch instantly to view pending orders.</p>
-        </div>
-      </div>
-      <!-- Clicking this triggers the sidebar tab switch via javascript below -->
-      <button onclick="document.getElementById('requests-tab').click()" class="btn btn-primary px-4 w-auto text-start">Open Queue</button>
-    </div>
-  </div>
-  <div class="col-12 col-md-6 col-xl-4">
-    <div class="dashboard-action-card">
-      <div class="d-flex align-items-center gap-3 mb-3">
-        <div class="dashboard-action-icon"><i class="bi bi-box-seam"></i></div>
-        <div>
-          <h5 class="fw-bold mb-1">Check Inventory</h5>
-          <p class="small text-muted mb-0">Return to stock controls and medicine listings.</p>
-        </div>
-      </div>
-      <button onclick="document.getElementById('home-tab').click()" class="btn btn-outline-primary px-4 w-auto text-start">Inventory View</button>
-    </div>
-  </div>
-  <div class="col-12 col-md-6 col-xl-4">
-    <div class="dashboard-action-card">
-      <div class="d-flex align-items-center gap-3 mb-3">
-        <div class="dashboard-action-icon"><i class="bi bi-arrow-clockwise"></i></div>
-        <div>
-          <h5 class="fw-bold mb-1">Refresh Data</h5>
-          <p class="small text-muted mb-0">Reload screen parameters instantly.</p>
-        </div>
-      </div>
-      <a href="javascript:location.reload()" class="btn btn-outline-dark px-4">Refresh Page</a>
+      <div class="small text-muted">Closed requests.</div>
     </div>
   </div>
 @endsection
 
 @section('dashboard_main')
-<div class="tab-content" id="dashboardTabContent">
-  
-  <!-- INTERACTIVE WRAPPER PANELS -->
-  
-  <!-- PANEL A: PHARMACY HOME VIEW (Active by default) -->
-  <div class="tab-pane fade show active" id="panel-home" role="tabpanel" aria-labelledby="home-tab">
-    <div class="dashboard-table-card p-4">
-      <h4 class="fw-bold mb-2">Pharmacy Inventory & Management</h4>
-      <p class="text-muted small">This section holds your core pharmacy layout views as seen in image_c6f214.jpg.</p>
-      
-      <!-- INVENTORY LIST PLACEHOLDER -->
-      <div class="p-5 text-center bg-light rounded-3 border">
-        <i class="bi bi-box-seam text-muted fs-1 mb-2 d-block"></i>
-        <span class="text-muted small d-block">Your main inventory data and controls list here.</span>
+  <div class="dashboard-table-card p-3 p-lg-4" id="requestsTable">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+      <div>
+        <div class="text-uppercase small text-muted fw-semibold">Reservation History</div>
+        <h4 class="fw-bold mb-0">Recent Activity</h4>
       </div>
+      <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">{{ $pendingCount }} pending now</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead class="table-light">
+          <tr class="small text-uppercase text-muted">
+            <th>Medicine</th>
+            <th>Pharmacy</th>
+            <th>Status</th>
+            <th>Note</th>
+            <th>Placed On</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse ($reservations as $r)
+          <tr>
+            <td><div class="fw-bold text-primary">{{ $r->medicine_name }}</div></td>
+            <td>
+              <div class="fw-semibold text-dark">{{ $r->pharmacy_name }}</div>
+              <div class="small text-muted"><i class="bi bi-geo-alt-fill me-1"></i>{{ $r->pharmacy_address ?? 'No address provided' }}</div>
+            </td>
+            <td>
+              @if ($r->status === 'confirmed')
+                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Confirmed</span>
+              @elseif ($r->status === 'declined')
+                <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill">Declined</span>
+              @else
+                <span class="badge bg-warning-subtle text-dark px-3 py-2 rounded-pill">Pending</span>
+              @endif
+            </td>
+            <td class="small text-wrap" style="max-width: 200px;">{{ $r->note ?? '-' }}</td>
+            <td class="small text-muted">{{ date('M d, H:i', strtotime($r->created_at)) }}</td>
+            <td class="text-end">
+              @if($r->status === 'pending')
+                <span class="text-muted small">Awaiting review</span>
+              @else
+                <span class="text-muted small">Closed</span>
+              @endif
+            </td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">No medicine reservations have been placed yet.</td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <!-- PANEL B: PATIENT RESERVATION QUEUE VIEW (Hidden initially) -->
-  <div class="tab-pane fade" id="panel-requests" role="tabpanel" aria-labelledby="requests-tab">
-    <div class="dashboard-table-card p-3 p-lg-4" id="requestsTable">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-        <div>
-          <div class="text-uppercase small text-muted fw-semibold">Requests Table</div>
-          <h4 class="fw-bold mb-0">Patient Reservation Queue</h4>
-        </div>
-        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">{{ $pendingCount }} pending now</span>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead class="table-light">
-            <tr class="small text-uppercase text-muted">
-              <th>Medicine</th>
-              <th>Patient Details</th>
-              <th>Status</th>
-              <th>Note</th>
-              <th>Placed On</th>
-              <th class="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse ($reservations as $r)
-            <tr>
-              <td><div class="fw-bold text-primary">{{ $r->medicine_name }}</div></td>
-              <td>
-                <div class="fw-semibold">{{ $r->user_name }}</div>
-                <div class="small text-muted">{{ $r->user_email }}</div>
-              </td>
-              <td>
-                @if ($r->status === 'confirmed')
-                  <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Confirmed</span>
-                @elseif ($r->status === 'declined')
-                  <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill">Declined</span>
-                @else
-                  <span class="badge bg-warning-subtle text-dark px-3 py-2 rounded-pill">Pending</span>
-                @endif
-              </td>
-              <td class="small text-wrap" style="max-width: 200px;">{{ $r->note ?? '-' }}</td>
-              <td class="small text-muted">{{ date('M d, H:i', strtotime($r->created_at)) }}</td>
-              <td class="text-end">
-                @if($r->status === 'pending')
-                <div class="d-flex gap-2 justify-content-end">
-                  <form method="POST" action="/pharmacist/requests/{{ $r->id }}/confirm">
-                    @csrf
-                    <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" type="submit">Confirm</button>
-                  </form>
-                  <form method="POST" action="/pharmacist/requests/{{ $r->id }}/decline">
-                    @csrf
-                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" type="submit">Decline</button>
-                  </form>
-                </div>
-                @else
-                <span class="text-muted small">Processed</span>
-                @endif
-              </td>
-            </tr>
-            @empty
-            <tr>
-              <td colspan="6" class="text-center py-5 text-muted">No medicine requests have been placed yet.</td>
-            </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- EXTRA DETAILS HANDLER JAVASCRIPT -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const homeTab = document.getElementById('home-tab');
-    const requestsTab = document.getElementById('requests-tab');
-    const welcomeBtn = document.getElementById('welcome-action-btn');
-
-    if(homeTab && requestsTab && welcomeBtn) {
-      homeTab.addEventListener('shown.bs.tab', function () {
-        welcomeBtn.innerText = "View Queue";
-        welcomeBtn.setAttribute('onclick', "document.getElementById('requests-tab').click()");
-      });
-      requestsTab.addEventListener('shown.bs.tab', function () {
-        welcomeBtn.innerText = "Back to Inventory";
-        welcomeBtn.setAttribute('onclick', "document.getElementById('home-tab').click()");
-      });
-    }
-  });
-</script>
-@endsection
-
-@section('dashboard_notifications')
-  <!-- Side notification items remain static on right side as requested -->
-  <div class="dashboard-notice mb-4">
-    <div class="text-uppercase small text-muted fw-semibold mb-2">Notifications and Updates Panel</div>
-    <h5 class="fw-bold mb-3">Queue Highlights</h5>
+  <div class="dashboard-notice mt-4">
+    <div class="text-uppercase small text-muted fw-semibold mb-2">Tips</div>
+    <h5 class="fw-bold mb-3">Reservation Guide</h5>
     <div class="dashboard-notice-list">
       <div class="dashboard-notice-item">
-        <h6 class="fw-semibold mb-2">Pending action</h6>
-        <p>{{ $pendingCount }} request{{ $pendingCount === 1 ? '' : 's' }} need a decision.</p>
+        <h6 class="fw-semibold mb-2">Check status often</h6>
+        <p>Pharmacies usually review requests within a few hours during business days.</p>
       </div>
       <div class="dashboard-notice-item">
-        <h6 class="fw-semibold mb-2">Patient readiness</h6>
-        <p>{{ $confirmedCount }} request{{ $confirmedCount === 1 ? '' : 's' }} are ready for pickup coordination.</p>
+        <h6 class="fw-semibold mb-2">Pickup requirements</h6>
+        <p>Bring a valid ID and your reservation details when visiting the pharmacy.</p>
       </div>
     </div>
   </div>

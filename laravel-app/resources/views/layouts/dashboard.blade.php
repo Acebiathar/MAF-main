@@ -364,11 +364,12 @@
     <div class="dashboard-content">
       
       <div class="dashboard-topbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 justify-content-between">
-        <form action="/" method="GET" class="dashboard-search flex-grow-1">
+        <form id="dashboard-search-form" action="@yield('dashboard_search_action', '/')" method="GET" class="dashboard-search flex-grow-1">
           <i class="bi bi-search"></i>
           <input
+            id="dashboard-search-input"
             type="text"
-            name="item_names[]"
+            name="search"
             class="form-control form-control-lg"
             placeholder="{{ $dashboardSearchPlaceholder }}">
         </form>
@@ -443,7 +444,7 @@
   </a>
 </li>
               </li>
-            </ul>
+         \=''   </ul>
           </div>
           </div>
       </div>

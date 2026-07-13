@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SearchHistoryController;
 use App\Http\Controllers\ProfileController;
 
 // --- GLOBAL HELPERS ---
@@ -444,7 +445,6 @@ Route::post('/reserve/{item}', function (int $item) {
     flash('success', 'Reservation sent.');
     return redirect('/');
 });
-
 Route::get('/requests', function () {
     $user = currentUser();
     
@@ -453,40 +453,44 @@ Route::get('/requests', function () {
         return redirect('/login');
     }
 
-    // 2. Guard: If they ARE logged in, but they are NOT a patient,
-    // send them to their correct dashboard instead of /login (this prevents the infinite loop!)
+    // 2. Guard: Redirect non-patients to their respective dashboards
     if (strtolower($user->role) !== 'patient') {
         if (strtolower($user->role) === 'admin') return redirect('/admin');
         if (strtolower($user->role) === 'pharmacist') return redirect('/pharmacist');
     }
 
-    // 3. Main Logic: If they pass the guards above, they are a valid patient.
-    // Fetch their reservations and show the page.
-    $reservations = DB::table('reservations as r')
+    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
+
+    // --- ADDED: Fetch the 5 most recent searches for this user ---
+    $recentSearches = DB::table('search_histories') // Change 'search_histories' to 'search_history' if needed
+    ->where('user_id', session('user_id'))
+    ->latest()
+    ->take(5)
+    ->get();
+
+    // 3. Main Logic: Fetch patient reservations
+    $search = strtolower(trim(request('search', '')));
+
+    $reservationsQuery = DB::table('reservations as r')
         ->join('pharmacies as p', 'r.pharmacy_id', '=', 'p.id')
         ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
-        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.address as pharmacy_address')
-        ->where('r.user_id', $user->id)
+        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', 'p.location as pharmacy_address')
+        ->where('r.user_id', $user->id);
+
+    if (!empty($search)) {
+        $reservationsQuery->where(function ($query) use ($search) {
+            $query->whereRaw('LOWER(m.name) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(p.name) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(p.location) LIKE ?', ["%{$search}%"]);
+        });
+    }
+
+    $reservations = $reservationsQuery
         ->orderByDesc('r.created_at')
         ->get();
         
-    return renderView('patient_requests', compact('reservations'));
-});
-
-// --- PHARMACIST REQUEST MANAGEMENT ---
-
-Route::get('/pharmacist/requests', function () {
-    $user = currentUser();
-    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-
-    $reservations = DB::table('reservations as r')
-        ->join('users as u', 'r.user_id', '=', 'u.id')
-        ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
-        ->select('r.*', 'u.name as user_name', 'u.email as user_email', 'm.name as medicine_name')
-        ->where('r.pharmacy_id', $pharmacy->id)
-        ->orderByDesc('r.created_at')
-        ->get();
-    return renderView('pharmacist_requests', compact('reservations', 'pharmacy'));
+    // Included 'recentSearches' inside compact() so it passes to your sidebar
+    return renderView('patient_requests', compact('reservations', 'pharmacy', 'recentSearches'));
 });
 
 Route::post('/pharmacist/requests/{reservation}/{action}', function (int $reservation, string $action) {
@@ -544,6 +548,7 @@ Route::get('/admin/{action?}/{type?}', function ($action = null, $type = null) {
     ]);
 });
 
+
 Route::get('/admin/pharmacies/{pharmacy}/{action}', function (int $pharmacy, string $action) {
     $user = currentUser();
     if (!$user || $user->role !== 'admin') return redirect('/');
@@ -590,3 +595,5 @@ View::composer('index', function ($view) {
 
     $view->with('testimonials', $testimonials);
 });
+
+Route::post('/search-history/clear', [SearchHistoryController::class, 'clear'])->name('search.history.clear');

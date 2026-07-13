@@ -479,6 +479,29 @@ body {
     align-items: center;
     gap: 12px; /* Uniform horizontal starting point for icons and text */
 }
+
+.dashboard-sidebar .dashboard-notice {
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0;
+}
+
+.dashboard-sidebar .dashboard-notice .text-uppercase,
+.dashboard-sidebar .dashboard-notice .small,
+.dashboard-sidebar .dashboard-notice .text-muted,
+.dashboard-sidebar .dashboard-notice .clear-history-btn {
+    color: rgba(226, 232, 240, 0.85) !important;
+}
+
+.dashboard-sidebar .dashboard-notice a {
+    color: #cbd5e1 !important;
+}
+
+.dashboard-sidebar .dashboard-notice a:hover {
+    color: #ffffff !important;
+}
+
 /* ===========================================
    DASHBOARD ARCHITECTURE & LAYOUT WORKSPACE
    =========================================== */
