@@ -148,11 +148,14 @@
   </style>
 </head>
 
-<body class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*')) ? '' : 'bg-light' }}">
+<body class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*') || Request::is('pharmacist*') || Request::is('admin*') || Request::is('account*')) ? '' : 'bg-light' }}">
 
-  @include('partials.header')
+  {{-- Conditionally hide header for dashboard views --}}
+  @unless(Request::is('requests*') || Request::is('dashboard*') || Request::is('pharmacist*') || Request::is('admin*') || Request::is('account*'))
+    @include('partials.header')
+  @endunless
 
-  <main class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*')) ? '' : 'py-4' }}">
+  <main class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*') || Request::is('pharmacist*') || Request::is('admin*') || Request::is('account*')) ? '' : 'py-4' }}">
 
     @if(session('alerts'))
     @foreach (session('alerts') as $alert)
@@ -174,7 +177,10 @@
     @endif
   </main>
 
-  @include('partials.footer')
+  {{-- Conditionally hide footer for dashboard views --}}
+  @unless(Request::is('requests*') || Request::is('dashboard*') || Request::is('pharmacist*') || Request::is('admin*') || Request::is('account*'))
+    @include('partials.footer')
+  @endunless
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>

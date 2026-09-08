@@ -160,7 +160,6 @@ Route::get('/privacy', function () {
 })->name('privacy');
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
-
 Route::match(['get', 'post'], '/login', function (Request $request) {
     if ($request->isMethod('get')) {
         $userId = session('user_id');
@@ -181,18 +180,21 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
         if ($user && Hash::check($password, $user->password)) {
             session(['user_id' => $user->id]);
 
-            session()->flash('alerts', [
-                'category' => 'success',
-                'message' => "Hi, " . $user->name . "! Welcome back.",
-            ]);
+            flash('success', "Hi, " . $user->name . "! Welcome back.");
 
-            return redirectToDashboard($user);
+            // Explicit direct check to prevent silent redirection failures
+            if (in_array($user->role, ['pharmacist', 'pharmacy'], true)) {
+                return redirect('/pharmacist');
+            }
+
+            if ($user->role === 'admin') {
+                return redirect('/admin/dashboard');
+            }
+
+            return redirect('/requests');
         }
 
-        session()->flash('alerts', [
-            'category' => 'danger',
-            'message' => 'Invalid credentials.',
-        ]);
+        flash('danger', 'Invalid credentials.');
         return redirect('/login');
     }
 })->name('login');
@@ -242,7 +244,9 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
             return redirect('/register')->withInput();
         }
 
-        DB::transaction(function () use ($name, $email, $password, $role, $pharmacyName, $licenseNumber, $location, $phoneNumber) {
+        $user = null;
+
+        DB::transaction(function () use ($name, $email, $password, $role, $pharmacyName, $licenseNumber, $location, $phoneNumber, &$user) {
             $userId = DB::table('users')->insertGetId([
                 'name' => $name,
                 'email' => $email,
@@ -257,7 +261,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
                     'name' => $pharmacyName,
                     'location' => $location,
                     'address' => $location,
-                    'phone' => $phoneNumber,
+                    'phone_number' => $phoneNumber, // Set to phone_number matching database structure
                     'license_number' => $licenseNumber,
                     'status' => 'pending',
                     'owner_id' => $userId,
@@ -265,13 +269,20 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
                     'updated_at' => now(),
                 ]);
             }
+
+            $user = DB::table('users')->where('id', $userId)->first();
         });
 
+        // Store active session immediately after creation
+        session(['user_id' => $user->id]);
+
         flash('success', $role === 'pharmacist'
-            ? 'Registration successful. Your pharmacy account is pending admin verification.'
-            : 'Registration successful. Please log in.');
-        return redirect('/login');
+            ? 'Registration successful. Welcome to your dashboard!'
+            : 'Registration successful. Welcome!');
+
+        return redirectToDashboard($user);
     }
+
     return renderView('auth.register');
 })->name('register');
 
@@ -336,79 +347,23 @@ Route::match(['get', 'post'], '/account', function (Request $request) {
     ]);
 })->name('account');
 
+// Route alias matching route('profile.settings') in dashboard.blade.php
+Route::get('/profile/settings', function () {
+    return redirect('/account');
+})->name('profile.settings');
+
 // --- PHARMACIST DASHBOARD & INVENTORY ---
 
-Route::get('/pharmacist', function () {
-    try {
-        $user = currentUser();
-        if (!$user || $user->role !== 'pharmacist') return redirect('/login');
-
-        $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-        if (!$pharmacy) return redirect('/');
-
-        $isActive = ($pharmacy->status === 'approved');
-
-        $all_medicines = DB::table('medicines')->orderBy('name')->get();
-        $requestCollection = DB::table('reservations')
-            ->where('pharmacy_id', $pharmacy->id)
-            ->orderByDesc('created_at')
-            ->get();
-
-        $inventory = collect();
-        if ($isActive) {
-            $inventory = DB::table('pharmacy_medicine as pm')
-                ->leftJoin('medicines as m', 'pm.medicine_id', '=', 'm.id')
-                ->select('pm.*', 'm.name as medicine_name')
-                ->where('pm.pharmacy_id', $pharmacy->id)
-                ->get();
-        } else {
-            flash('info', 'Your pharmacy account is pending admin verification. Inventory becomes visible after approval.');
-        }
-
-        return renderView('dashboard_pharmacist', [
-            'pharmacy' => $pharmacy,
-            'all_medicines' => $all_medicines,
-            'inventory' => $inventory,
-            'isActive' => $isActive,
-            'requestCollection' => $requestCollection,
-        ]);
-    } catch (\Exception $e) {
-        flash('danger', 'Dashboard error: ' . $e->getMessage());
-        return redirect('/');
-    }
-});
-
-Route::post('/pharmacist/add', function (Request $request) {
-    $user = currentUser();
-    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-
-    $medicineName = trim(strtolower($request->input('medicine_name')));
-    $medicine = DB::table('medicines')->where('name', $medicineName)->first();
-
-    if ($medicine) {
-        $medId = $medicine->id;
-    } else {
-        $medId = DB::table('medicines')->insertGetId([
-            'name' => $medicineName,
-            'category' => 'General',
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-    }
-
-    DB::table('pharmacy_medicine')->updateOrInsert(
-        ['pharmacy_id' => $pharmacy->id, 'medicine_id' => $medId],
-        [
-            'price' => (float)$request->input('price'),
-            'quantity' => (int)$request->input('quantity'),
-            'stock_status' => $request->input('stock_status', 'in_stock'),
-            'updated_at' => now()
-        ]
-    );
-
-    flash('success', 'Inventory updated.');
-    return redirect('/pharmacist');
-});
+Route::get('/pharmacist', [\App\Http\Controllers\PharmacyController::class, 'page'])->name('pharmacist.dashboard');
+Route::get('/pharmacist/{section}', [\App\Http\Controllers\PharmacyController::class, 'page'])
+    ->whereIn('section', ['medicines', 'inventory', 'prices', 'requests', 'subscription', 'profile', 'settings']);
+Route::post('/pharmacist/add', [\App\Http\Controllers\PharmacyController::class, 'saveStock']);
+Route::put('/pharmacist/inventory/{item}', [\App\Http\Controllers\PharmacyController::class, 'saveStock']);
+Route::delete('/pharmacist/inventory/{item}', [\App\Http\Controllers\PharmacyController::class, 'removeStock']);
+Route::post('/pharmacist/profile', [\App\Http\Controllers\PharmacyController::class, 'profile']);
+Route::post('/pharmacist/settings', [\App\Http\Controllers\PharmacyController::class, 'settings']);
+Route::post('/pharmacist/subscription', [\App\Http\Controllers\PharmacyController::class, 'submitPayment']);
+Route::post('/pharmacist/requests/{reservation}/{action}', [\App\Http\Controllers\PharmacyController::class, 'reservation']);
 
 // --- PATIENT REQUESTS & RESERVATIONS ---
 
@@ -446,7 +401,7 @@ Route::get('/requests', function () {
     $reservations = DB::table('reservations as r')
         ->join('pharmacies as p', 'r.pharmacy_id', '=', 'p.id')
         ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
-        ->select('r.*', 'm.name as medicine_name', 'p.name as pharmacy_name', DB::raw('COALESCE(p.address, p.location) as pharmacy_address'))
+        ->selectRaw('r.*, m.name as medicine_name, p.name as pharmacy_name, p.location as pharmacy_address')
         ->where('r.user_id', $user->id)
         ->orderByDesc('r.created_at')
         ->get();
@@ -454,73 +409,9 @@ Route::get('/requests', function () {
     return renderView('patient_requests', compact('reservations'));
 });
 
-// --- PHARMACIST REQUEST MANAGEMENT ---
-
-Route::get('/pharmacist/requests', function () {
-    $user = currentUser();
-    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-
-    $reservations = DB::table('reservations as r')
-        ->join('users as u', 'r.user_id', '=', 'u.id')
-        ->join('medicines as m', 'r.medicine_id', '=', 'm.id')
-        ->select('r.*', 'u.name as user_name', 'u.email as user_email', 'm.name as medicine_name')
-        ->where('r.pharmacy_id', $pharmacy->id)
-        ->orderByDesc('r.created_at')
-        ->get();
-    return renderView('pharmacist_requests', compact('reservations', 'pharmacy'));
-});
-
-Route::post('/pharmacist/requests/{reservation}/{action}', function (int $reservation, string $action) {
-    $user = currentUser();
-    if (!$user || $user->role !== 'pharmacist') return redirect('/login');
-
-    $pharmacy = DB::table('pharmacies')->where('owner_id', $user->id)->first();
-    if (!$pharmacy) return redirect('/');
-
-    $status = $action === 'confirm' ? 'confirmed' : 'declined';
-
-    DB::transaction(function () use ($reservation, $pharmacy, $status, $action) {
-        $resRow = DB::table('reservations')
-            ->where('id', $reservation)
-            ->where('pharmacy_id', $pharmacy->id)
-            ->first();
-
-        if (!$resRow) return;
-
-        if ($action === 'confirm' && $resRow->status !== 'confirmed') {
-            $quantityToDeduct = 1;
-
-            DB::table('pharmacy_medicine')
-                ->where('pharmacy_id', $pharmacy->id)
-                ->where('medicine_id', $resRow->medicine_id)
-                ->where('quantity', '>=', $quantityToDeduct)
-                ->decrement('quantity', $quantityToDeduct);
-
-            $updatedStock = DB::table('pharmacy_medicine')
-                ->where('pharmacy_id', $pharmacy->id)
-                ->where('medicine_id', $resRow->medicine_id)
-                ->first();
-
-            if ($updatedStock && $updatedStock->quantity <= 0) {
-                DB::table('pharmacy_medicine')
-                    ->where('id', $updatedStock->id)
-                    ->update(['stock_status' => 'out_of_stock']);
-            }
-        }
-
-        DB::table('reservations')
-            ->where('id', $reservation)
-            ->update([
-                'status' => $status,
-                'updated_at' => now()
-            ]);
-    });
-
-    flash('success', 'Reservation status updated and stock metrics synced.');
-    return redirect('/pharmacist/requests');
-});
-
 // --- ADMIN DASHBOARD ---
+Route::get('/admin/subscriptions', [\App\Http\Controllers\PharmacyController::class, 'payments']);
+Route::post('/admin/subscriptions/{payment}/{action}', [\App\Http\Controllers\PharmacyController::class, 'reviewPayment']);
 
 Route::get('/admin/{action?}/{type?}', function ($action = null, $type = null) {
     $user = currentUser();

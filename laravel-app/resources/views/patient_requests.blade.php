@@ -218,29 +218,73 @@
     <div class="dashboard-notice mb-4">
       <div class="text-uppercase small text-muted fw-semibold mb-2">Notifications and Updates</div>
       <h5 class="fw-bold mb-3">Request Status Alerts</h5>
-      <div class="dashboard-notice-list">
-        @if ($pendingCount > 0)
-        <div class="dashboard-notice-item">
-          <h6 class="fw-semibold mb-2">Pending Reviews</h6>
-          <p>{{ $pendingCount }} request{{ $pendingCount === 1 ? '' : 's' }} still waiting on pharmacy confirmation. Check back soon!</p>
-        </div>
-        @endif
+      <div class="row g-3 mb-4">
 
-        @if ($confirmedCount > 0)
-        <div class="dashboard-notice-item">
-          <h6 class="fw-semibold mb-2">Ready for Pickup</h6>
-          <p>{{ $confirmedCount }} request{{ $confirmedCount === 1 ? '' : 's' }} confirmed and ready. Visit the pharmacy within 24 hours when possible.</p>
+  <!-- Card 1: Total Requests -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <span class="text-uppercase text-muted fw-bold small" style="font-size: 0.75rem;">Total Requests</span>
+          <h2 class="fw-bold my-1 text-dark">{{ $reservationCount ?? 0 }}</h2>
         </div>
-        @endif
-
-        @if ($declinedCount > 0)
-        <div class="dashboard-notice-item">
-          <h6 class="fw-semibold mb-2">Need Attention</h6>
-          <p>{{ $declinedCount }} request{{ $declinedCount === 1 ? '' : 's' }} are unavailable. Run a fresh search to compare other nearby pharmacies.</p>
-        </div>
-        @endif
+        <span class="badge rounded-circle bg-primary-subtle text-primary p-2">
+          <i class="bi bi-journal-check fs-5"></i>
+        </span>
       </div>
+      <p class="text-muted small mb-0">Everything you have submitted so far.</p>
     </div>
+  </div>
+
+  <!-- Card 2: Pending -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <span class="text-uppercase text-muted fw-bold small" style="font-size: 0.75rem;">Pending</span>
+          <h2 class="fw-bold my-1 text-dark">{{ $pendingCount ?? 0 }}</h2>
+        </div>
+        <span class="badge rounded-circle bg-primary-subtle text-primary p-2">
+          <i class="bi bi-clock-history fs-5"></i>
+        </span>
+      </div>
+      <p class="text-muted small mb-0">Awaiting pharmacist review.</p>
+    </div>
+  </div>
+
+  <!-- Card 3: Ready for Pickup -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <span class="text-uppercase text-muted fw-bold small" style="font-size: 0.75rem;">Ready For Pickup</span>
+          <h2 class="fw-bold my-1 text-dark">{{ $confirmedCount ?? 0 }}</h2>
+        </div>
+        <span class="badge rounded-circle bg-primary-subtle text-primary p-2">
+          <i class="bi bi-bag-check fs-5"></i>
+        </span>
+      </div>
+      <p class="text-muted small mb-0">Confirmed and ready to collect.</p>
+    </div>
+  </div>
+
+  <!-- Card 4: Unavailable -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="card border-0 rounded-4 shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <span class="text-uppercase text-muted fw-bold small" style="font-size: 0.75rem;">Unavailable</span>
+          <h2 class="fw-bold my-1 text-dark">{{ $declinedCount ?? 0 }}</h2>
+        </div>
+        <span class="badge rounded-circle bg-primary-subtle text-primary p-2">
+          <i class="bi bi-x-circle fs-5"></i>
+        </span>
+      </div>
+      <p class="text-muted small mb-0">Requests that need a fresh search.</p>
+    </div>
+  </div>
+
+</div>
 
     <div class="dashboard-notice">
       <h5 class="fw-bold mb-3">Quick Tips</h5>

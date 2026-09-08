@@ -173,7 +173,8 @@ if (!function_exists('isPharmacist')) {
      */
     function isPharmacist()
     {
-        return getUserRole() === 'pharmacist';
+        $role = getUserRole();
+        return $role === 'pharmacist' || $role === 'pharmacy';
     }
 }
 
@@ -187,4 +188,26 @@ if (!function_exists('isPatient')) {
     {
         return getUserRole() === 'patient';
     }
+}
+
+if (!function_exists('redirectToDashboard')) {
+    /**
+     * Redirect user to their designated dashboard based on role
+     *
+     * @param object $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    function redirectToDashboard($user) {
+    if (!$user) return redirect('/login');
+
+    if ($user->role === 'admin') {
+        return redirect('/admin/dashboard');
+    }
+
+    if (in_array($user->role, ['pharmacist', 'pharmacy'], true)) {
+        return redirect('/pharmacist'); // Matches Route::get('/pharmacist')
+    }
+
+    return redirect('/requests');
+}
 }

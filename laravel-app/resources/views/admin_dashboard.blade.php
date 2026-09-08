@@ -18,6 +18,7 @@
 @endsection
 
 @section('dashboard_sidebar')
+  <a href="/admin/subscriptions" class="nav-link"><span class="dashboard-nav-main"><i class="bi bi-credit-card"></i><span class="fw-semibold">Subscription Payments</span></span></a>
   <a href="/admin" class="nav-link {{ Request::is('admin') ? 'active' : '' }}">
     <span class="dashboard-nav-main">
       <i class="bi bi-speedometer2"></i>
