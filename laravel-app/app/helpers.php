@@ -31,10 +31,12 @@ if (!function_exists('flash')) {
      */
     function flash($category, $message)
     {
-        session()->push('alerts', [
+        $alerts = session()->get('alerts', []);
+        $alerts[] = [
             'category' => $category,
             'message' => $message,
-        ]);
+        ];
+        session()->flash('alerts', $alerts);
     }
 }
 

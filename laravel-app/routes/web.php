@@ -25,10 +25,12 @@ if (!function_exists('currentUser')) {
 if (!function_exists('flash')) {
     function flash($category, $message)
     {
-        session()->flash('alerts', [
+        $alerts = session()->get('alerts', []);
+        $alerts[] = [
             'category' => $category,
             'message' => $message,
-        ]);
+        ];
+        session()->flash('alerts', $alerts);
     }
 }
 
@@ -52,8 +54,19 @@ if (!function_exists('redirectToDashboard')) {
 
 // 1. Core Landing / Search Route (Assigned to 'index')
 Route::get('/', function (Request $request) {
-    // Read the single search query string instead of the array
-    $searchQuery = $request->input('search', '');
+    $input = $request->validate([
+        'search' => 'nullable|string|max:1000',
+        'item_names' => 'nullable|array|max:20',
+        'item_names.*' => 'required|string|max:255',
+    ]);
+    // Support the search field and links created by the previous tag-based form.
+    $terms = collect([$input['search'] ?? '', ...($input['item_names'] ?? [])])
+        ->flatMap(fn ($value) => explode(',', $value))
+        ->map(fn ($value) => trim(preg_replace('/\s+/u', ' ', $value)))
+        ->filter(fn ($value) => $value !== '')
+        ->unique(fn ($value) => mb_strtolower($value))
+        ->values();
+    $searchQuery = $terms->implode(', ');
     $results = collect();
 
     if (!empty(trim($searchQuery))) {
@@ -62,7 +75,7 @@ Route::get('/', function (Request $request) {
 
         // Normalize strings to strip accidental spaces and lower case variations smoothly
         $cleanNames = array_filter(array_map(function ($name) {
-            return trim(strtolower($name));
+            return trim(mb_strtolower($name));
         }, $requestedNames));
 
         if (!empty($cleanNames)) {
@@ -133,6 +146,7 @@ Route::get('/', function (Request $request) {
     }
 
     return renderView('index', [
+        'searchQuery' => $searchQuery,
         'results'     => $results,
         'currentUser' => currentUser()
     ]);

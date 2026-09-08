@@ -54,7 +54,7 @@ class PharmacyController extends Controller
                 $stock->where('id', $item);
                 abort_unless((clone $stock)->exists(), 404);
             } else {
-                $name = trim($data['medicine_name']);
+                $name = trim(preg_replace('/\s+/u', ' ', $data['medicine_name']));
                 if ($name === '') throw ValidationException::withMessages(['medicine_name' => 'Enter a medicine name.']);
                 $medicine = DB::table('medicines')->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
                 $medicineId = $medicine->id ?? DB::table('medicines')->insertGetId([
@@ -67,7 +67,7 @@ class PharmacyController extends Controller
             if ((clone $stock)->exists()) $stock->update($values);
             else DB::table('pharmacy_medicine')->insert($values + ['pharmacy_id' => $pharmacy->id, 'medicine_id' => $medicineId, 'created_at' => now()]);
         });
-        flash('success', 'Stock saved.');
+        flash('success', 'Medicine saved. Your listing is now available in patient search.');
         return back();
     }
 

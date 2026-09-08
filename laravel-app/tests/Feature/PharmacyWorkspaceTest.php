@@ -93,6 +93,41 @@ class PharmacyWorkspaceTest extends TestCase
         $this->assertDatabaseHas('pharmacy_medicine', ['id' => $stock->id, 'quantity' => 0, 'price' => 1300, 'stock_status' => 'out_of_stock']);
     }
 
+    public function test_saved_medicine_is_searchable_with_current_stock_and_price(): void
+    {
+        $this->withSession(['user_id' => 1])->from('/pharmacist/medicines')->post('/pharmacist/add', [
+            'medicine_name' => '  Amoxicillin   500mg  ', 'quantity' => 30, 'price' => 1200,
+        ])->assertRedirect('/pharmacist/medicines');
+        $medicine = DB::table('medicines')->where('name', 'Amoxicillin 500mg')->first();
+        $this->assertNotNull($medicine);
+        $stock = DB::table('pharmacy_medicine')->where('medicine_id', $medicine->id)->first();
+        $this->assertDatabaseHas('pharmacy_medicine', ['id' => $stock->id, 'pharmacy_id' => 1, 'quantity' => 30, 'price' => 1200]);
+
+        $this->withSession(['user_id' => 3])->get('/?'.http_build_query(['search' => 'AMOXICILLIN   500mg']))
+            ->assertOk()->assertSee('data-medicine="Amoxicillin 500mg"', false)
+            ->assertSee('Pharmacy 1')->assertSee('data-price="1,200 UGX"', false)
+            ->assertSee('data-quantity="30"', false)->assertSee('/reserve/'.$stock->id);
+
+        $this->withSession(['user_id' => 1])->put('/pharmacist/inventory/'.$stock->id, ['quantity' => 0, 'price' => 1500])->assertRedirect();
+        $this->withSession(['user_id' => 3])->get('/?search=amoxicillin')->assertOk()
+            ->assertSee('data-price="1,500 UGX"', false)->assertSee('data-quantity="0"', false)->assertSee('Out of Stock');
+        $this->withSession(['user_id' => 1])->delete('/pharmacist/inventory/'.$stock->id)->assertRedirect();
+        $this->withSession(['user_id' => 3])->get('/?search=amoxicillin')->assertOk()
+            ->assertDontSee('data-medicine="Amoxicillin 500mg"', false)->assertSee('No medicines matching');
+    }
+
+    public function test_search_accepts_legacy_tags_and_multiple_terms_but_hides_unapproved_pharmacies(): void
+    {
+        $this->withSession(['user_id' => 1])->post('/pharmacist/add', ['medicine_name' => 'Ibuprofen', 'quantity' => 20, 'price' => 800])->assertRedirect();
+        foreach ([['search' => 'paracetamol, ibuprofen'], ['search' => '', 'item_names' => ['PARACETAMOL', 'Ibuprofen']]] as $query) {
+            $this->withSession(['user_id' => 3])->get('/?'.http_build_query($query))->assertOk()
+                ->assertSee('data-medicine="Paracetamol"', false)->assertSee('data-medicine="Ibuprofen"', false);
+        }
+        DB::table('pharmacies')->where('id', 1)->update(['status' => 'pending']);
+        $this->get('/?search=ibuprofen')->assertOk()->assertDontSee('data-medicine="Ibuprofen"', false);
+        $this->get('/?search=')->assertOk()->assertDontSee('No medicines matching');
+    }
+
     public function test_guests_patients_and_unapproved_pharmacies_are_restricted(): void
     {
         $this->get('/pharmacist/requests')->assertRedirect('/login');
@@ -112,6 +147,16 @@ class PharmacyWorkspaceTest extends TestCase
         $data['current_password'] = 'password123';
         $this->post('/pharmacist/settings', $data)->assertRedirect();
         $this->assertDatabaseHas('users', ['id' => 1, 'email' => 'new@example.com']);
+    }
+
+    public function test_action_messages_display_once_as_auto_dismissing_toasts(): void
+    {
+        $this->withSession(['user_id' => 1])->from('/pharmacist/profile')->post('/pharmacist/profile', [
+            'name' => 'Updated Pharmacy', 'location' => 'Kampala', 'phone_number' => '0700000001',
+        ])->assertRedirect('/pharmacist/profile')->assertSessionHas('alerts');
+        $this->get('/pharmacist/profile')->assertOk()->assertSee('Pharmacy profile updated.')
+            ->assertSee('data-bs-delay="5000"', false)->assertSee('class="toast flash-toast"', false)->assertSessionMissing('alerts');
+        $this->get('/pharmacist/profile')->assertOk()->assertDontSee('Pharmacy profile updated.');
     }
 
     public function test_subscription_requires_admin_verification_and_extends_renewals(): void

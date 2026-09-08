@@ -415,7 +415,6 @@
                                             </div>
                                         </div>
 
-                                        <div id="editableItemList" class="d-flex flex-wrap gap-2 mb-3"></div>
 
                                         <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
                                             <div class="input-group bg-white rounded-4 p-2 border border-white border-2 shadow">
@@ -426,7 +425,7 @@
                                                 <input type="text"
                                                     name="search"
                                                     id="itemInput"
-                                                    value="{{ request('search') }}"
+                                                    value="{{ $searchQuery }}"
                                                     class="form-control border-0 bg-transparent text-dark px-2 py-3 search-input-field"
                                                     placeholder="Enter prescription criteria (e.g., Panadol, Amoxicillin)..."
                                                     style="font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em;">
@@ -473,11 +472,11 @@
         </div>
     </section>
 
-    @if(request()->has('search') && isset($results) && $results->isEmpty())
+    @if($searchQuery !== '' && $results->isEmpty())
     <div class="container mt-5">
         <div class="alert alert-warning text-center shadow-sm border-0 rounded-4 p-4">
             <i class="bi bi-exclamation-triangle-fill me-2 fs-5 text-warning align-middle"></i>
-            <span class="fw-medium">No approved pharmacies currently have "{{ request('search') }}" listed in stock logs. Please verify characters or execute alternative lookup strings.</span>
+            <span class="fw-medium">No medicines matching "{{ $searchQuery }}" were found at approved pharmacies. Try another name or check the spelling.</span>
         </div>
     </div>
     @endif
@@ -903,62 +902,6 @@
         setTimeout(() => toast.remove(), 4200);
     }
 
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function updateSearchBtn() {
-        const list = document.getElementById('editableItemList');
-        const form = document.getElementById('searchForm');
-        if (!list || !form) return;
-
-        form.querySelectorAll('input[name="item_names[]"]').forEach((el) => el.remove());
-        list.querySelectorAll('input[type="hidden"]').forEach((inp) => form.appendChild(inp.cloneNode(true)));
-    }
-
-    function createTag(value) {
-        const wrap = document.createElement('div');
-        wrap.className = 'tag-item';
-        wrap.innerHTML = `
-            <span>${escapeHtml(value)}</span>
-            <button class="btn btn-sm p-0 border-0 bg-transparent text-white d-inline-flex" type="button" aria-label="Remove element">
-                <i class="bi bi-x-circle-fill ms-1" style="font-size: 0.9rem; opacity:0.8;"></i>
-            </button>
-            <input type="hidden" name="item_names[]" value="${escapeHtml(value)}">
-        `;
-
-        wrap.querySelector('button')?.addEventListener('click', () => {
-            wrap.remove();
-            updateSearchBtn();
-        });
-
-        return wrap;
-    }
-
-    function addItem() {
-        const input = document.getElementById('itemInput');
-        const mainList = document.getElementById('editableItemList');
-        if (!input || !mainList) return;
-
-        const value = input.value.trim();
-        if (!value) {
-            showToast('Please specify an authentic medical nomenclature input.', 'error');
-            input.focus();
-            return;
-        }
-
-        mainList.appendChild(createTag(value));
-        input.value = '';
-        updateSearchBtn();
-        showToast(`Added tag criteria: "${value}"`, 'success');
-        input.focus();
-    }
-
     function animateCounterEl(el, target) {
         if (!el) return;
         let current = 0;
@@ -986,37 +929,9 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        const input = document.getElementById('itemInput');
-        const form = document.getElementById('searchForm');
-
         animateCounterEl(document.getElementById('medCount'), 2480);
         animateCounterEl(document.getElementById('pharCount'), 186);
         animateCounterEl(document.getElementById('stockCount'), 58200);
-
-        if (input) {
-            input.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    addItem();
-                }
-            });
-        }
-
-        if (form && input) {
-            form.addEventListener('submit', function(e) {
-                const remainder = input.value.trim();
-                if (remainder) {
-                    const mainList = document.getElementById('editableItemList');
-                    if (mainList) {
-                        mainList.appendChild(createTag(remainder));
-                        input.value = '';
-                        updateSearchBtn();
-                    }
-                }
-            });
-        }
-
-        updateSearchBtn();
 
         // =========================================================================
         // LIVE MAP GEOLOCATION CONTROLLER ENGAGEMENT (SAFEBODA PARITY)

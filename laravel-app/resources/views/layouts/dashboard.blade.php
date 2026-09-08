@@ -7,6 +7,11 @@
   $profileName = $currentUser->name ?? 'Account';
   $profileRole = isset($currentUser->role) ? ucfirst($currentUser->role) : 'User';
   $isPharmacyDashboard = request()->is('pharmacist', 'pharmacist/*');
+  $isAdminDashboard = request()->is('admin', 'admin/*');
+  $isPatientDashboard = request()->is('requests', 'requests/*');
+  $hasDashboardHeader = $isPharmacyDashboard || $isAdminDashboard || $isPatientDashboard;
+  $dashboardHeaderTitle = $isPharmacyDashboard ? 'Pharmacy Dashboard' : ($isAdminDashboard ? 'Admin Dashboard' : 'Patient Dashboard');
+  $dashboardHomeUrl = $isPharmacyDashboard ? '/pharmacist' : ($isAdminDashboard ? '/admin' : '/requests');
   $initials = collect(explode(' ', trim($profileName)))->filter()->map(fn ($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('');
 @endphp
 
@@ -98,6 +103,9 @@
     color: #ff8794;
     font-size: 1.05rem;
   }
+
+  .dashboard-sidebar-home i { color: #7fc8ff; }
+  .dashboard-sidebar-home:hover { background: rgba(255, 255, 255, 0.08); }
 
   .dashboard-nav .nav-link {
     border-radius: 18px;
@@ -436,11 +444,92 @@
   .pharmacy-workspace .dashboard-notice { width: 100% !important; }
   .pharmacy-workspace .dashboard-stat { min-height: 150px !important; }
   .pharmacy-workspace .dashboard-topbar { z-index: 1050; }
+  .dashboard-with-header { flex-direction: column; }
+  .dashboard-masthead { position: relative; z-index: 2100; }
+  .dashboard-title-bar {
+    padding: .85rem 1.5rem;
+    background: linear-gradient(110deg, #0b5ed7, #0d6efd);
+    border: 1px solid #6ea8fe;
+    border-radius: 8px 8px 0 0;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .dashboard-masthead-row { display: flex; min-height: 76px; background: #fff; border-bottom: 1px solid #dce8ec; }
+  .dashboard-masthead-brand {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    flex: 0 0 280px;
+    padding: 1rem 1.5rem;
+    background: #10233c;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 0 #10233c;
+    color: #e9f2ff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .dashboard-masthead-brand:hover,
+  .dashboard-masthead-brand:focus { color: #fff; }
+  .dashboard-masthead-brand i { font-size: 1.65rem; color: #7fc8ff; }
+  .dashboard-masthead .dashboard-topbar {
+    flex: 1;
+    flex-direction: row !important;
+    min-width: 0;
+    width: auto;
+    margin-bottom: 0;
+    padding: .7rem 1.5rem;
+    background: #fff;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .dashboard-masthead .dashboard-topbar > .d-flex { justify-content: flex-end !important; }
+  .dashboard-masthead .dashboard-bell { width: 36px; height: 36px; background: transparent; border-radius: 50%; }
+  .dashboard-masthead .dashboard-bell:hover { background: #edf3fe; }
+  .dashboard-masthead .dashboard-profile-btn { padding: .35rem; background: transparent; gap: .6rem; border-radius: 8px; }
+  .dashboard-masthead .dashboard-profile-btn:hover { background: #f2f7ff; }
+  .dashboard-masthead .dashboard-avatar { width: 32px; height: 32px; border-radius: 50%; background: #10233c; flex-shrink: 0; }
+  .dashboard-profile-copy { min-width: 0; max-width: 220px; }
+  .dashboard-profile-copy > div:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dashboard-profile-chevron { font-size: .75rem; color: #10233c; }
+  .dashboard-with-header .dashboard-frame { flex: 1; min-height: 0; }
+  @media (min-width: 1200px) {
+    .dashboard-with-header .dashboard-sidebar {
+      height: auto;
+      align-self: stretch;
+      position: static;
+      overflow-y: visible;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .dashboard-title-bar { padding: .75rem 1rem; font-size: 1.15rem; }
+    .dashboard-masthead-brand { flex-basis: auto; padding: .75rem; gap: .4rem; font-size: 1rem; }
+    .dashboard-masthead .dashboard-topbar { padding: .5rem; }
+    .dashboard-masthead .dashboard-topbar > .d-flex { gap: .35rem !important; }
+    .dashboard-profile-copy { max-width: 120px; }
+  }
+  @media (max-width: 380px) {
+    .dashboard-profile-copy { max-width: 85px; }
+    .dashboard-masthead-brand { font-size: .9rem; }
+  }
 </style>
 
-<div class="dashboard-shell {{ $isPharmacyDashboard ? 'pharmacy-workspace' : '' }}">
+<div class="dashboard-shell {{ $isPharmacyDashboard ? 'pharmacy-workspace' : '' }} {{ $hasDashboardHeader ? 'dashboard-with-header' : '' }}">
+  @if($hasDashboardHeader)
+    <header class="dashboard-masthead">
+      <div class="dashboard-title-bar">{{ $dashboardHeaderTitle }}</div>
+      <div class="dashboard-masthead-row">
+        <a href="{{ $dashboardHomeUrl }}" class="dashboard-masthead-brand"><i class="bi bi-capsule" aria-hidden="true"></i><span>MedFinder</span></a>
+        @include('partials.dashboard-topbar')
+      </div>
+    </header>
+  @endif
   <div class="dashboard-frame">
     <aside class="dashboard-sidebar">
+      @unless($hasDashboardHeader)
       <div class="dashboard-brand">
         <div class="dashboard-brand-mark">
           <i class="bi bi-grid-1x2-fill"></i>
@@ -449,6 +538,8 @@
           <div class="fw-bold">Medfinder Ug</div>
         </div>
       </div>
+
+      @endunless
 
       <div class="dashboard-nav nav flex-column mb-4">
         @if($isPharmacyDashboard)
@@ -459,6 +550,10 @@
       </div>
 
       <div class="dashboard-sidebar-footer">
+        <a href="{{ route('index') }}" class="dashboard-sidebar-logout dashboard-sidebar-home mb-2">
+          <i class="bi bi-house-door" aria-hidden="true"></i>
+          <span class="fw-semibold">Back to Home</span>
+        </a>
         <a href="{{ route('logout') }}" class="dashboard-sidebar-logout">
           <i class="bi bi-box-arrow-right"></i>
           <span class="fw-semibold">Logout</span>
@@ -468,69 +563,9 @@
 
     <div class="dashboard-content">
       
-      <div class="dashboard-topbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 justify-content-between">
-        <form action="/" method="GET" class="dashboard-search flex-grow-1">
-          <i class="bi bi-search"></i>
-          <input
-            type="text"
-            name="item_names[]"
-            class="form-control form-control-lg"
-            placeholder="{{ $dashboardSearchPlaceholder }}">
-        </form>
-
-        <div class="d-flex align-items-center gap-3 justify-content-between justify-content-sm-end w-100 w-lg-auto">
-          
-          <div class="dropdown">
-            <button class="dashboard-bell dropdown-toggle" type="button" id="bellDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Notifications">
-              <i class="bi bi-bell-fill"></i>
-              @if($notificationBadge > 0)
-                <span class="dashboard-bell-badge" id="live-bell-count">{{ $notificationBadge }}</span>
-              @endif
-            </button>
-            <div class="dropdown-menu dropdown-menu-end shadow border-0 p-3 dashboard-notification-menu" aria-labelledby="bellDropdown">
-              <h6 class="fw-bold border-bottom pb-3">Notifications</h6>
-              @hasSection('dashboard_notifications')
-                @yield('dashboard_notifications')
-              @else
-                <p class="small text-muted mb-0">No pending alerts.</p>
-              @endif
-            </div>
-          </div>
-
-          <div class="dropdown">
-            <a href="#" class="dashboard-profile-btn dropdown-toggle text-decoration-none" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <div class="dashboard-avatar">{{ $initials ?: 'MF' }}</div>
-              
-              <div class="d-none d-sm-block text-start">
-                <div class="fw-semibold text-dark small lh-1 mb-1">{{ $profileName }}</div>
-                <div class="text-muted extra-small" style="font-size: 0.75rem;">{{ $profileRole }}</div>
-              </div>
-            </a>
-    
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2 rounded-3" aria-labelledby="profileDropdown" style="min-width: 220px; position: absolute; z-index: 3000 !important;">
-              <li class="p-2 border-bottom mb-2 bg-light rounded-2">
-                <div class="fw-bold text-dark small">{{ $profileName }}</div>
-                <small class="text-primary fw-semibold" style="font-size: 0.72rem;">{{ $profileRole }} Control Panel</small>
-              </li>
-              
-             <li>
-  <a class="dropdown-item d-flex align-items-center py-2 px-3 rounded-2" href="{{ $isPharmacyDashboard ? url('/pharmacist/settings') : route('profile.settings') }}">
-    <i class="bi bi-gear text-muted me-2.5 fs-5"></i> Account Settings
-  </a>
-</li>
-              
-              <li><hr class="dropdown-divider my-2"></li>
-              
-              <li>
-                <a class="dropdown-item d-flex align-items-center py-2 px-3 text-danger rounded-2" href="/logout">
-                  <i class="bi bi-box-arrow-right me-2.5 fs-5"></i> Logout
-                </a>
-              </li>
-            </ul>
-          </div>
-          
-        </div>
-      </div>
+      @unless($hasDashboardHeader)
+        @include('partials.dashboard-topbar')
+      @endunless
 
       <div class="dashboard-hero text-white mb-4">
         <small class="text-white-50 text-uppercase fw-bold tracking-wider fs-7">Welcome Section</small>

@@ -145,6 +145,29 @@
         justify-content: center;
       }
     }
+    .flash-toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: min(380px, calc(100vw - 2rem));
+      max-height: calc(100dvh - 2rem);
+      overflow-y: auto;
+      z-index: 11000;
+      pointer-events: none;
+    }
+
+    .flash-toast {
+      width: 100%;
+      background: #fff;
+      color: #10233c;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid var(--flash-accent);
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(16, 35, 60, 0.16);
+      pointer-events: auto;
+    }
+
+    .flash-toast-icon { color: var(--flash-accent); }
   </style>
 </head>
 
@@ -157,16 +180,26 @@
 
   <main class="{{ (Request::is('requests*') || Request::is('dashboard*') || Request::is('search*') || Request::is('pharmacist*') || Request::is('admin*') || Request::is('account*')) ? '' : 'py-4' }}">
 
-    @if(session('alerts'))
-    @foreach (session('alerts') as $alert)
-    <div class="container">
-      <div class="alert alert-{{ $alert['category'] ?? 'info' }} alert-dismissible fade show shadow-sm" role="alert">
-        {{ $alert['message'] ?? 'No message content' }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
+    <div class="toast-container flash-toast-container" aria-live="polite" aria-atomic="false">
+      @foreach(session()->pull('alerts', []) as $alert)
+        @php
+          $category = $alert['category'] ?? 'info';
+          [$accent, $icon, $label] = match ($category) {
+            'success' => ['#198754', 'bi-check-circle-fill', 'Success'],
+            'danger', 'error' => ['#dc3545', 'bi-exclamation-circle-fill', 'Error'],
+            'warning' => ['#b77900', 'bi-exclamation-triangle-fill', 'Notice'],
+            default => ['#0d6efd', 'bi-info-circle-fill', 'Update'],
+          };
+        @endphp
+        <div class="toast flash-toast" role="status" aria-atomic="true" style="--flash-accent: {{ $accent }}" data-bs-delay="{{ in_array($category, ['danger', 'error', 'warning']) ? 8000 : 5000 }}">
+          <div class="toast-body d-flex align-items-start gap-3 p-3">
+            <i class="bi {{ $icon }} flash-toast-icon fs-5" aria-hidden="true"></i>
+            <div class="flex-grow-1"><div class="fw-semibold mb-1">{{ $label }}</div><div>{{ $alert['message'] ?? '' }}</div></div>
+            <button type="button" class="btn-close flex-shrink-0" data-bs-dismiss="toast" aria-label="Dismiss notification"></button>
+          </div>
+        </div>
+      @endforeach
     </div>
-    @endforeach
-    @endif
 
     @hasSection('fullwidth')
     @yield('fullwidth')
@@ -183,6 +216,16 @@
   @endunless
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll('.flash-toast').forEach(element => {
+      const toast = bootstrap.Toast.getOrCreateInstance(element, { autohide: true });
+      element.addEventListener('hidden.bs.toast', () => {
+        toast.dispose();
+        element.remove();
+      });
+      toast.show();
+    });
+  </script>
   <script>
     const backToTop = document.getElementById('backToTop');
     if (backToTop) {
