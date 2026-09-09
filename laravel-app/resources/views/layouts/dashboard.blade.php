@@ -524,8 +524,11 @@
     .dashboard-masthead-brand { font-size: .9rem; }
   }
 </style>
+@if($isAdminDashboard)
+  <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
+@endif
 
-<div class="dashboard-shell {{ $isPharmacyDashboard ? 'pharmacy-workspace' : ($isPatientDashboard ? 'patient-workspace' : '') }} {{ $hasDashboardHeader ? 'dashboard-with-header' : '' }}">
+<div class="dashboard-shell {{ $isPharmacyDashboard ? 'pharmacy-workspace' : ($isPatientDashboard ? 'patient-workspace' : ($isAdminDashboard ? 'admin-workspace' : '')) }} {{ $hasDashboardHeader ? 'dashboard-with-header' : '' }}">
   @if($hasDashboardHeader)
     <header class="dashboard-masthead">
       <div class="dashboard-title-bar">{{ $dashboardHeaderTitle }}</div>
@@ -537,15 +540,16 @@
   @endif
   <div class="dashboard-frame">
     <aside class="dashboard-sidebar">
+      @if($isAdminDashboard)
+        <button class="btn admin-menu-toggle d-xl-none w-100 mb-3 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#adminSidebarMenu" aria-controls="adminSidebarMenu" aria-expanded="false"><span>Admin Menu</span></button>
+        <div id="adminSidebarMenu" class="collapse d-xl-flex flex-column flex-grow-1">
+      @endif
       @if($isPatientDashboard)
-        <button class="btn btn-outline-light d-xl-none w-100 mb-3 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#patientSidebarMenu" aria-controls="patientSidebarMenu" aria-expanded="false"><span><i class="bi bi-list me-2" aria-hidden="true"></i>Patient Menu</span><i class="bi bi-chevron-down" aria-hidden="true"></i></button>
+        <button class="btn btn-outline-light d-xl-none w-100 mb-3 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#patientSidebarMenu" aria-controls="patientSidebarMenu" aria-expanded="false"><span>Patient Menu</span></button>
         <div id="patientSidebarMenu" class="collapse d-xl-flex flex-column flex-grow-1">
       @endif
       @unless($hasDashboardHeader)
       <div class="dashboard-brand">
-        <div class="dashboard-brand-mark">
-          <i class="bi bi-grid-1x2-fill"></i>
-        </div>
         <div class="dashboard-brand-copy">
           <div class="fw-bold">Medfinder Ug</div>
         </div>
@@ -563,15 +567,14 @@
 
       <div class="dashboard-sidebar-footer">
         <a href="{{ route('index') }}" class="dashboard-sidebar-logout dashboard-sidebar-home mb-2">
-          <i class="bi bi-house-door" aria-hidden="true"></i>
           <span class="fw-semibold">Back to Home</span>
         </a>
         <a href="{{ route('logout') }}" class="dashboard-sidebar-logout">
-          <i class="bi bi-box-arrow-right"></i>
           <span class="fw-semibold">Logout</span>
         </a>
       </div>
       @if($isPatientDashboard)</div>@endif
+      @if($isAdminDashboard)</div>@endif
     </aside>
 
     <div class="dashboard-content">
@@ -581,6 +584,7 @@
       @endunless
 
       <div class="dashboard-hero text-white mb-4">
+        @if($isAdminDashboard)<span class="admin-hero-icon"><i class="bi bi-gear-fill" aria-hidden="true"></i></span>@endif
         <small class="text-white-50 text-uppercase fw-bold tracking-wider fs-7">Welcome Section</small>
         <h1 class="fw-bold mt-1 mb-2">@yield('dashboard_title')</h1>
         <p class="mb-0 text-white-50">@yield('dashboard_subtitle')</p>

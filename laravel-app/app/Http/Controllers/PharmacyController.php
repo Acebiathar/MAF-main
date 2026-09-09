@@ -28,7 +28,9 @@ class PharmacyController extends Controller
             ->where('pm.pharmacy_id', $pharmacy->id)->select('pm.*', 'm.name as medicine_name')->orderBy('m.name')->get();
         $reservations = DB::table('reservations as r')->join('medicines as m', 'r.medicine_id', '=', 'm.id')
             ->join('users as u', 'r.user_id', '=', 'u.id')->where('r.pharmacy_id', $pharmacy->id)
-            ->select('r.*', 'm.name as medicine_name', 'u.name as user_name', 'u.email as user_email')->orderByDesc('r.created_at')->get();
+            ->select('r.*', 'm.name as medicine_name', 'u.name as user_name', 'u.email as user_email')
+            ->orderByRaw("CASE WHEN r.status = 'pending' THEN 0 ELSE 1 END")
+            ->orderByDesc('r.created_at')->orderByDesc('r.id')->get();
         $pendingCount = $reservations->where('status', 'pending')->count();
         $isActive = $pharmacy->status === 'approved';
         $all_medicines = DB::table('medicines')->orderBy('name')->get();
@@ -102,7 +104,9 @@ class PharmacyController extends Controller
             }
             $query->update(['status' => $action === 'confirm' ? 'confirmed' : 'declined', 'updated_at' => now()]);
         });
-        flash('success', 'Reservation updated.');
+        flash('success', $action === 'confirm'
+            ? 'Reservation approved. Stock updated and the patient can now see it is ready for pickup.'
+            : 'Reservation declined. The patient can see the updated status in their dashboard.');
         return back();
     }
 

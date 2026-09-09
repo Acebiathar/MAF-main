@@ -34,22 +34,6 @@ if (!function_exists('flash')) {
     }
 }
 
-if (!function_exists('redirectToDashboard')) {
-    function redirectToDashboard(object $user)
-    {
-        $role = strtolower(trim($user->role));
-        if ($role === 'admin') {
-            return redirect('/admin');
-        }
-
-        if (in_array($role, ['pharmacist', 'pharmacy'], true)) {
-            return redirect('/pharmacist');
-        }
-
-        return redirect('/requests');
-    }
-}
-
 // --- PUBLIC PAGES (Home, Search, About) ---
 
 // 1. Core Landing / Search Route (Assigned to 'index')
@@ -184,6 +168,10 @@ Route::get('/privacy', function () {
 })->name('privacy');
 
 // --- AUTHENTICATION (Login, Register, Logout) ---
+Route::get('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'requestForm'])->name('password.request');
+Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'sendLink'])->middleware('throttle:5,1')->name('password.email');
+Route::get('/reset-password/{token}', [\App\Http\Controllers\PasswordResetController::class, 'resetForm'])->name('password.reset');
+Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->middleware('throttle:10,1')->name('password.update');
 Route::match(['get', 'post'], '/login', function (Request $request) {
     if ($request->isMethod('get')) {
         $userId = session('user_id');
@@ -199,10 +187,18 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
         $request->validate(['email' => 'required|string|email|max:255', 'password' => 'required|string']);
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
+        $loginKey = 'login:'.hash('sha256', $email.'|'.$request->ip());
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($loginKey, 5)) {
+            return redirect('/login')->withErrors(['email' => 'Too many sign-in attempts. Please wait one minute and try again.'])->withInput($request->only('email'));
+        }
 
         $user = DB::table('users')->whereRaw('LOWER(TRIM(email)) = ?', [$email])->first();
 
         if ($user && Hash::check($password, $user->password)) {
+            \Illuminate\Support\Facades\RateLimiter::clear($loginKey);
+            if (Hash::needsRehash($user->password)) {
+                DB::table('users')->where('id', $user->id)->update(['password' => Hash::make($password), 'updated_at' => now()]);
+            }
             $request->session()->regenerate();
             session(['user_id' => $user->id]);
 
@@ -211,7 +207,8 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
             return redirectToDashboard($user);
         }
 
-        return redirect('/login')->withErrors(['email' => 'The email or password is incorrect. If registration was unsuccessful, please create your account first.'])->withInput($request->only('email'));
+        \Illuminate\Support\Facades\RateLimiter::hit($loginKey, 60);
+        return redirect('/login')->withErrors(['email' => 'The email or password is incorrect. Try again or reset your password.'])->withInput($request->only('email'));
     }
 })->name('login');
 
@@ -288,8 +285,9 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
     return renderView('auth.register');
 })->name('register');
 
-Route::get('/logout', function () {
-    session()->forget('user_id');
+Route::get('/logout', function (Request $request) {
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
     flash('info', 'Logged out.');
     return redirect('/');
 })->name('logout');
@@ -439,44 +437,9 @@ Route::delete('/requests/search-history', function () {
 Route::get('/admin/subscriptions', [\App\Http\Controllers\PharmacyController::class, 'payments']);
 Route::post('/admin/subscriptions/{payment}/{action}', [\App\Http\Controllers\PharmacyController::class, 'reviewPayment']);
 
-Route::get('/admin/{action?}/{type?}', function ($action = null, $type = null) {
-    $user = currentUser();
-    if (!$user || $user->role !== 'admin') return redirect('/');
-
-    $stats = [
-        'users' => DB::table('users')->count(),
-        'pharmacies' => DB::table('pharmacies')->where('status', 'approved')->count(),
-        'medicines' => DB::table('medicines')->count(),
-        'reservations' => DB::table('reservations')->count(),
-    ];
-
-    $pending = DB::table('pharmacies')->where('status', 'pending')->get();
-
-    $viewList = null;
-    $viewType = $type;
-
-    if ($action === 'view') {
-        if ($type === 'users') {
-            $viewList = DB::table('users')->orderBy('created_at', 'desc')->get();
-        } elseif ($type === 'pharmacies') {
-            $viewList = DB::table('pharmacies')->where('status', 'approved')->get();
-        } elseif ($type === 'medicines') {
-            $viewList = DB::table('medicines')->get();
-        } elseif ($type === 'reservations') {
-            $viewList = DB::table('reservations')
-                ->join('users', 'reservations.user_id', '=', 'users.id')
-                ->select('reservations.*', 'users.name as user_name')
-                ->get();
-        }
-    }
-
-    return renderView('admin_dashboard', [
-        'stats' => $stats,
-        'pending' => $pending,
-        'viewList' => $viewList,
-        'viewType' => $viewType
-    ]);
-});
+Route::get('/admin/reports/export', [\App\Http\Controllers\AdminDashboardController::class, 'export']);
+Route::post('/admin/settings', [\App\Http\Controllers\AdminDashboardController::class, 'settings']);
+Route::get('/admin/{action?}/{type?}', [\App\Http\Controllers\AdminDashboardController::class, 'page']);
 
 Route::get('/admin/pharmacies/{pharmacy}/{action}', function (int $pharmacy, string $action) {
     $user = currentUser();

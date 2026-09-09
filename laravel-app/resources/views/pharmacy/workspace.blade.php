@@ -21,11 +21,12 @@
 
   @if($section === 'dashboard')
     <div class="dashboard-panel mb-4">
-      <div class="d-flex justify-content-between mb-3"><h5 class="fw-bold">Recent Reservations</h5><a href="/pharmacist/requests">View all</a></div>
-      <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Patient</th><th>Medicine</th><th>Status</th><th>Date</th></tr></thead><tbody>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><h5 class="fw-bold mb-0">Patient Reservations <span class="badge rounded-pill text-bg-warning ms-2">{{ $pendingCount }} pending</span></h5><a href="/pharmacist/requests">View all reservations</a></div>
+      <p class="small text-muted">Pending reservations appear first. Approve a request to set aside one unit and mark it ready for pickup in the patient’s dashboard.</p>
+      <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Patient</th><th>Medicine</th><th>Status</th><th>Date</th><th>Decision</th></tr></thead><tbody>
         @forelse($reservations->take(5) as $reservation)
-          <tr><td>{{ $reservation->user_name }}</td><td>{{ $reservation->medicine_name }}</td><td><span class="badge rounded-pill {{ $reservation->status === 'pending' ? 'text-bg-warning' : ($reservation->status === 'confirmed' ? 'text-bg-success' : 'text-bg-secondary') }}">{{ ucfirst($reservation->status) }}</span></td><td>{{ \Illuminate\Support\Carbon::parse($reservation->created_at)->format('Y-m-d') }}</td></tr>
-        @empty<tr><td colspan="4" class="text-muted py-4">No reservations yet.</td></tr>@endforelse
+          <tr><td>{{ $reservation->user_name }}</td><td>{{ $reservation->medicine_name }}@if($reservation->note)<div class="small text-muted text-break mt-1">Patient note: {{ $reservation->note }}</div>@endif</td><td><span class="badge rounded-pill {{ $reservation->status === 'pending' ? 'text-bg-warning' : ($reservation->status === 'confirmed' ? 'text-bg-success' : 'text-bg-secondary') }}">{{ ucfirst($reservation->status) }}</span></td><td>{{ \Illuminate\Support\Carbon::parse($reservation->created_at)->format('Y-m-d') }}</td><td>@include('pharmacy.reservation-actions', ['reservation' => $reservation])</td></tr>
+        @empty<tr><td colspan="5" class="text-muted py-4">No reservations yet.</td></tr>@endforelse
       </tbody></table></div>
     </div>
     <div class="dashboard-panel"><div class="d-flex justify-content-between mb-3"><h5 class="fw-bold">Stock Overview</h5><a href="/pharmacist/inventory">View all</a></div>

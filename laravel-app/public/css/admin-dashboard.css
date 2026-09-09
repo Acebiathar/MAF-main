@@ -1,0 +1,149 @@
+.admin-workspace { font-family: inherit; font-size: 1rem; font-weight: 400; line-height: 1.5; }
+.admin-workspace .dashboard-nav { gap: .4rem; }
+.admin-workspace .dashboard-nav .nav-link { border: 0; border-radius: 8px; padding: .85rem 1rem; font-size: .9rem; }
+.admin-workspace .dashboard-nav-main { gap: .75rem; min-width: 0; }
+.admin-workspace .dashboard-nav-main i { font-size: 1.08rem; }
+.admin-workspace .dashboard-content { padding: 1.6rem 1.75rem; }
+.admin-workspace .dashboard-hero > small { display: none; }
+.admin-workspace .dashboard-hero::after { display: none; }
+.admin-workspace .admin-hero-icon { position: absolute; right: 1.4rem; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #dce8fa; color: #0d6efd; font-size: 1.7rem; }
+.admin-workspace .dashboard-stats-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem !important; margin: 0 0 1.3rem; }
+.admin-workspace .dashboard-stats-row > [class*='col-'] { padding: 0; min-width: 0; margin-top: 0; }
+.admin-workspace .dashboard-stat.admin-summary { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; min-height: 145px; padding: 1.1rem .55rem; border: 1px solid var(--admin-border) !important; border-radius: 10px !important; background: var(--admin-surface) !important; text-align: center; text-decoration: none; box-shadow: 0 3px 7px #30497805 !important; transition: transform .15s, box-shadow .15s; }
+.admin-workspace .admin-summary:hover { transform: translateY(-3px); box-shadow: 0 6px 14px #30497812 !important; }
+.admin-workspace .admin-summary-icon { color: var(--admin-color); font-size: 1.6rem; display: grid; place-items: center; background: var(--admin-tint); width: 43px; height: 43px; border-radius: 13px; }
+.admin-workspace .admin-summary-label { font-size: .76rem; color: #344c69; }
+.admin-workspace .admin-summary .dashboard-stat-value { font-size: 1.55rem; line-height: 1.3; color: var(--admin-color); }
+.admin-workspace .admin-tone-blue { --admin-color: #087cf0; --admin-surface: #f3faff; --admin-border: #c6e6ff; --admin-tint: #e0f1ff; }
+.admin-workspace .admin-tone-green { --admin-color: #009879; --admin-surface: #f1fcf9; --admin-border: #c7efe5; --admin-tint: #d8f7ed; }
+.admin-workspace .admin-tone-purple { --admin-color: #0d6efd; --admin-surface: #f7f4ff; --admin-border: #ded5ff; --admin-tint: #ece5ff; }
+.admin-workspace .admin-tone-orange { --admin-color: #f27d13; --admin-surface: #fffaf3; --admin-border: #ffe2b8; --admin-tint: #fff0d8; }
+.admin-workspace .admin-card { background: #fff; border: 1px solid #e6eaf5; border-radius: 12px; padding: 1.3rem; box-shadow: 0 3px 9px #26477705; margin-bottom: 1.2rem; min-width: 0; }
+.admin-workspace .admin-card-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem; margin-bottom: 1rem; }
+.admin-workspace .admin-card-heading h2 { font-size: 1rem; font-weight: 700; margin: 0; color: #182e51; }
+.admin-workspace .admin-card-heading > a { font-size: .78rem; text-decoration: none; }
+.admin-workspace .admin-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.admin-workspace .admin-muted, .admin-workspace .admin-empty { color: #7383a0; font-size: .8rem; }
+.admin-workspace .admin-empty { padding: 1.5rem .5rem; text-align: center; }
+.admin-workspace .admin-feed-row { display: flex; gap: .8rem; padding: .9rem 0; border-bottom: 1px solid #eef1f7; text-decoration: none; }
+.admin-workspace .admin-feed-row:last-child { border-bottom: 0; }
+.admin-workspace .admin-feed-row:hover strong { color: #0d6efd; }
+.admin-workspace .admin-feed-icon { display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: var(--admin-tint); color: var(--admin-color); font-size: 1.05rem; }
+.admin-workspace .admin-feed-copy { min-width: 0; }
+.admin-workspace .admin-feed-copy strong { display: block; font-size: .8rem; font-weight: 600; color: #273c5d; overflow-wrap: anywhere; }
+.admin-workspace .admin-feed-copy > span, .admin-workspace .admin-feed-copy time { display: block; font-size: .72rem; color: #7b8ba6; line-height: 1.6; overflow-wrap: anywhere; }
+.admin-workspace .admin-periods { display: flex; gap: .25rem; flex-wrap: wrap; }
+.admin-workspace .admin-periods button { background: transparent; color: #7685a0; font-size: .73rem; border: 0; padding: .5rem .65rem; border-radius: 7px; }
+.admin-workspace .admin-periods button.active { background: #e1edff; color: #0d6efd; font-weight: 600; }
+.admin-workspace .admin-periods button:hover { background: #eef4ff; }
+.admin-workspace .admin-chart-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+.admin-workspace .admin-chart-meta select { max-width: 160px; color: #5c6c86; font-size: .75rem; border-color: #e6eaf5; }
+.admin-workspace .admin-chart-wrap { width: 100%; margin-top: 1rem; }
+.admin-workspace #admin-overview-chart { display: block; width: 100%; height: auto; min-height: 180px; }
+.admin-workspace .admin-chart-readout { min-height: 1.3em; text-align: center; color: #6a7890; font-size: .75rem; margin: .4rem 0; }
+.admin-workspace .admin-chart-table { color: #64748b; font-size: .75rem; }
+.admin-workspace .admin-chart-table summary { cursor: pointer; }
+.admin-workspace .admin-chart-point:focus { outline: none; stroke: #0b5ed7; stroke-width: 3; }
+.admin-workspace .admin-health { background: linear-gradient(110deg, #edf4ff, #f7faff); border: 1px solid #dce8fa; border-radius: 12px; padding: 1rem 1.2rem; }
+.admin-workspace .admin-health summary { display: flex; align-items: center; gap: .8rem; list-style: none; cursor: pointer; }
+.admin-workspace .admin-health summary::-webkit-details-marker { display: none; }
+.admin-workspace .admin-health-icon { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: #e1edff; color: #0d6efd; font-size: 1.35rem; }
+.admin-workspace .admin-health strong { display: block; color: #10233c; font-size: .85rem; }
+.admin-workspace .admin-health small { display: block; color: #607089; font-size: .72rem; }
+.admin-workspace .admin-health-details { margin-top: 1rem; font-size: .8rem; color: #62728f; }
+.admin-workspace .admin-health-details a { display: inline-block; margin-right: 1rem; }
+.admin-workspace .admin-health[open] summary > .bi-chevron-right { transform: rotate(90deg); }
+.admin-workspace .admin-review summary { cursor: pointer; color: #0d6efd; font-size: .85rem; font-weight: 600; }
+.admin-workspace .admin-settings { max-width: 760px; }
+.admin-workspace .admin-settings .form-label { font-size: .85rem; }
+.admin-workspace .dashboard-table-card { border-radius: 12px !important; }
+.admin-workspace .dashboard-notice { width: 100% !important; }
+.admin-workspace a:focus-visible, .admin-workspace button:focus-visible, .admin-workspace summary:focus-visible { outline: 3px solid #8bb9ff; outline-offset: 3px; }
+@media (min-width: 1200px) {
+  .admin-workspace .dashboard-frame { grid-template-columns: 280px minmax(0, 1fr); }
+}
+@media (max-width: 1199.98px) {
+  .admin-workspace .admin-menu-toggle { color: #0b5ed7; border: 1px solid #b6d4fe; background: #edf4ff; }
+}
+@media (max-width: 767.98px) {
+  .admin-workspace .dashboard-content { padding: 1rem; }
+  .admin-workspace .admin-panels { grid-template-columns: 1fr; gap: 0; }
+  .admin-workspace .admin-hero-icon { right: 1rem; width: 38px; height: 38px; font-size: 1.4rem; }
+  .admin-workspace .admin-card { padding: 1rem; }
+}
+@media (max-width: 575.98px) {
+  .admin-workspace .dashboard-stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem !important; }
+  .admin-workspace .dashboard-stat.admin-summary { min-height: 130px; }
+  .admin-workspace .admin-chart-heading { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-workspace .admin-summary { transition: none; }
+  .admin-workspace .admin-summary:hover { transform: none; }
+}
+
+/* A shared type scale for every admin page, including record tables. */
+.admin-workspace :is(h1, h2, h3, h4, h5, h6, button, input, select, textarea, code, .table) {
+  font-family: inherit;
+}
+.admin-workspace :is(.dashboard-nav .nav-link, .dashboard-sidebar-logout, .dashboard-hero p,
+  .admin-summary-label, .admin-card-heading > a, .admin-muted, .admin-empty,
+  .admin-feed-copy strong, .admin-feed-copy > span, .admin-feed-copy time,
+  .admin-periods button, .admin-chart-meta select, .admin-chart-readout,
+  .admin-chart-table, .admin-health strong, .admin-health small, .admin-health-details,
+  .admin-review summary, .form-label, .form-control, .form-select, .btn,
+  .table, .table .small, .table small, .table code, .badge) {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.admin-workspace :is(.dashboard-hero h1, .dashboard-title-bar) {
+  font-size: 1.3rem;
+  font-weight: 700 !important;
+  line-height: 1.4;
+}
+.admin-workspace :is(.admin-card-heading h2, .dashboard-table-card h4, .admin-settings h2) {
+  font-size: 1rem;
+  font-weight: 700 !important;
+  line-height: 1.5;
+}
+.admin-workspace .admin-summary .dashboard-stat-value {
+  font-size: 1.9rem;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums;
+}
+.admin-workspace .table th {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  color: #536584;
+}
+.admin-workspace .table td { color: #344c69; }
+.admin-workspace .dashboard-table-card .text-uppercase {
+  text-transform: none !important;
+  letter-spacing: normal;
+}
+.admin-workspace .badge { white-space: normal; }
+.admin-workspace .admin-chart-meta select { max-width: 180px; }
+.admin-workspace #admin-overview-chart text { font-family: inherit; font-size: 12px; }
+
+/* Match the patient and pharmacy navigation and typography. */
+.admin-workspace .dashboard-nav .nav-link { font-size: .9rem; }
+.admin-workspace .dashboard-nav .nav-link:hover { transform: none; }
+.admin-workspace .dashboard-hero { padding-right: 5rem; }
+.admin-workspace .dashboard-hero h1 { font-size: 1.65rem; }
+.admin-workspace .admin-hero-icon { background: rgba(255, 255, 255, .16); color: #fff; }
+.admin-workspace .admin-summary { --admin-surface: #fff; --admin-border: #dce5f0; --admin-color: #0d6efd; --admin-tint: #e1edff; }
+.admin-workspace .admin-summary .dashboard-stat-value { color: #10233c; }
+.admin-workspace .admin-summary-label { color: #607089; }
+.admin-workspace .admin-feed-icon { --admin-color: #0d6efd; --admin-tint: #e1edff; }
+.admin-workspace .admin-feed-copy > span,
+.admin-workspace .admin-feed-copy time,
+.admin-workspace .admin-health small,
+.admin-workspace .admin-chart-readout,
+.admin-workspace .admin-periods button,
+.admin-workspace .admin-chart-meta select,
+.admin-workspace .badge { font-size: .875rem; }
+.admin-workspace :is(.admin-card-heading h2, .dashboard-table-card h4, .admin-settings h2) { font-size: 1.25rem; }
+@media (max-width: 767.98px) {
+  .admin-workspace .dashboard-title-bar { font-size: 1.15rem; }
+}

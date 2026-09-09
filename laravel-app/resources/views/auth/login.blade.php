@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-  <div class="col-md-5">
+  <div class="w-100" style="max-width: 480px;">
     <div class="card shadow border-0 rounded-4">
-      <div class="card-body p-5">
+      <div class="card-body p-4 p-sm-5">
         <div class="text-center mb-4">
             <h4 class="fw-bold mb-1">Welcome!</h4>
             <p class="text-muted small">Sign in to manage your medicine requests</p>
@@ -28,6 +28,7 @@
             </div>
           </div>
 
+          <div class="text-end mb-3"><a class="small" href="{{ route('password.request') }}">Forgot password?</a></div>
           <button class="btn btn-primary w-100 py-2 fw-bold shadow-sm" type="submit">
             Sign In
           </button>
@@ -43,7 +44,7 @@
     <div class="text-center mt-4">
         <p class="small text-muted">
             Logging in as a Pharmacist? <br> 
-            <span class="opacity-75">Your dashboard will load once your license is verified.</span>
+            <span class="opacity-75">We’ll open the dashboard for your account automatically.</span>
         </p>
     </div>
   </div>

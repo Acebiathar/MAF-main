@@ -10,65 +10,11 @@
 @section('title', 'Pharmacy Requests | Medfinder')
 @section('dashboard_search_placeholder', 'Search medicines or request context')
 @section('dashboard_notification_badge', (string) $pendingCount)
-@section('dashboard_title', 'Requests for ' . $pharmacy->name)
+@section('dashboard_title', 'Reservations for ' . $pharmacy->name)
 @section('dashboard_subtitle', 'Review incoming reservations, respond fast to patient needs, and keep fulfillment moving smoothly.')
 @section('dashboard_welcome_meta')
-  <a href="/pharmacist" class="btn btn-light text-primary rounded-pill px-4 fw-semibold">Back to Inventory</a>
+  <a href="/pharmacist" class="btn btn-light text-primary rounded-pill px-4 fw-semibold">Back to Dashboard</a>
 @endsection
-
-
-@section('dashboard_stats')
-  <div class="col-10 col-md-6 col-xxl-4">
-    <div class="dashboard-stat">
-      <div class="d-flex align-items-center  gap-2 mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">All Requests</div>
-          <div class="dashboard-stat-value">{{ $requestCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-journals"></i></div>
-      </div>
-      <div class="small text-muted">Total reservation activity for this pharmacy.</div>
-    </div>
-  </div>
-  <div class="col-9 col-md-4 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex align-items-center  gap-2 mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Pending</div>
-          <div class="dashboard-stat-value">{{ $pendingCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-hourglass-split"></i></div>
-      </div>
-      <div class="small text-muted">Still waiting for your decision.</div>
-    </div>
-  </div>
-  <div class="col-9 col-md-4 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Confirmed</div>
-          <div class="dashboard-stat-value">{{ $confirmedCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-check2-square"></i></div>
-      </div>
-      <div class="small text-muted">Requests approved for pickup.</div>
-    </div>
-  </div>
-  <div class="col-12 col-md-6 col-xxl-3">
-    <div class="dashboard-stat">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <div class="small text-muted text-uppercase">Declined</div>
-          <div class="dashboard-stat-value">{{ $declinedCount }}</div>
-        </div>
-        <div class="dashboard-stat-icon"><i class="bi bi-slash-circle"></i></div>
-      </div>
-      <div class="small text-muted">Requests closed without fulfillment.</div>
-    </div>
-  </div>
-@endsection
-
-
 
 @section('dashboard_main')
   <div class="dashboard-table-card p-3 p-lg-4" id="requestsTable">
@@ -112,20 +58,7 @@
             <td class="small text-wrap" style="max-width: 200px;">{{ $r->note ?? '-' }}</td>
             <td class="small text-muted">{{ date('M d, H:i', strtotime($r->created_at)) }}</td>
             <td class="text-end">
-              @if($r->status === 'pending')
-              <div class="d-flex gap-2 justify-content-end">
-                <form method="POST" action="/pharmacist/requests/{{ $r->id }}/confirm">
-                  @csrf
-                  <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" type="submit">Confirm</button>
-                </form>
-                <form method="POST" action="/pharmacist/requests/{{ $r->id }}/decline">
-                  @csrf
-                  <button class="btn btn-sm btn-outline-danger rounded-pill px-3" type="submit">Decline</button>
-                </form>
-              </div>
-              @else
-              <span class="text-muted small">Processed</span>
-              @endif
+              @include('pharmacy.reservation-actions', ['reservation' => $r])
             </td>
           </tr>
           @empty

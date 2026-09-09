@@ -3,8 +3,7 @@
 @section('dashboard_title', 'Subscription Payments')
 @section('dashboard_subtitle', 'Verify mobile-money receipts before activating pharmacy subscriptions.')
 @section('dashboard_sidebar')
-  <a href="/admin" class="nav-link">Admin Dashboard</a>
-  <a href="/admin/subscriptions" class="nav-link active">Subscription Payments</a>
+  @include('partials.admin-sidebar')
 @endsection
 @section('dashboard_main')
 <div class="dashboard-panel"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Pharmacy</th><th>Reference / phone</th><th>Amount</th><th>Period</th><th>Status</th><th>Review</th></tr></thead><tbody>

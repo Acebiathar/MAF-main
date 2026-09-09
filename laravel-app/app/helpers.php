@@ -200,16 +200,13 @@ if (!function_exists('redirectToDashboard')) {
      * @return \Illuminate\Http\RedirectResponse
      */
     function redirectToDashboard($user) {
-    if (!$user) return redirect('/login');
+        if (!$user) return redirect('/login');
 
-    if ($user->role === 'admin') {
-        return redirect('/admin/dashboard');
+        return match (strtolower(trim($user->role))) {
+            'patient' => redirect('/requests'),
+            'pharmacist', 'pharmacy' => redirect('/pharmacist'),
+            'admin' => redirect('/admin'),
+            default => abort(403, 'This account does not have a supported dashboard role.'),
+        };
     }
-
-    if (in_array($user->role, ['pharmacist', 'pharmacy'], true)) {
-        return redirect('/pharmacist'); // Matches Route::get('/pharmacist')
-    }
-
-    return redirect('/requests');
-}
 }
