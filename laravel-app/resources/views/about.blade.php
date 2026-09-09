@@ -261,11 +261,11 @@
 
 @php
 $teamMembers = [
-['name' => 'Amina N.', 'role' => 'Founder', 'image' => 'images/team-1.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
-['name' => 'Brian K.', 'role' => 'Lead Developer', 'image' => 'images/team-2.png', 'bio' => 'Builds and improves the core platform experience.'],
-['name' => 'Clara S.', 'role' => 'Pharmacist Advisor', 'image' => 'images/team 3.jpeg', 'bio' => 'Supports medicine information and pharmacy workflows.'],
-['name' => 'David O.', 'role' => 'Project Coordinator', 'image' => 'images/team-1.jpeg', 'bio' => 'Keeps the team aligned and project delivery on track.'],
-['name' => 'Esther M.', 'role' => 'UI/UX Designer', 'image' => 'images/team-2.png', 'bio' => 'Designs simple and easy-to-use patient journeys.'],
+['name' => 'Abiathar s.', 'role' => 'Project Manager', 'image' => 'images/team 4.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
+['name' => 'Lamulah N.', 'role' => 'UI/UX Designer', 'image' => 'images/team-2.png', 'bio' => 'Builds and improves the core platform experience.'],
+['name' => 'Stellah N.', 'role' => 'lead developer ', 'image' => 'images/team-1.jpeg', 'bio' => 'Supports medicine information and pharmacy workflows.'],
+['name' => 'Ruth T .', 'role' => 'Project Coordinator', 'image' => 'images/team 3.jpeg', 'bio' => 'Keeps the team aligned and project delivery on track.'],
+['name' => 'Patricia T.', 'role' => 'Project advisor', 'image' => 'images/team 5.jpeg', 'bio' => 'Designs simple and easy-to-use patient journeys.'],
 ['name' => 'Frank P.', 'role' => 'Support Lead', 'image' => 'images/team 3.jpeg', 'bio' => 'Helps patients and pharmacies use the platform smoothly.'],
 ];
 @endphp
