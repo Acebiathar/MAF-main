@@ -376,6 +376,24 @@
             opacity: 1;
         }
     }
+
+    #heroCarousel.medicine-search-mode .carousel-item {
+        min-height: 0;
+        height: auto;
+        padding: 0;
+    }
+    #heroCarousel.medicine-search-mode .carousel-caption {
+        position: relative;
+        width: 100%;
+        padding: 1rem 0;
+    }
+    #heroCarousel.medicine-search-mode .col-lg-8 { width: 100%; }
+    .medicine-results-map { min-height: 500px; }
+    .medicine-results-list { max-height: 500px; overflow-y: auto; }
+    @media (max-width: 767.98px) {
+        .medicine-results-map { min-height: 260px; }
+        .medicine-results-list { max-height: none; }
+    }
 </style>
 @endsection
 
@@ -390,17 +408,19 @@
         </div>
     </div>
 
-    <div id="heroCarousel" class="carousel slide hero-carousel">
+    <div id="heroCarousel" class="carousel slide hero-carousel {{ $searchQuery !== '' ? 'medicine-search-mode' : '' }}">
         <div class="carousel-inner">
             <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1600');">
                 <div class="carousel-caption">
                     <div class="container">
                         <div class="row align-items-center">
                             <div class="col-lg-8">
+                                @if($searchQuery === '')
                                 <span class="badge bg-primary px-3 py-2 rounded-pill text-uppercase mb-3 tracking-wider fw-semibold" style="font-size: 0.75rem;">Verified Stocks Only</span>
                                 <h1 class="display-4 fw-bold text-white mb-3" style="letter-spacing: -0.02em; line-height: 1.2;">Find Prescriptions Near You, Instantly.</h1>
                                 <p class="lead text-white-50 mb-4" style="max-width: 600px;">Unified platform mapping local medical stock configurations directly to real-time consumer and emergency needs across Uganda.</p>
 
+                                @endif
                                 <div class="search-card-wrapper position-relative overflow-hidden p-4 p-md-4">
                                     <div class="position-absolute" style="width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 180, 170, 0.25) 0%, rgba(0,0,0,0) 70%); top: -50px; right: -50px; pointer-events: none;"></div>
 
@@ -411,7 +431,7 @@
                                             </div>
                                             <div>
                                                 <h3 class="text-white fw-bold h5 mb-0" style="letter-spacing: -0.01em;">Search For Your Medicine</h3>
-                                                <p class="text-white-50 mb-0" style="font-size: 0.8rem;">Type medication criteria name and press Enter to accumulate items into criteria tag matrices.</p>
+                                                <p class="text-white-50 mb-0" style="font-size: 0.8rem;">Enter a medicine name to check availability at nearby pharmacies.</p>
                                             </div>
                                         </div>
 
@@ -452,6 +472,7 @@
         </div>
     </div>
 
+    @if($searchQuery === '')
     <section class="container" style="margin-top: -30px; position: relative; z-index: 10;">
         <div class="row g-4 justify-content-center">
             <div class="col-6 col-md-4">
@@ -474,33 +495,36 @@
             </div>
         </div>
     </section>
+    @endif
 
     @if($searchQuery !== '' && $results->isEmpty())
-    <div class="container mt-5">
+    <div id="medicine-results" class="container pt-3">
         <div class="alert alert-warning text-center shadow-sm border-0 rounded-4 p-4">
             <i class="bi bi-exclamation-triangle-fill me-2 fs-5 text-warning align-middle"></i>
             <span class="fw-medium">No medicines matching "{{ $searchQuery }}" were found at approved pharmacies. Try another name or check the spelling.</span>
+            <div class="mt-3"><a href="{{ route('index') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Clear results</a></div>
         </div>
     </div>
     @endif
 
     {{-- INTERACTIVE LIVE DASHBOARD: INTEGRATED MAP AND LIST SPLIT VIEW --}}
     @if(isset($results) && $results->isNotEmpty())
-    <div class="container py-5">
+    <div id="medicine-results" class="container pt-3 pb-4">
         <div class="glass-card overflow-hidden">
             <div class="p-4 bg-white border-bottom border-light d-flex flex-column flex-sm-row gap-3 align-items-sm-center justify-content-between">
                 <h3 class="fw-bold h5 mb-0 text-dark"><i class="bi bi-map-fill me-2 text-primary"></i> Live Availability Records Map</h3>
-                <div>
+                <div class="d-flex flex-wrap align-items-center gap-2">
                     <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-medium" style="font-size: 0.8rem;">Prioritized by Location Proximity</span>
+                    <a href="{{ route('index') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 text-nowrap" aria-label="Clear search results and reset the search box">Clear results</a>
                 </div>
             </div>
 
             <div class="row g-0">
-                <div class="col-lg-7 col-md-6 position-relative" style="min-height: 500px;">
+                <div class="col-lg-7 col-md-6 position-relative medicine-results-map order-2 order-md-1">
                     <div id="map" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10;"></div>
                 </div>
 
-                <div class="col-lg-5 col-md-6 bg-white border-start" style="max-height: 500px; overflow-y: auto;">
+                <div class="col-lg-5 col-md-6 bg-white border-start medicine-results-list order-1 order-md-2">
                     <div class="list-group list-group-flush">
                         @foreach ($results as $pharmacy)
                         @foreach ($pharmacy->medicines as $medicine)
