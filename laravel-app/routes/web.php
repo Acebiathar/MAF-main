@@ -37,12 +37,12 @@ if (!function_exists('flash')) {
 if (!function_exists('redirectToDashboard')) {
     function redirectToDashboard(object $user)
     {
-        $role = strtolower($user->role);
+        $role = strtolower(trim($user->role));
         if ($role === 'admin') {
             return redirect('/admin');
         }
 
-        if ($role === 'pharmacist') {
+        if (in_array($role, ['pharmacist', 'pharmacy'], true)) {
             return redirect('/pharmacist');
         }
 
@@ -145,6 +145,16 @@ Route::get('/', function (Request $request) {
         }
     }
 
+    $searchUser = currentUser();
+    if ($searchQuery !== '' && $searchUser && strtolower($searchUser->role) === 'patient') {
+        DB::table('search_history')->insert([
+            'user_id' => $searchUser->id,
+            'query' => $searchQuery,
+            'result_count' => $results->sum(fn ($pharmacy) => $pharmacy->medicines->count()),
+            'searched_at' => now(),
+        ]);
+    }
+
     return renderView('index', [
         'searchQuery' => $searchQuery,
         'results'     => $results,
@@ -186,30 +196,22 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
     }
 
     if ($request->isMethod('post')) {
+        $request->validate(['email' => 'required|string|email|max:255', 'password' => 'required|string']);
         $email = strtolower(trim($request->input('email', '')));
         $password = $request->input('password', '');
 
-        $user = DB::table('users')->where('email', $email)->first();
+        $user = DB::table('users')->whereRaw('LOWER(TRIM(email)) = ?', [$email])->first();
 
         if ($user && Hash::check($password, $user->password)) {
+            $request->session()->regenerate();
             session(['user_id' => $user->id]);
 
             flash('success', "Hi, " . $user->name . "! Welcome back.");
 
-            // Explicit direct check to prevent silent redirection failures
-            if (in_array($user->role, ['pharmacist', 'pharmacy'], true)) {
-                return redirect('/pharmacist');
-            }
-
-            if ($user->role === 'admin') {
-                return redirect('/admin/dashboard');
-            }
-
-            return redirect('/requests');
+            return redirectToDashboard($user);
         }
 
-        flash('danger', 'Invalid credentials.');
-        return redirect('/login');
+        return redirect('/login')->withErrors(['email' => 'The email or password is incorrect. If registration was unsuccessful, please create your account first.'])->withInput($request->only('email'));
     }
 })->name('login');
 
@@ -219,6 +221,17 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
     }
 
     if ($request->isMethod('post')) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:patient,pharmacist',
+            'pharmacy_name' => 'nullable|required_if:role,pharmacist|string|max:255',
+            'license_number' => 'nullable|required_if:role,pharmacist|string|max:255',
+            'location' => 'nullable|required_if:role,pharmacist|string|max:255',
+            'phone' => 'nullable|required_if:role,pharmacist|string|max:30',
+        ]);
+
         $name = trim((string) $request->input('name', ''));
         $email = strtolower(trim($request->input('email', '')));
         $password = (string) $request->input('password', '');
@@ -228,34 +241,9 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
         $location = trim((string) $request->input('location', ''));
         $phoneNumber = trim((string) $request->input('phone', ''));
 
-        if ($name === '' || $email === '' || $password === '') {
-            flash('danger', 'Name, email, and password are required.');
-            return redirect('/register')->withInput();
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            flash('danger', 'Please enter a valid email address.');
-            return redirect('/register')->withInput();
-        }
-
-        if (strlen($password) < 8) {
-            flash('danger', 'Password must be at least 8 characters long.');
-            return redirect('/register')->withInput();
-        }
-
-        if (!in_array($role, ['patient', 'pharmacist'], true)) {
-            flash('danger', 'Please choose a valid account type.');
-            return redirect('/register')->withInput();
-        }
-
-        if ($role === 'pharmacist' && ($pharmacyName === '' || $licenseNumber === '' || $location === '' || $phoneNumber === '')) {
-            flash('danger', 'All pharmacy verification details are required for pharmacist accounts.');
-            return redirect('/register')->withInput();
-        }
-
-        if (DB::table('users')->where('email', $email)->exists()) {
-            flash('warning', 'Email already registered.');
-            return redirect('/register')->withInput();
+        if (DB::table('users')->whereRaw('LOWER(TRIM(email)) = ?', [$email])->exists()) {
+            return redirect('/register')->withErrors(['email' => 'This email is already registered. Please log in.'])
+                ->withInput($request->except('password', 'password_confirmation'));
         }
 
         $user = null;
@@ -274,7 +262,6 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
                 DB::table('pharmacies')->insert([
                     'name' => $pharmacyName,
                     'location' => $location,
-                    'address' => $location,
                     'phone_number' => $phoneNumber, // Set to phone_number matching database structure
                     'license_number' => $licenseNumber,
                     'status' => 'pending',
@@ -287,7 +274,8 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
             $user = DB::table('users')->where('id', $userId)->first();
         });
 
-        // Store active session immediately after creation
+        // Sign in only after the account transaction succeeds.
+        $request->session()->regenerate();
         session(['user_id' => $user->id]);
 
         flash('success', $role === 'pharmacist'
@@ -381,27 +369,33 @@ Route::post('/pharmacist/requests/{reservation}/{action}', [\App\Http\Controller
 
 // --- PATIENT REQUESTS & RESERVATIONS ---
 
-Route::post('/reserve/{item}', function (int $item) {
+Route::post('/reserve/{item}', function (Request $request, int $item) {
     $user = currentUser();
-    if (!$user || $user->role !== 'patient') return redirect('/login');
+    if (!$user) return redirect('/login');
+    abort_unless(strtolower($user->role) === 'patient', 403);
+    $data = $request->validate(['note' => 'nullable|string|max:2000']);
 
-    $itemRow = DB::table('pharmacy_medicine')->where('id', $item)->first();
-    if (!$itemRow) return redirect('/');
+    DB::transaction(function () use ($user, $item, $data) {
+        // Lock this patient's row so repeated submissions cannot create duplicate pending requests.
+        DB::table('users')->where('id', $user->id)->lockForUpdate()->first();
+        $itemRow = DB::table('pharmacy_medicine')->where('id', $item)->lockForUpdate()->first();
+        if (!$itemRow || $itemRow->quantity <= 0 || !DB::table('pharmacies')->where('id', $itemRow->pharmacy_id)->where('status', 'approved')->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['reservation' => 'This medicine is currently unavailable. Please search for another pharmacy.']);
+        }
+        $existing = DB::table('reservations')->where('user_id', $user->id)->where('pharmacy_id', $itemRow->pharmacy_id)
+            ->where('medicine_id', $itemRow->medicine_id)->where('status', 'pending')->exists();
+        if ($existing) return;
+        DB::table('reservations')->insert([
+            'user_id' => $user->id, 'pharmacy_id' => $itemRow->pharmacy_id, 'medicine_id' => $itemRow->medicine_id,
+            'status' => 'pending', 'note' => $data['note'] ?? null, 'created_at' => now(), 'updated_at' => now(),
+        ]);
+    });
 
-    DB::table('reservations')->insert([
-        'user_id' => $user->id,
-        'pharmacy_id' => $itemRow->pharmacy_id,
-        'medicine_id' => $itemRow->medicine_id,
-        'status' => 'pending',
-        'created_at' => now(),
-        'note' => request('note', ''),
-    ]);
-
-    flash('success', 'Reservation sent.');
-    return redirect('/');
+    flash('success', 'Your reservation is pending pharmacy approval. You can track it here.');
+    return redirect('/requests?section=reservations');
 });
 
-Route::get('/requests', function () {
+Route::get('/requests', function (Request $request) {
     $user = currentUser();
 
     if (!$user) {
@@ -420,7 +414,25 @@ Route::get('/requests', function () {
         ->orderByDesc('r.created_at')
         ->get();
 
-    return renderView('patient_requests', compact('reservations'));
+    $section = $request->query('section', 'home');
+    if ($section === 'requests') $section = 'reservations';
+    abort_unless(in_array($section, ['home', 'reservations', 'notifications', 'history'], true), 404);
+    $searchHistory = $section === 'history'
+        ? DB::table('search_history')->where('user_id', $user->id)->orderByDesc('searched_at')->orderByDesc('id')->paginate(15)->withQueryString()
+        : null;
+
+    $recentSearches = DB::table('search_history')->where('user_id', $user->id)->orderByDesc('searched_at')->orderByDesc('id')->limit(5)->get();
+    $searchCount = DB::table('search_history')->where('user_id', $user->id)->count();
+    return renderView('patient_requests', compact('reservations', 'section', 'searchHistory', 'recentSearches', 'searchCount'));
+});
+
+Route::delete('/requests/search-history', function () {
+    $user = currentUser();
+    if (!$user) return redirect('/login');
+    abort_unless(strtolower($user->role) === 'patient', 403);
+    DB::table('search_history')->where('user_id', $user->id)->delete();
+    flash('success', 'Your search history has been cleared.');
+    return redirect('/requests?section=history');
 });
 
 // --- ADMIN DASHBOARD ---

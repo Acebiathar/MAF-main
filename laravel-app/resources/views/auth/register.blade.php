@@ -12,7 +12,10 @@
           <p class="text-muted small mb-0">Join our network of patients and pharmacies in Uganda</p>
         </div>
 
-        <form method="POST" action="/register" novalidate>
+        @if($errors->any())
+          <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+        @endif
+        <form method="POST" action="/register">
           @csrf
           <div class="row g-3">
             <div class="col-md-6">
@@ -31,19 +34,26 @@
                 class="form-control bg-light border-0"
                 type="email"
                 name="email"
+                autocomplete="email"
                 value="{{ old('email') }}"
                 placeholder="example@mail.com"
                 required>
             </div>
 
             <div class="col-md-6">
-              <label class="form-label small fw-bold text-secondary">Password</label>
+              <label for="register-password" class="form-label small fw-bold text-secondary">Password</label>
+              <div class="input-group">
               <input
+                id="register-password"
                 class="form-control bg-light border-0"
                 type="password"
                 name="password"
+                minlength="8"
+                autocomplete="new-password"
                 placeholder="Minimum 8 characters"
                 required>
+                <button type="button" class="btn btn-light text-secondary px-3" data-password-toggle="register-password" aria-controls="register-password" aria-label="Show password" aria-pressed="false" title="Show password"><i class="bi bi-eye" aria-hidden="true"></i></button>
+              </div>
             </div>
 
             <div class="col-md-6">
@@ -126,6 +136,8 @@
     </div>
   </div>
 </div>
+
+@endsection
 
 @section('scripts')
 <script>

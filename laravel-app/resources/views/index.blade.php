@@ -416,6 +416,9 @@
                                         </div>
 
 
+                                        @if($errors->any())
+                                            <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+                                        @endif
                                         <form id="searchForm" action="{{ url('/') }}" method="GET" class="m-0">
                                             <div class="input-group bg-white rounded-4 p-2 border border-white border-2 shadow">
                                                 <span class="input-group-text border-0 bg-transparent ps-3 pe-2">
@@ -509,40 +512,34 @@
                             data-price="{{ number_format($medicine->pivot->price ?? 0, 0) }} UGX"
                             data-quantity="{{ $medicine->pivot->quantity ?? 0 }}">
 
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <div>
-                                    <span class="d-block fw-bold text-dark h6 mb-0 text-capitalize">{{ $medicine->name }}</span>
-                                    <small class="text-muted" style="font-size: 0.75rem;">ID: {{ 1000 + $medicine->id }}</small>
-                                </div>
-                                <span class="fw-bold text-dark text-nowrap">{{ number_format($medicine->pivot->price ?? 0, 0) }} <small class="text-muted" style="font-size:0.7rem;">UGX</small></span>
-                            </div>
-
-                            <div class="my-2">
-                                <div class="fw-bold text-primary mb-0.5" style="font-size: 0.9rem;">
-                                    <i class="bi bi-patch-check-fill me-1 text-info"></i>{{ $pharmacy->name }}
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill text-xs ms-1" style="font-size: 0.65rem;">
-                                        {{ $pharmacy->available_items_count ?? 1 }} Matches
-                                    </span>
-                                </div>
-                                <small class="text-muted d-block text-truncate"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ $pharmacy->location ?? $pharmacy->pharmacy_location }}</small>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-light">
-                                <div>
-                                    @if(($medicine->pivot->quantity ?? 0) == 0)
-                                    <span class="badge bg-danger bg-opacity-10 text-danger px-2.5 py-1.5 rounded-pill fw-semibold" style="font-size: 0.75rem;">Out of Stock</span>
-                                    @elseif(($medicine->pivot->quantity ?? 0) <= 5)
-                                        <span class="badge bg-warning bg-opacity-10 text-warning px-2.5 py-1.5 rounded-pill fw-semibold" style="font-size: 0.75rem; color: #b58105 !important;"><i class="bi bi-exclamation-triangle"></i> Limited ({{ $medicine->pivot->quantity }})</span>
+                            <div class="medicine-result-summary">
+                                <h4 class="h6 fw-bold text-dark mb-3">{{ $medicine->name }}</h4>
+                                <dl class="row g-2 small mb-0">
+                                    <dt class="col-4 text-muted fw-normal">Pharmacy</dt>
+                                    <dd class="col-8 fw-semibold text-primary mb-0">{{ $pharmacy->name }}</dd>
+                                    <dt class="col-4 text-muted fw-normal">Location</dt>
+                                    <dd class="col-8 mb-0">{{ $pharmacy->location ?? $pharmacy->pharmacy_location ?? 'Location not provided' }}</dd>
+                                    <dt class="col-4 text-muted fw-normal">Price</dt>
+                                    <dd class="col-8 fw-semibold mb-0">UGX {{ number_format($medicine->pivot->price ?? 0, 0) }}</dd>
+                                    <dt class="col-4 text-muted fw-normal">Quantity</dt>
+                                    <dd class="col-8 mb-0">{{ number_format($medicine->pivot->quantity ?? 0) }} units</dd>
+                                    <dt class="col-4 text-muted fw-normal">Availability</dt>
+                                    <dd class="col-8 mb-0">
+                                        @if(($medicine->pivot->quantity ?? 0) > 0)
+                                            <span class="badge bg-success-subtle text-success rounded-pill"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>In Stock</span>
                                         @else
-                                        <span class="badge-stock" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;"><i class="bi bi-check2-circle"></i> In Stock ({{ $medicine->pivot->quantity }})</span>
+                                            <span class="badge bg-danger-subtle text-danger rounded-pill"><i class="bi bi-x-circle me-1" aria-hidden="true"></i>Out of Stock</span>
                                         @endif
-                                </div>
+                                    </dd>
+                                </dl>
+                            </div>
 
+                            <div class="d-flex justify-content-end align-items-center mt-3 pt-3 border-top border-light">
                                 <div>
                                     @if(isset($currentUser) && $currentUser->role === 'patient')
                                     <form action="{{ url('/reserve/' . ($medicine->pivot->id ?? $medicine->id)) }}" method="POST" class="m-0">
                                         @csrf
-                                        <button type="submit" class="btn btn-xs btn-primary rounded-pill px-3 py-1 shadow-sm fw-bold transition" style="font-size: 0.75rem;">
+                                        <button type="submit" class="btn btn-xs btn-primary rounded-pill px-3 py-1 shadow-sm fw-bold transition" style="font-size: 0.75rem;" @disabled(($medicine->pivot->quantity ?? 0) <= 0)>
                                             <i class="bi bi-shield-lock-fill me-1"></i>Reserve
                                         </button>
                                     </form>
@@ -953,26 +950,13 @@
             rows.forEach(row => {
                 const lat = parseFloat(row.getAttribute('data-lat'));
                 const lng = parseFloat(row.getAttribute('data-lng'));
-                const pharmacyName = row.getAttribute('data-pharmacy');
-                const medicineName = row.getAttribute('data-medicine');
-                const price = row.getAttribute('data-price');
-                const qty = parseInt(row.getAttribute('data-quantity'));
-
                 if (!isNaN(lat) && !isNaN(lng)) {
                     // Create Pin Marker Instance
                     const marker = L.marker([lat, lng]).addTo(map);
 
-                    // Design matching pop-ups matching theme requirements
-                    marker.bindPopup(`
-                        <div style="font-family: 'Inter', sans-serif; padding: 2px;">
-                            <strong style="color: #0b5ed7; font-size: 0.95rem; d-block; margin-bottom: 4px;">${pharmacyName}</strong><br>
-                            <span style="font-weight: 600; color: #0f172a;">Medicine:</span> ${medicineName}<br>
-                            <span style="font-weight: 600; color: #0f172a;">Price:</span> ${price}<br>
-                            <span class="badge" style="background-color: ${qty > 0 ? '#d1e7dd' : '#f8d7da'}; color: ${qty > 0 ? '#0f5132' : '#842029'}; padding: 3px 6px; border-radius: 4px; display:inline-block; margin-top:5px; font-size:0.75rem;">
-                                ${qty > 0 ? 'Units Available: ' + qty : 'Out of Stock'}
-                            </span>
-                        </div>
-                    `);
+                    // Reuse the escaped listing details so the map shows the same information.
+                    const popup = row.querySelector('.medicine-result-summary').cloneNode(true);
+                    marker.bindPopup(popup, { minWidth: 260 });
 
                     markers.push({
                         marker: marker,

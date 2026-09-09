@@ -240,6 +240,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[data-password-toggle]').forEach(button => {
+        const input = document.getElementById(button.dataset.passwordToggle);
+        if (!input) return;
+        button.addEventListener('click', () => {
+          const reveal = input.type === 'password';
+          input.type = reveal ? 'text' : 'password';
+          button.setAttribute('aria-pressed', String(reveal));
+          button.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
+          button.title = reveal ? 'Hide password' : 'Show password';
+          button.querySelector('i').className = reveal ? 'bi bi-eye-slash' : 'bi bi-eye';
+        });
+      });
+
       const authButtons = document.querySelectorAll('.auth-buttons .btn');
       authButtons.forEach(button => {
         button.addEventListener('mouseenter', () => button.classList.add('btn-hover'));

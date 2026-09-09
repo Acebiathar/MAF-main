@@ -13,87 +13,15 @@
 @section('dashboard_title', 'Patient Dashboard')
 @section('dashboard_subtitle', 'Track your medicine requests, check fulfillment progress, and jump back into search without leaving your workspace.')
 @section('dashboard_welcome_meta')
-  <div class="badge bg-light text-primary px-3 py-2 rounded-pill">Requests this week: {{ $reservationCount }}</div>
+  <div class="badge bg-light text-primary px-3 py-2 rounded-pill">Reservations: {{ $reservationCount }} ? Searches: {{ $searchCount }}</div>
 @endsection
 
 @section('dashboard_sidebar')
-  <!-- PATIENT HOME -->
-  <a href="#" class="nav-link active" onclick="showSection('home'); return false;">
-    <span class="dashboard-nav-main">
-      <i class="bi bi-speedometer2"></i>
-      <span>
-        <div class="fw-semibold">Patient Home</div>
-        <small>Overview</small>
-      </span>
-    </span>
-    <span class="badge text-bg-light">{{ $reservationCount }}</span>
-  </a>
-
-  <!-- SEARCH MEDICINE -->
-  <a href="/" class="nav-link">
-    <span class="dashboard-nav-main">
-      <i class="bi bi-search"></i>
-      <span>
-        <div class="fw-semibold">Search Medicine</div>
-        <small>Find nearby</small>
-      </span>
-    </span>
-  </a>
-
-  <!-- MY REQUESTS -->
-  <a href="#" class="nav-link" onclick="showSection('requests'); return false;">
-    <span class="dashboard-nav-main">
-      <i class="bi bi-journal-check"></i>
-      <span>
-        <div class="fw-semibold">My Requests</div>
-        <small>Request history</small>
-      </span>
-    </span>
-    <span class="badge text-bg-light">{{ $reservationCount }}</span>
-  </a>
-
-  <!-- NOTIFICATIONS -->
-  <a href="#" class="nav-link" onclick="showSection('notifications'); return false;">
-    <span class="dashboard-nav-main">
-      <i class="bi bi-bell-fill"></i>
-      <span>
-        <div class="fw-semibold">Notifications</div>
-        <small>Updates & alerts</small>
-      </span>
-    </span>
-    <span class="badge bg-danger text-white">{{ $pendingCount }}</span>
-  </a>
-
-  <!-- NOTIFICATIONS SECTION IN SIDEBAR -->
-  <div id="sidebar-notifications" class="mt-4 pt-3 border-top border-light border-opacity-10">
-    <div class="small text-white fw-semibold mb-2">Active Alerts</div>
-    <div class="dashboard-notice-list">
-      @if ($pendingCount > 0)
-      <div class="dashboard-notice-item small" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.2);">
-        <h6 class="fw-semibold mb-1" style="color: #ffc107; font-size: 0.85rem;">Pending Reviews</h6>
-        <p class="mb-0" style="color: #e9f2ff; font-size: 0.8rem;">{{ $pendingCount }} request{{ $pendingCount === 1 ? '' : 's' }} awaiting confirmation</p>
-      </div>
-      @endif
-
-      @if ($confirmedCount > 0)
-      <div class="dashboard-notice-item small mt-2" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.2);">
-        <h6 class="fw-semibold mb-1" style="color: #28a745; font-size: 0.85rem;">Ready for Pickup</h6>
-        <p class="mb-0" style="color: #e9f2ff; font-size: 0.8rem;">{{ $confirmedCount }} confirmed and ready</p>
-      </div>
-      @endif
-
-      @if ($declinedCount > 0)
-      <div class="dashboard-notice-item small mt-2" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2);">
-        <h6 class="fw-semibold mb-1" style="color: #dc3545; font-size: 0.85rem;">Need Attention</h6>
-        <p class="mb-0" style="color: #e9f2ff; font-size: 0.8rem;">{{ $declinedCount }} unavailable - search alternatives</p>
-      </div>
-      @endif
-    </div>
-  </div>
+  @include('partials.patient-sidebar')
 @endsection
 
-
 @section('dashboard_main')
+  @if($section === 'home')
   <!-- PATIENT HOME SECTION -->
   <div id="section-home" class="section-content">
     <!-- Stats Cards -->
@@ -149,13 +77,16 @@
     </div>
   </div>
 
+    @include('partials.patient-activity')
+  @endif
+  @if($section === 'reservations')
   <!-- MY REQUESTS SECTION (CLEAN SINGLE INSTANCE) -->
-  <div id="section-requests" class="section-content" style="display: none;">
+  <div id="section-requests" class="section-content">
     <div class="dashboard-table-card p-3 p-lg-4">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
         <div>
-          <div class="text-uppercase small text-muted fw-semibold">Your Requests</div>
-          <h4 class="fw-bold mb-0">All Medicine Requests</h4>
+          <div class="text-uppercase small text-muted fw-semibold">Reservations</div>
+          <h4 class="fw-bold mb-0">Your Reservations</h4>
         </div>
         <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">{{ $reservationCount }} requests</span>
       </div>
@@ -213,8 +144,10 @@
     </div>
   </div>
 
+  @endif
+  @if($section === 'notifications')
   <!-- NOTIFICATIONS SECTION -->
-  <div id="section-notifications" class="section-content" style="display: none;">
+  <div id="section-notifications" class="section-content">
     <div class="dashboard-notice mb-4">
       <div class="text-uppercase small text-muted fw-semibold mb-2">Notifications and Updates</div>
       <h5 class="fw-bold mb-3">Request Status Alerts</h5>
@@ -304,11 +237,17 @@
       </div>
     </div>
   </div>
+  @endif
+  @if($section === 'history')
+    @include('partials.patient-search-history')
+  @endif
 @endsection
 
 @section('dashboard_notifications')
+  <a class="d-block text-decoration-none p-2" href="/requests?section=notifications">View request updates <span class="badge text-bg-primary ms-1">{{ $pendingCount }}</span></a>
 @endsection
 
+@section('styles')
 <style>
   /* Sidebar notification styling */
   .dashboard-notice-list .dashboard-notice-item {
@@ -382,39 +321,4 @@
   }
 </style>
 
-<script>
-  function showSection(section) {
-    // Hide all sections completely
-    document.querySelectorAll('.section-content').forEach(el => {
-      el.style.display = 'none';
-    });
-
-    // Show selected section
-    const sectionEl = document.getElementById(`section-${section}`);
-    if (sectionEl) {
-      sectionEl.style.display = 'block';
-    }
-
-    // Update active nav link
-    document.querySelectorAll('.dashboard-sidebar .nav-link').forEach(link => {
-      link.classList.remove('active');
-    });
-    
-    if (event && event.target) {
-      const activeLink = event.target.closest('.nav-link');
-      if (activeLink) activeLink.classList.add('active');
-    }
-  }
-
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    // Show home section by default
-    showSection('home');
-    
-    // Set Patient Home as active explicitly
-    const homeLink = document.querySelector('.dashboard-sidebar .nav-link:first-child');
-    if (homeLink) {
-      homeLink.classList.add('active');
-    }
-  });
-</script>
+@endsection

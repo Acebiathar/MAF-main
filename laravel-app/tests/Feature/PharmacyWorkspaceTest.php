@@ -32,6 +32,7 @@ class PharmacyWorkspaceTest extends TestCase
             $t->id(); $t->integer('pharmacy_id'); $t->integer('medicine_id'); $t->integer('user_id'); $t->string('status'); $t->text('note')->nullable(); $t->timestamps();
         });
         (require database_path('migrations/2026_09_08_000001_create_subscription_payments_table.php'))->up();
+        (require database_path('migrations/2026_09_08_000002_create_search_history_table.php'))->up();
         foreach ([1 => 'pharmacist', 2 => 'pharmacist', 3 => 'patient', 4 => 'admin'] as $id => $role) {
             DB::table('users')->insert(['id' => $id, 'name' => 'User '.$id, 'email' => $id.'@example.com', 'password' => Hash::make('password123'), 'role' => $role]);
         }
@@ -51,6 +52,115 @@ class PharmacyWorkspaceTest extends TestCase
         $this->assertStringContainsString('dashboard-notification-menu', $html);
         $this->assertSame(1, substr_count($html, 'Review and approve patient requests.'));
         $this->assertLessThan(strpos($html, 'id="profileDropdown"'), strpos($html, 'Review and approve patient requests.'));
+    }
+
+    public function test_patient_can_register_log_out_and_log_back_into_patient_dashboard(): void
+    {
+        $credentials = ['name' => 'New Patient', 'email' => 'New.Patient@Example.com', 'password' => 'Patient-pass123', 'role' => 'patient'];
+        $this->from('/register')->post('/register', $credentials)->assertRedirect('/requests');
+        $user = DB::table('users')->where('email', 'new.patient@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertSame('patient', $user->role);
+        $this->assertTrue(Hash::check($credentials['password'], $user->password));
+        $this->get('/requests')->assertOk()->assertSee('Patient Dashboard');
+        $this->get('/logout')->assertRedirect('/')->assertSessionMissing('user_id');
+        $this->post('/login', ['email' => ' NEW.PATIENT@EXAMPLE.COM ', 'password' => $credentials['password']])
+            ->assertRedirect('/requests')->assertSessionHas('user_id', $user->id);
+        $this->get('/requests')->assertOk()->assertSee('New Patient')->assertSee('Patient Dashboard');
+    }
+
+    public function test_patient_search_history_is_saved_private_and_can_be_revisited_and_cleared(): void
+    {
+        DB::table('users')->insert(['id' => 5, 'name' => 'Other Patient', 'email' => 'other@example.com', 'password' => Hash::make('password123'), 'role' => 'patient']);
+        $this->withSession(['user_id' => 5])->get('/?search=OtherMedicine')->assertOk();
+        $this->withSession(['user_id' => 3])->get('/?search=paracetamol')->assertOk();
+        $this->assertDatabaseHas('search_history', ['user_id' => 3, 'query' => 'paracetamol', 'result_count' => 1]);
+        $this->get('/requests?section=history')->assertOk()->assertSee('Search History')->assertSee('paracetamol')
+            ->assertSee('Search again')->assertSee('search=paracetamol')->assertDontSee('OtherMedicine');
+        $this->get('/logout');
+        $this->post('/login', ['email' => '3@example.com', 'password' => 'password123'])->assertRedirect('/requests');
+        $this->get('/requests?section=history')->assertOk()->assertSee('paracetamol');
+        $this->delete('/requests/search-history')->assertRedirect('/requests?section=history');
+        $this->assertDatabaseMissing('search_history', ['user_id' => 3]);
+        $this->assertDatabaseHas('search_history', ['user_id' => 5, 'query' => 'OtherMedicine']);
+        $this->get('/requests?section=history')->assertSee('No searches yet.');
+    }
+
+    public function test_patient_sidebar_sections_render_without_javascript_and_history_excludes_guests_and_providers(): void
+    {
+        $this->get('/?search=paracetamol')->assertOk();
+        $this->withSession(['user_id' => 1])->get('/?search=paracetamol')->assertOk();
+        $this->assertDatabaseCount('search_history', 0);
+        $this->delete('/requests/search-history')->assertForbidden();
+        foreach (['home' => 'Total Requests', 'requests' => 'Your Reservations', 'reservations' => 'Your Reservations', 'notifications' => 'Request Status Alerts', 'history' => 'No searches yet.'] as $section => $heading) {
+            $this->withSession(['user_id' => 3])->get('/requests?section='.$section)->assertOk()
+                ->assertSee($heading)->assertSee('Search History')->assertSee('aria-current="page"', false)->assertDontSee('onclick="showSection', false);
+        }
+        $this->get('/?search=')->assertOk();
+        $this->assertDatabaseCount('search_history', 0);
+    }
+
+    public function test_new_patient_activity_and_pharmacist_decisions_appear_in_dashboard(): void
+    {
+        $this->post('/register', ['name' => 'Activity Patient', 'email' => 'activity@example.com', 'password' => 'Patient-pass123', 'role' => 'patient'])->assertRedirect('/requests');
+        $patient = DB::table('users')->where('email', 'activity@example.com')->first();
+        $this->get('/?search=paracetamol')->assertOk();
+        $this->get('/requests')->assertOk()->assertSee('Recent Searches')->assertSee('paracetamol')->assertSee('Searches: 1')->assertSee('patientSidebarMenu');
+        $this->post('/reserve/1', ['note' => 'Pickup tomorrow'])->assertRedirect('/requests?section=reservations');
+        $reservation = DB::table('reservations')->where('user_id', $patient->id)->first();
+        $this->assertNotNull($reservation);
+        $this->assertSame('pending', $reservation->status);
+        $this->post('/reserve/1')->assertRedirect('/requests?section=reservations');
+        $this->assertSame(1, DB::table('reservations')->where('user_id', $patient->id)->count());
+        $this->get('/requests?section=reservations')->assertOk()->assertSee('Pickup tomorrow')->assertSee('Pharmacy 1')->assertSee('Kampala');
+        $this->get('/requests')->assertOk()->assertSee('Recent Reservations')->assertSee('Paracetamol')->assertSee('Pharmacy 1');
+        $this->withSession(['user_id' => 1])->post('/pharmacist/requests/'.$reservation->id.'/confirm')->assertRedirect();
+        $this->withSession(['user_id' => $patient->id])->get('/requests')->assertOk()
+            ->assertViewHas('reservations', fn ($rows) => $rows->count() === 1 && $rows->first()->status === 'confirmed')
+            ->assertSee('Ready for Pickup');
+        $this->get('/requests?section=reservations')->assertSee('Ready for Pick-up');
+        $this->withSession(['user_id' => 3])->get('/requests?section=reservations')->assertDontSee('Pickup tomorrow');
+    }
+
+    public function test_unavailable_stock_and_unapproved_pharmacies_cannot_be_reserved(): void
+    {
+        DB::table('pharmacy_medicine')->where('id', 1)->update(['quantity' => 0]);
+        $this->withSession(['user_id' => 3])->from('/?search=paracetamol')->post('/reserve/1')->assertSessionHasErrors('reservation');
+        $this->get('/?search=paracetamol')->assertSee('This medicine is currently unavailable.');
+        DB::table('pharmacy_medicine')->where('id', 1)->update(['quantity' => 10]);
+        DB::table('pharmacies')->where('id', 1)->update(['status' => 'pending']);
+        $this->post('/reserve/1')->assertSessionHasErrors('reservation');
+        $this->post('/reserve/9999')->assertSessionHasErrors('reservation');
+        $this->assertDatabaseCount('reservations', 1);
+        $this->withSession(['user_id' => 1])->post('/reserve/1')->assertForbidden();
+    }
+
+    public function test_failed_registration_shows_errors_without_creating_a_patient_or_flashing_password(): void
+    {
+        $this->from('/register')->post('/register', ['name' => 'New Patient', 'email' => 'new@example.com', 'password' => 'short', 'role' => 'patient'])
+            ->assertRedirect('/register')->assertSessionHasErrors('password')->assertSessionMissing('_old_input.password')->assertSessionMissing('user_id');
+        $this->assertDatabaseMissing('users', ['email' => 'new@example.com']);
+        $this->get('/register')->assertOk()->assertSee('The password field must be at least 8 characters.');
+    }
+
+    public function test_pharmacist_registration_matches_pharmacy_database_columns(): void
+    {
+        $this->post('/register', ['name' => 'New Pharmacist', 'email' => 'new-pharmacist@example.com', 'password' => 'Pharmacy-pass123',
+            'role' => 'pharmacist', 'pharmacy_name' => 'New Pharmacy', 'license_number' => 'NEW-123', 'location' => 'Entebbe', 'phone' => '0700000001'])
+            ->assertRedirect('/pharmacist');
+        $user = DB::table('users')->where('email', 'new-pharmacist@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertDatabaseHas('pharmacies', ['owner_id' => $user->id, 'name' => 'New Pharmacy', 'location' => 'Entebbe', 'status' => 'pending']);
+        $this->get('/pharmacist')->assertOk()->assertSee('New Pharmacy');
+    }
+
+    public function test_login_handles_existing_email_capitalization_and_rejects_wrong_password(): void
+    {
+        DB::table('users')->where('id', 3)->update(['email' => 'Existing.Patient@Example.com']);
+        $this->from('/login')->post('/login', ['email' => 'existing.patient@example.com', 'password' => 'incorrect'])
+            ->assertRedirect('/login')->assertSessionHasErrors('email')->assertSessionMissing('user_id')->assertSessionMissing('_old_input.password');
+        $this->post('/login', ['email' => 'existing.patient@example.com', 'password' => 'password123'])
+            ->assertRedirect('/requests')->assertSessionHas('user_id', 3);
     }
 
     public function test_stock_add_update_validation_and_owned_removal(): void

@@ -435,10 +435,18 @@
     }
   }
   .dashboard-content { min-width: 0; }
+  .patient-workspace .dashboard-nav-main { min-width: 0; }
+  .patient-workspace .dashboard-nav-main > span { overflow-wrap: anywhere; }
+  .patient-workspace .dashboard-nav .badge { flex-shrink: 0; }
+  .patient-workspace .dashboard-stat,
+  .patient-workspace .dashboard-notice { width: 100% !important; }
+  .patient-search-details { min-width: 0; flex: 1 1 200px; }
   .dashboard-notification-menu { width: min(390px, calc(100vw - 40px)); max-height: 70vh; overflow-y: auto; }
   .dashboard-notification-menu .dashboard-notice { width: 100% !important; padding: 1rem; }
   .dashboard-content .dashboard-table-card { width: 100% !important; }
+  .patient-workspace .dashboard-nav .nav-link,
   .pharmacy-workspace .dashboard-nav .nav-link { border: 0; border-radius: 8px; padding: .85rem 1rem; font-size: .9rem; }
+  .patient-workspace .dashboard-nav .nav-link:hover,
   .pharmacy-workspace .dashboard-nav .nav-link:hover { transform: none; }
   .pharmacy-workspace .dashboard-hero h1 { font-size: 1.65rem; }
   .pharmacy-workspace .dashboard-notice { width: 100% !important; }
@@ -517,7 +525,7 @@
   }
 </style>
 
-<div class="dashboard-shell {{ $isPharmacyDashboard ? 'pharmacy-workspace' : '' }} {{ $hasDashboardHeader ? 'dashboard-with-header' : '' }}">
+<div class="dashboard-shell {{ $isPharmacyDashboard ? 'pharmacy-workspace' : ($isPatientDashboard ? 'patient-workspace' : '') }} {{ $hasDashboardHeader ? 'dashboard-with-header' : '' }}">
   @if($hasDashboardHeader)
     <header class="dashboard-masthead">
       <div class="dashboard-title-bar">{{ $dashboardHeaderTitle }}</div>
@@ -529,6 +537,10 @@
   @endif
   <div class="dashboard-frame">
     <aside class="dashboard-sidebar">
+      @if($isPatientDashboard)
+        <button class="btn btn-outline-light d-xl-none w-100 mb-3 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#patientSidebarMenu" aria-controls="patientSidebarMenu" aria-expanded="false"><span><i class="bi bi-list me-2" aria-hidden="true"></i>Patient Menu</span><i class="bi bi-chevron-down" aria-hidden="true"></i></button>
+        <div id="patientSidebarMenu" class="collapse d-xl-flex flex-column flex-grow-1">
+      @endif
       @unless($hasDashboardHeader)
       <div class="dashboard-brand">
         <div class="dashboard-brand-mark">
@@ -559,6 +571,7 @@
           <span class="fw-semibold">Logout</span>
         </a>
       </div>
+      @if($isPatientDashboard)</div>@endif
     </aside>
 
     <div class="dashboard-content">
