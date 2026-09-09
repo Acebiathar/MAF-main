@@ -14,14 +14,6 @@ if (!function_exists('renderView')) {
     }
 }
 
-if (!function_exists('currentUser')) {
-    function currentUser()
-    {
-        $userId = session('user_id');
-        return $userId ? DB::table('users')->where('id', $userId)->first() : null;
-    }
-}
-
 if (!function_exists('flash')) {
     function flash($category, $message)
     {
@@ -174,8 +166,7 @@ Route::get('/reset-password/{token}', [\App\Http\Controllers\PasswordResetContro
 Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->middleware('throttle:10,1')->name('password.update');
 Route::match(['get', 'post'], '/login', function (Request $request) {
     if ($request->isMethod('get')) {
-        $userId = session('user_id');
-        $user = $userId ? DB::table('users')->where('id', $userId)->first() : null;
+        $user = currentUser();
 
         if ($user) {
             return redirectToDashboard($user);
@@ -195,12 +186,17 @@ Route::match(['get', 'post'], '/login', function (Request $request) {
         $user = DB::table('users')->whereRaw('LOWER(TRIM(email)) = ?', [$email])->first();
 
         if ($user && Hash::check($password, $user->password)) {
+            if (!$user->is_active) {
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return redirect('/login')->withErrors(['email' => 'Your account has been deactivated. Please contact site support.'])->withInput($request->only('email'));
+            }
             \Illuminate\Support\Facades\RateLimiter::clear($loginKey);
             if (Hash::needsRehash($user->password)) {
                 DB::table('users')->where('id', $user->id)->update(['password' => Hash::make($password), 'updated_at' => now()]);
             }
             $request->session()->regenerate();
-            session(['user_id' => $user->id]);
+            session(['user_id' => $user->id, 'user_session_version' => $user->session_version]);
 
             flash('success', "Hi, " . $user->name . "! Welcome back.");
 
@@ -273,7 +269,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
 
         // Sign in only after the account transaction succeeds.
         $request->session()->regenerate();
-        session(['user_id' => $user->id]);
+        session(['user_id' => $user->id, 'user_session_version' => $user->session_version]);
 
         flash('success', $role === 'pharmacist'
             ? 'Registration successful. Welcome to your dashboard!'
@@ -285,7 +281,7 @@ Route::match(['get', 'post'], '/register', function (Request $request) {
     return renderView('auth.register');
 })->name('register');
 
-Route::get('/logout', function (Request $request) {
+Route::match(['get', 'post'], '/logout', function (Request $request) {
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     flash('info', 'Logged out.');
@@ -438,6 +434,7 @@ Route::get('/admin/subscriptions', [\App\Http\Controllers\PharmacyController::cl
 Route::post('/admin/subscriptions/{payment}/{action}', [\App\Http\Controllers\PharmacyController::class, 'reviewPayment']);
 
 Route::get('/admin/reports/export', [\App\Http\Controllers\AdminDashboardController::class, 'export']);
+Route::post('/admin/users/{user}/status', [\App\Http\Controllers\AdminDashboardController::class, 'accountStatus'])->whereNumber('user');
 Route::post('/admin/settings', [\App\Http\Controllers\AdminDashboardController::class, 'settings']);
 Route::get('/admin/{action?}/{type?}', [\App\Http\Controllers\AdminDashboardController::class, 'page']);
 

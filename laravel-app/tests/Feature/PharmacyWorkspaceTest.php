@@ -34,6 +34,7 @@ class PharmacyWorkspaceTest extends TestCase
         (require database_path('migrations/2026_09_08_000001_create_subscription_payments_table.php'))->up();
         (require database_path('migrations/2026_09_08_000002_create_search_history_table.php'))->up();
         (require database_path('migrations/2014_10_12_100000_create_password_reset_tokens_table.php'))->up();
+        (require database_path('migrations/2026_09_09_000001_add_account_deactivation.php'))->up();
         foreach ([1 => 'pharmacist', 2 => 'pharmacist', 3 => 'patient', 4 => 'admin'] as $id => $role) {
             DB::table('users')->insert(['id' => $id, 'name' => 'User '.$id, 'email' => $id.'@example.com', 'password' => Hash::make('password123'), 'role' => $role]);
         }
@@ -162,6 +163,17 @@ class PharmacyWorkspaceTest extends TestCase
             ->assertRedirect('/login')->assertSessionHasErrors('email')->assertSessionMissing('user_id')->assertSessionMissing('_old_input.password');
         $this->post('/login', ['email' => 'existing.patient@example.com', 'password' => 'password123'])
             ->assertRedirect('/requests')->assertSessionHas('user_id', 3);
+    }
+
+    public function test_post_logout_clears_sessions_for_every_role(): void
+    {
+        foreach ([1 => '/pharmacist', 3 => '/requests', 4 => '/admin'] as $id => $dashboard) {
+            $this->withSession(['user_id' => $id, 'user_session_version' => 0, 'private_marker' => 'remove-me'])
+                ->post('/logout')->assertRedirect('/')
+                ->assertSessionMissing('user_id')->assertSessionMissing('user_session_version')->assertSessionMissing('private_marker');
+            $this->get($dashboard)->assertRedirect('/login');
+        }
+        $this->post('/logout')->assertRedirect('/');
     }
 
     public function test_login_redirects_all_roles_and_logout_removes_the_session(): void
@@ -405,6 +417,47 @@ class PharmacyWorkspaceTest extends TestCase
             foreach (['', '/reports', '/settings', '/reports/export'] as $path) $this->get('/admin'.$path)->assertForbidden();
             $this->post('/admin/settings', [])->assertForbidden();
         }
+    }
+
+    public function test_admin_can_deactivate_and_reactivate_accounts_without_deleting_records(): void
+    {
+        foreach ([3 => '/requests', 1 => '/pharmacist'] as $id => $dashboard) {
+            $this->withSession(['user_id' => 4, 'user_session_version' => 0])->post('/admin/users/'.$id.'/status', [
+                'is_active' => 0, 'reason' => 'Account review requested', 'confirmed' => 1,
+            ])->assertRedirect('/admin/view/users');
+            $this->assertDatabaseHas('users', ['id' => $id, 'is_active' => false, 'session_version' => 1]);
+            $this->assertDatabaseHas('account_status_events', ['user_id' => $id, 'admin_id' => 4, 'is_active' => false, 'reason' => 'Account review requested']);
+            $this->get('/admin/view/users')->assertOk()->assertSee('Deactivated')->assertSee('Reactivate');
+            $this->withSession(['user_id' => $id, 'user_session_version' => 0])->get($dashboard)->assertRedirect('/login')->assertSessionMissing('user_id');
+            $this->post('/login', ['email' => $id.'@example.com', 'password' => 'password123'])->assertSessionHasErrors('email')->assertSessionMissing('user_id');
+            $this->withSession(['user_id' => 4, 'user_session_version' => 0])->post('/admin/users/'.$id.'/status', [
+                'is_active' => 1, 'reason' => 'Account review completed', 'confirmed' => 1,
+            ])->assertRedirect('/admin/view/users');
+            // Old sessions must not regain access after reactivation.
+            $this->withSession(['user_id' => $id, 'user_session_version' => 0])->get('/login')->assertOk()->assertSessionMissing('user_id');
+            $this->post('/login', ['email' => $id.'@example.com', 'password' => 'password123'])->assertRedirect($dashboard)->assertSessionHas('user_session_version', 2);
+            $this->get($dashboard)->assertOk()->assertDontSee('Confirm deactivation');
+        }
+        $this->assertDatabaseCount('users', 4);
+        $this->assertDatabaseCount('reservations', 1);
+        $this->assertDatabaseCount('pharmacy_medicine', 1);
+        $this->assertDatabaseCount('account_status_events', 4);
+    }
+
+    public function test_account_status_changes_require_admin_confirmation_and_reason(): void
+    {
+        $data = ['is_active' => 0, 'reason' => 'Account review requested', 'confirmed' => 1];
+        $this->post('/admin/users/3/status', $data)->assertForbidden();
+        foreach ([1, 3] as $id) $this->withSession(['user_id' => $id])->post('/admin/users/2/status', $data)->assertForbidden();
+        $this->withSession(['user_id' => 4])->post('/admin/users/4/status', $data)->assertForbidden();
+        $this->post('/admin/users/999/status', $data)->assertNotFound();
+        $this->post('/admin/users/3/status', ['is_active' => 0])->assertSessionHasErrors(['reason', 'confirmed']);
+        $this->assertDatabaseHas('users', ['id' => 3, 'is_active' => true]);
+        $this->post('/admin/users/3/status', $data)->assertRedirect();
+        $this->post('/admin/users/3/status', $data)->assertRedirect();
+        $this->assertDatabaseCount('account_status_events', 1);
+        $this->assertDatabaseHas('users', ['id' => 3, 'session_version' => 1]);
+        $this->get('/admin/users/2/status')->assertStatus(405);
     }
 
     public function test_admin_settings_require_current_password_and_preserve_role(): void

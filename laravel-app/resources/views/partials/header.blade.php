@@ -8,18 +8,33 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ route('how') }}">How it Works</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('how') }}">How it Works</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
             </ul>
 
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item auth-buttons d-flex gap-2 align-items-center">
                     @if(currentUser())
-                    <a href="{{ route('logout') }}" class="btn btn-outline-danger px-4 rounded-pill">Logout</a>
+                        @php
+                            $role = strtolower(trim(currentUser()->role ?? ''));
+                            $dashboardUrl = match($role) {
+                                'admin' => url('/admin'),
+                                'pharmacist', 'pharmacy' => url('/pharmacist'),
+                                'patient' => url('/requests'),
+                                default => url('/'),
+                            };
+                        @endphp
+
+                        <a href="{{ $dashboardUrl }}" class="btn btn-primary px-4 rounded-pill text-white">Dashboard</a>
+
+                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger px-4 rounded-pill">Logout</button>
+                        </form>
                     @else
-                    <a href="{{ route('login') }}" class="btn btn-outline-primary btn-login px-4 rounded-pill" data-label="Login">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary btn-register text-white px-4 rounded-pill" data-label="Register">Register</a>
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary btn-login px-4 rounded-pill" data-label="Login">Login</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary btn-register text-white px-4 rounded-pill" data-label="Register">Register</a>
                     @endif
                 </li>
             </ul>

@@ -118,6 +118,10 @@
   color: #536584;
 }
 .admin-workspace .table td { color: #344c69; }
+.admin-workspace .admin-account-action { min-width: 150px; }
+.admin-workspace .admin-account-action summary { cursor: pointer; }
+.admin-workspace .admin-account-action[open] { min-width: 250px; max-width: 320px; }
+.admin-workspace .admin-account-action form { white-space: normal; }
 .admin-workspace .dashboard-table-card .text-uppercase {
   text-transform: none !important;
   letter-spacing: normal;

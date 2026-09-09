@@ -103,6 +103,37 @@ class AdminDashboardController extends Controller
         }, 'medfinder-report-'.now()->format('Y').'.csv', ['Content-Type' => 'text/csv']);
     }
 
+    public function accountStatus(Request $request, int $user)
+    {
+        $this->authorizeAdmin();
+        $adminId = currentUser()->id;
+        $request->merge(['reason' => trim((string) $request->input('reason'))]);
+        $data = $request->validate([
+            'is_active' => 'required|boolean',
+            'reason' => 'required|string|min:5|max:500',
+            'confirmed' => 'accepted',
+        ]);
+        DB::transaction(function () use ($user, $adminId, $data) {
+            $account = DB::table('users')->where('id', $user)->lockForUpdate()->first();
+            abort_unless($account, 404);
+            abort_if($account->role === 'admin' || $account->id === $adminId, 403, 'Administrator accounts are protected.');
+            $active = (bool) $data['is_active'];
+            if ((bool) $account->is_active === $active) return;
+            DB::table('users')->where('id', $user)->update([
+                'is_active' => $active,
+                'session_version' => $account->session_version + 1,
+                'remember_token' => null,
+                'updated_at' => now(),
+            ]);
+            DB::table('account_status_events')->insert([
+                'user_id' => $user, 'admin_id' => $adminId, 'is_active' => $active,
+                'reason' => $data['reason'], 'created_at' => now(),
+            ]);
+        });
+        flash('success', $data['is_active'] ? 'Account reactivated. The user can sign in again.' : 'Account deactivated. Sign-in and existing account sessions are blocked.');
+        return redirect('/admin/view/users');
+    }
+
     public function settings(Request $request)
     {
         $this->authorizeAdmin();

@@ -17,7 +17,13 @@ if (!function_exists('currentUser')) {
     function currentUser()
     {
         $userId = session('user_id');
-        return $userId ? DB::table('users')->where('id', $userId)->first() : null;
+        $user = $userId ? DB::table('users')->where('id', $userId)->first() : null;
+        if ($user && (!$user->is_active || (int) session('user_session_version', 0) !== (int) $user->session_version)) {
+            session()->invalidate();
+            session()->regenerateToken();
+            return null;
+        }
+        return $user;
     }
 }
 

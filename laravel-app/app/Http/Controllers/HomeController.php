@@ -47,7 +47,7 @@ class HomeController extends Controller
             'results' => $results,
             'pharmacies' => collect(),
             'alternatives' => collect(),
-            'currentUser' => session('user_id') ? DB::table('users')->where('id', session('user_id'))->first() : null,
+            'currentUser' => currentUser(),
             'items' => collect(),
             'itemSearch' => ''
         ]);
