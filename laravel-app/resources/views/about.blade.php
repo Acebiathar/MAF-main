@@ -261,7 +261,7 @@
 
 @php
 $teamMembers = [
-['name' => 'Abiathar s.', 'role' => 'Project Manager', 'image' => 'images/team 4.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
+['name' => 'Abiathar S.', 'role' => 'Project Manager', 'image' => 'images/team 4.jpeg', 'bio' => 'Guides the MedFinder vision and long-term growth.'],
 ['name' => 'Lamulah N.', 'role' => 'UI/UX Designer', 'image' => 'images/team-2.png', 'bio' => 'Builds and improves the core platform experience.'],
 ['name' => 'Stellah N.', 'role' => 'lead developer ', 'image' => 'images/team-1.jpeg', 'bio' => 'Supports medicine information and pharmacy workflows.'],
 ['name' => 'Ruth T .', 'role' => 'Project Coordinator', 'image' => 'images/team 3.jpeg', 'bio' => 'Keeps the team aligned and project delivery on track.'],
@@ -280,7 +280,7 @@ $teamMembers = [
         <div class="row g-4 justify-content-center">
             @foreach ($teamMembers as $member)
             <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow-sm h-100 team-card animate-on-scroll">
+                <div class="card border-0 shadow-sm team-card animate-on-scroll">
                     <img src="{{ asset($member['image']) }}" class="card-img-top team-img team-img-pos-{{ $loop->iteration }}" alt="{{ $member['name'] }}">
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">{{ $member['name'] }}</h5>
@@ -466,15 +466,40 @@ $teamMembers = [
     }
 
     .team-card {
+        display: grid;
+        grid-template-rows: minmax(0, 7fr) minmax(min-content, 3fr);
+        height: clamp(600px, 65vw, 680px);
         border-radius: 20px;
         overflow: hidden;
         transition: 0.3s;
     }
 
-    .team-img {
-        height: 300px;
+    .team-card .team-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
         object-fit: cover;
+        object-position: center 20%;
+        flex-shrink: 0;
     }
+
+    .team-card .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .team-card .card-body h5 { font-size: 1rem; }
+    .team-card .card-body p { font-size: .875rem; line-height: 1.4; }
+    .team-card .card-body p.small { font-size: .8125rem; margin-bottom: 0; }
+    .team-card .social-links { margin-top: .5rem !important; }
+
+    .team-card .team-img-pos-2 { object-position: center 45%; }
+    .team-card .team-img-pos-4,
+    .team-card .team-img-pos-6 { object-position: center top; }
+    .team-card .team-img-pos-5 { object-position: center; }
 
     .hero-section {
         background: linear-gradient(135deg, #f4f8ff 0%, #e7efff 100%);
